@@ -46,13 +46,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -152,24 +172,117 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ZipController.cs" />
+    <Compile Include="Controllers\TableController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filter\LoginFilter.cs" />
+    <Compile Include="Filter\WebApiExceptionFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BP_Data_allobject.cs" />
+    <Compile Include="Models\BP_Data_Cal_BlastsDynamiteSet_Base.cs" />
+    <Compile Include="Models\BP_Data_Cal_BlastsDynamiteSet_Detail.cs" />
+    <Compile Include="Models\BP_Data_Cal_BlastsDynamiteSet_DyClass.cs" />
+    <Compile Include="Models\BP_Data_Cal_BlastsDynamiteSet_VolBase.cs" />
+    <Compile Include="Models\Bp_Data_comment.cs" />
+    <Compile Include="Models\BP_Data_geologicalinf.cs" />
+    <Compile Include="Models\BP_Data_geologicalinfsm.cs" />
+    <Compile Include="Models\BP_Data_geologicalyear.cs" />
+    <Compile Include="Models\BP_Data_lbastpoint.cs" />
+    <Compile Include="Models\BP_Data_lbastpreset.cs" />
+    <Compile Include="Models\BP_Data_mytext.cs" />
+    <Compile Include="Models\BP_Data_point.cs" />
+    <Compile Include="Models\BP_Data_yinxin.cs" />
+    <Compile Include="Models\Bp_项目.cs" />
+    <Compile Include="Models\Bp_项目数据.cs" />
+    <Compile Include="Models\Bp_项目权限.cs" />
+    <Compile Include="Models\Bp_项目资料.cs" />
+    <Compile Include="Models\DBContext.cs" />
+    <Compile Include="Models\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\AjaxResult.cs" />
+    <Compile Include="Utils\CookieResult.cs" />
+    <Compile Include="Utils\JsonHelper.cs" />
+    <Compile Include="Utils\LogHelper.cs" />
+    <Compile Include="Utils\PagedResult.cs" />
+    <Compile Include="Utils\SerializeHelper.cs" />
+    <Compile Include="Utils\ZipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\bootstrap-switch.css" />
+    <Content Include="Content\css\bootstrap-table.css" />
+    <Content Include="Content\css\colorpicker.css" />
+    <Content Include="Content\css\datatables.css" />
+    <Content Include="Content\css\datepicker.css" />
+    <Content Include="Content\css\daterange-picker.css" />
+    <Content Include="Content\css\font-awesome.css" />
+    <Content Include="Content\css\fullcalendar.css" />
+    <Content Include="Content\css\gray.css" />
+    <Content Include="Content\css\green.css" />
+    <Content Include="Content\css\isotope.css" />
+    <Content Include="Content\css\jquery.fancybox.css" />
+    <Content Include="Content\css\magenta.css" />
+    <Content Include="Content\css\morris.css" />
+    <Content Include="Content\css\orange.css" />
+    <Content Include="Content\css\pygments.css" />
+    <Content Include="Content\css\se7en-font.css" />
+    <Content Include="Content\css\select2.css" />
+    <Content Include="Content\css\style.css" />
+    <Content Include="Content\css\summernote.css" />
+    <Content Include="Content\css\timepicker.css" />
+    <Content Include="Content\css\typeahead.css" />
+    <Content Include="Content\css\wizard.css" />
+    <Content Include="Content\login.css" />
+    <Content Include="Content\PagedList.css" />
+    <Content Include="Content\star-rating.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\2.png" />
+    <Content Include="Images\alpha.png" />
+    <Content Include="Images\bgdl.jpg" />
+    <Content Include="Images\chat-left%402x.png" />
+    <Content Include="Images\chat-left.png" />
+    <Content Include="Images\chat-right%402x.png" />
+    <Content Include="Images\chat-right.png" />
+    <Content Include="Images\checkmark%402x.png" />
+    <Content Include="Images\checkmark.png" />
+    <Content Include="Images\fancybox_overlay.png" />
+    <Content Include="Images\hue.png" />
+    <Content Include="Images\icon-search%402x.png" />
+    <Content Include="Images\icon-search.png" />
+    <Content Include="Images\ksfm.jpg" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\login-img.png" />
+    <Content Include="Images\login_logo.png" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\se7en-logo%402x.png" />
+    <Content Include="Images\se7en-logo.png" />
+    <Content Include="Images\select2-spinner.gif" />
+    <Content Include="Images\select2.png" />
+    <Content Include="Images\select2x2.png" />
+    <Content Include="Logs\log.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="log4net.config" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\se7en.svg" />
+    <Content Include="fonts\se7en.eot" />
+    <Content Include="fonts\se7en.ttf" />
+    <Content Include="fonts\se7en.woff" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\js\BPF.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -177,9 +290,59 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\js\bootstrap-colorpicker.js" />
+    <Content Include="Scripts\js\bootstrap-datepicker.js" />
+    <Content Include="Scripts\js\bootstrap-fileupload.js" />
+    <Content Include="Scripts\js\bootstrap-switch.min.js" />
+    <Content Include="Scripts\js\bootstrap-table-export.js" />
+    <Content Include="Scripts\js\bootstrap-table-mobile.min.js" />
+    <Content Include="Scripts\js\bootstrap-table-zh-CN.js" />
+    <Content Include="Scripts\js\bootstrap-table.js" />
+    <Content Include="Scripts\js\bootstrap-timepicker.js" />
+    <Content Include="Scripts\js\datatable-editable.js" />
+    <Content Include="Scripts\js\date.js" />
+    <Content Include="Scripts\js\daterange-picker.js" />
+    <Content Include="Scripts\js\excanvas.min.js" />
+    <Content Include="Scripts\js\fitvids.js" />
+    <Content Include="Scripts\js\fullcalendar.min.js" />
+    <Content Include="Scripts\js\gcal.js" />
+    <Content Include="Scripts\js\isotope_extras.js" />
+    <Content Include="Scripts\js\jquery-ui-1.10.2.js" />
+    <Content Include="Scripts\js\jquery.bootstrap.wizard.js" />
+    <Content Include="Scripts\js\jquery.datatables.min.js" />
+    <Content Include="Scripts\js\jquery.easy-pie-chart.js" />
+    <Content Include="Scripts\js\jquery.fancybox.pack.js" />
+    <Content Include="Scripts\js\jquery.inputmask.min.js" />
+    <Content Include="Scripts\js\jquery.isotope.min.js" />
+    <Content Include="Scripts\js\jquery.min.js" />
+    <Content Include="Scripts\js\jquery.mousewheel.js" />
+    <Content Include="Scripts\js\jquery.sparkline.min.js" />
+    <Content Include="Scripts\js\jquery.validate.js" />
+    <Content Include="Scripts\js\jquery.vmap.min.js" />
+    <Content Include="Scripts\js\jquery.vmap.sampledata.js" />
+    <Content Include="Scripts\js\jquery.vmap.world.js" />
+    <Content Include="Scripts\js\main.js" />
+    <Content Include="Scripts\js\modernizr.custom.js" />
+    <Content Include="Scripts\js\morris.min.js" />
+    <Content Include="Scripts\js\raphael.min.js" />
+    <Content Include="Scripts\js\respond.js" />
+    <Content Include="Scripts\js\select2.js" />
+    <Content Include="Scripts\js\selectivizr-min.js" />
+    <Content Include="Scripts\js\skycons.js" />
+    <Content Include="Scripts\js\styleswitcher.js" />
+    <Content Include="Scripts\js\summernote.min.js" />
+    <Content Include="Scripts\js\tableExport.min.js" />
+    <Content Include="Scripts\js\typeahead.js" />
+    <Content Include="Scripts\js\wysiwyg.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\star-rating.js" />
+    <Content Include="Scripts\view\table.js" />
+    <Content Include="Scripts\view\zip.js" />
+    <Content Include="Scripts\view\user.js" />
+    <Content Include="Scripts\view\home.js" />
+    <Content Include="Scripts\view\account.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -191,13 +354,17 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\Table\Query.cshtml" />
+    <Content Include="Views\Table\Mark.cshtml" />
+    <Content Include="Views\Zip\Down.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
+    <Folder Include="Data\" />
+    <Folder Include="Zip\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

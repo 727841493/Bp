@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "爆破项目";
+}
+
+@Scripts.Render("~/bundles/table")
+
+<div class="row">
+    <div id="toolbar"></div>
+    <div class="col-md-12">
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form id="formSearch" class="form-horizontal">
+
+                    @*根据日期查询报表*@
+                    <div class="form-group" style="margin-top:15px;">
+                        <div class="col-sm-5">
+                            <label class="control-label col-sm-6" for="txt_search_departmentname" style="text-align:center">日期 从</label>
+                            <div class="col-sm-6">
+                                <input class="form_datetime form-control" type="text" id="startTime" size="16" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="control-label col-sm-6" for="txt_search_statu" style="text-align:center">到</label>
+                            <div class="col-sm-6">
+                                <input class="form_datetime form-control" type="text" id="endTime" size="16" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*根据台阶水平查询报表*@
+                    <div class="form-group" style="margin-top:15px">
+                        <div class="col-sm-5">
+                            <label class="control-label col-sm-6" for="txt_search_departmentname" style="text-align:center">台阶水平</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="steps">
+                            </div>
+                        </div>
+                        @*根据岩性查询报表*@
+                        <div class="col-sm-5">
+                            <label class="control-label col-sm-6" for="txt_search_departmentname" style="text-align:center">岩性</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="lithology">
+                            </div>
+                        </div>
+                    </div>
+
+                    @*根据爆破效果查询报表*@
+                    <div class="form-group" style="margin-top:15px">
+                        <div class="col-sm-5">
+                            <label class="control-label col-sm-6" for="txt_search_departmentname" style="text-align:center">爆破效果</label>
+                            <div class="col-sm-6">
+                                <select style="height: 30px;width: 100%;" id="avg">
+                                    <option value="">所有（总评（四项评分的平均值））</option>
+                                    <option value="优">优 （4.5 ≤ 总评 ≤ 5）</option>
+                                    <option value="良">良 （4 ≤ 总评 ＜ 4.5）</option>
+                                    <option value="中">中 （3 ≤ 总评 ＜ 4）</option>
+                                    <option value="差">差 （总评 ＜ 3）</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*查询按钮*@
+                    <div class="form-group" style="margin-top:15px">
+                        <div class="col-sm-11" style="text-align:center;">
+                            <button type="button" style="width:100px;" id="btn_query" class="btn btn-primary">查询</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @*报表展示*@
+        <table id="table" data-mobile-responsive="true" data-card-view="true"></table>
+
+    </div>
+
+</div>
+

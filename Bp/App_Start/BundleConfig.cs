@@ -26,6 +26,103 @@ namespace Bp
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+
+            bundles.Add(new StyleBundle("~/Content/kj").Include(
+                      "~/Content/css/font-awesome.css",
+                      "~/Content/css/se7en-font.css",
+                      "~/Content/css/isotope.css",
+                      "~/Content/css/jquery.fancybox.css",
+                      "~/Content/css/fullcalendar.css",
+                      "~/Content/css/wizard.css",
+                      "~/Content/css/select2.css",
+                      "~/Content/css/morris.css",
+                      "~/Content/css/datatables.css",
+                      "~/Content/css/datepicker.css",
+                      "~/Content/css/timepicker.css",
+                      "~/Content/css/colorpicker.css",
+                      "~/Content/css/bootstrap-switch.css",
+                      "~/Content/css/daterange-picker.css",
+                      "~/Content/css/bootstrap-table.css",
+                      "~/Content/css/typeahead.css",
+                      "~/Content/css/summernote.css",
+                      "~/Content/css/pygments.css",
+                      "~/Content/css/style.css"
+                      ));
+
+            bundles.Add(new ScriptBundle("~/bundles/kj").Include(
+                      "~/Scripts/js/jquery-ui-1.10.2.js",
+                      "~/Scripts/js/raphael.min.js",
+                      "~/Scripts/js/selectivizr-min.js",
+                      "~/Scripts/js/jquery.mousewheel.js",
+                      "~/Scripts/js/jquery.vmap.min.js",
+                      "~/Scripts/js/jquery.vmap.sampledata.js",
+                      "~/Scripts/js/jquery.vmap.world.js",
+                      "~/Scripts/js/jquery.bootstrap.wizard.js",
+                      "~/Scripts/js/fullcalendar.min.js",
+                      "~/Scripts/js/gcal.js",
+                      "~/Scripts/js/jquery.datatables.min.js",
+                      "~/Scripts/js/datatable-editable.js",
+                      "~/Scripts/js/jquery.easy-pie-chart.js",
+                      "~/Scripts/js/excanvas.min.js",
+                      "~/Scripts/js/jquery.isotope.min.js",
+                      "~/Scripts/js/isotope_extras.js",
+                      "~/Scripts/js/modernizr.custom.js",
+                      "~/Scripts/js/jquery.fancybox.pack.js",
+                      "~/Scripts/js/select2.js",
+                      "~/Scripts/js/styleswitcher.js",
+                      "~/Scripts/js/wysiwyg.js",
+                      "~/Scripts/js/summernote.min.js",
+                      "~/Scripts/js/jquery.inputmask.min.js",
+                      "~/Scripts/js/jquery.validate.js",
+                      "~/Scripts/js/bootstrap-fileupload.js",
+                      "~/Scripts/js/bootstrap-datepicker.js",
+                      "~/Scripts/js/bootstrap-timepicker.js",
+                      "~/Scripts/js/bootstrap-colorpicker.js",
+                      "~/Scripts/js/bootstrap-switch.min.js",
+                      "~/Scripts/js/bootstrap-table.js",
+                      "~/Scripts/js/tableExport.min.js",
+                      "~/Scripts/js/bootstrap-table-export.js",
+                      "~/Scripts/js/bootstrap-table-mobile.min.js",
+                      "~/Scripts/js/bootstrap-table-zh-CN.js",
+                      "~/Scripts/js/BPF.js",
+                      "~/Scripts/js/typeahead.js",
+                      "~/Scripts/js/daterange-picker.js",
+                      "~/Scripts/js/date.js",
+                      "~/Scripts/js/morris.min.js",
+                      "~/Scripts/js/skycons.js",
+                      "~/Scripts/js/fitvids.js",
+                      "~/Scripts/js/jquery.sparkline.min.js",
+                      "~/Scripts/js/main.js",
+                      "~/Scripts/js/respond.js"
+                      ));
+
+            bundles.Add(new StyleBundle("~/Content/login").Include(
+                      "~/Content/login.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/login").Include(
+                      "~/Scripts/view/account.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/home").Include(
+                     "~/Scripts/view/home.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/user").Include(
+                     "~/Scripts/view/user.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/table").Include(
+                     "~/Scripts/view/table.js"));
+
+            bundles.Add(new StyleBundle("~/Content/comment").Include(
+                    "~/Content/star-rating.css"
+                   ));
+
+            bundles.Add(new ScriptBundle("~/bundles/comment").Include(
+                    "~/Scripts/star-rating.js"
+                    ));
+
+            bundles.Add(new ScriptBundle("~/bundles/zip").Include(
+                   "~/Scripts/view/zip.js"
+                   ));
         }
     }
 }

@@ -1,43 +1,152 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - 我的 ASP.NET 应用程序</title>
+    <title>@ViewBag.Title - 露天矿爆破综合信息服务平台</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/kj")
+    @Scripts.Render("~/bundles/kj")
+    <link href="/Content/css/green.css" media="all" rel="alternate stylesheet" title="green-theme" type="text/css" />
+    <link href="/Content/css/orange.css" media="all" rel="alternate stylesheet" title="orange-theme" type="text/css" />
+    <link href="/Content/css/magenta.css" media="all" rel="alternate stylesheet" title="magenta-theme" type="text/css" />
+    <link href="/Content/css/gray.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css" />
+    @RenderSection("scripts", required: false)
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+
+    <div class="modal-shiftfix">
+        <!-- Navigation -->
+        <div class="navbar navbar-fixed-top scroll-hide">
+            <div class="container-fluid top-bar">
+                <div class="pull-right">
+                    <ul class="nav navbar-nav pull-right">
+
+                        <li class="dropdown settings hidden-xs">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <span aria-hidden="true" class="se7en-gear"></span>
+                                <div class="sr-only">Settings</div>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="settings-link blue" href="javascript:chooseStyle('none', 30)">
+                                        <span></span>Blue
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="settings-link green" href="javascript:chooseStyle('green-theme', 30)">
+                                        <span></span>Green
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="settings-link orange" href="javascript:chooseStyle('orange-theme', 30)">
+                                        <span></span>Orange
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="settings-link magenta" href="javascript:chooseStyle('magenta-theme', 30)">
+                                        <span></span>Magenta
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="settings-link gray" href="javascript:chooseStyle('gray-theme', 30)">
+                                        <span></span>Gray
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown user hidden-xs">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <img width="34" height="34" src="../../Images/login_logo.png" />John Smith
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="/User/index">
+                                        <i class="icon-user"></i>
+                                        我的帐户
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="icon-gear"></i>
+                                        帐户设置
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="login1.html">
+                                        <i class="icon-signout"></i>退出
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <button class="navbar-toggle">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("应用程序名称", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a class="logo" href="/Home/Index">露天矿爆破综合信息服务平台</a>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("主页", "Index", "Home")</li>
-                    <li>@Html.ActionLink("关于", "About", "Home")</li>
-                    <li>@Html.ActionLink("联系方式", "Contact", "Home")</li>
-                </ul>
+            <div class="container-fluid main-nav clearfix">
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li>
+                            <a class="current" href="/Home/Index">
+                                <span aria-hidden="true" class="se7en-home"></span>首页
+                            </a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a data-toggle="dropdown" href="#">
+                                <span aria-hidden="true" class="se7en-tables"></span>爆破项目
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="/Table/Query">查询</a>
+                                </li>
+                                <li>
+                                    <a href="/Table/Mark">
+                                        <p>效果评价</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a data-toggle="dropdown" href="#">
+                                <span aria-hidden="true" class="se7en-pages"></span>文件共享
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                @*<li>
+                                    <a href="chat.html">
+                                        <p>上传</p>
+                                    </a>
+                                </li>*@
+                                <li>
+                                    <a href="/Zip/Down">下载</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="gallery.html">
+                                <span aria-hidden="true" class="se7en-gallery"></span>图片预览
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
+        <!-- End Navigation -->
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>
-        </footer>
     </div>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
 </body>
 </html>

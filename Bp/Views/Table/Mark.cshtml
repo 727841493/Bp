@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "爆破项目";
+}
+
+@Scripts.Render("~/bundles/table")
+@Styles.Render("~/Content/comment")
+@Scripts.Render("~/bundles/comment")
+
+<div class="row">
+    <div id="toolbar"></div>
+    <div class="col-md-12">
+
+        @*报表展示*@
+        <table id="mark" data-mobile-responsive="true" data-card-view="true"></table>
+
+    </div>
+</div>
+@*打分拟态框*@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">评分</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title" id="myModalLabel">项目编码：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel"> 块度：</h4>
+                <input id="kd" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 抛掷：</h4>
+                <input id="pz" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 根底：</h4>
+                <input id="gd" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 伞岩：</h4>
+                <input id="sy" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <div class="form-group">
+                    <label for="message-text" class="control-label">评论:</label>
+                    <textarea class="form-control" id="message-text" style="resize:none;height:120px;max-width:80%"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="sumbit()">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*查看评分历史拟态框*@
+<div class="modal fade" id="loadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">评分记录</h4>
+            </div>
+            <div class="modal-body">
+
+                <table id="history"></table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

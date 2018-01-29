@@ -1,31 +1,82 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "首页";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@Scripts.Render("~/bundles/home")
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<div class="container-fluid main-content">
+    <div class="row">
+        <!-- Area Charts:Morris -->
+        <div class="col-md-6">
+            <div class="widget-container fluid-height" style="height:425px">
+                <div class="heading">
+                    <i class="icon-bar-chart"></i>个人信息
+                </div>
+                <div class="widget-content padded text-center">
+                    <div class="graph-container" style="padding-top: 60px;">
+                        <div class="col-md-4"><img src="../../Images/login_logo.png" /></div>
+                        <div class="col-md-8">
+                            <p>登录名</p>
+                            <p>用户名</p>
+                            <p>用户类别</p>
+                            <p>所属科室</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Area Charts:Morris --><!-- Chat -->
+        <div class="col-md-6">
+            <div class="widget-container scrollable chat" style="height: 427px;">
+                <div class="heading">
+                    <i class="icon-comments"></i>通知<span class="icon-smile pull-right">发布</span>
+                </div>
+                <div class="widget-content padded">
+                    <ul>
+                        <li>
+                            <div class="bubble">
+                                <a class="user-name" href="#">John Smith</a>
+                                <p class="message">
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.
+                                </p>
+                                <p class="time">
+                                    <strong>Today </strong>3:53 pm
+                                </p>
+                            </div>
+                        </li>
+                        <li class="current-user">
+                            <div class="bubble">
+                                <a class="user-name" href="#">Jane Smith</a>
+                                <p class="message">
+                                    Donec odio. Quisque volutpat mattis eros.
+                                </p>
+                                <p class="time">
+                                    <strong>Today </strong>3:53 pm
+                                </p>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="post-message">
+                    @*<input class="form-control" placeholder="Write your message here..." type="text"><input type="submit" value="Send">*@
+                </div>
+            </div>
+        </div>
+        <!-- End Chat -->
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="row">
+        <!-- Pie Graph 1 -->
+        <div class="col-lg-12">
+            <div class="widget-container fluid-height">
+                <div class="heading">
+                    <i class="icon-bar-chart"></i>爆破项目@*<span class="pull-right">查看更多</span>*@
+                </div>
+                <div class="widget-content clearfix">
+                    <table id="table"></table>
+                </div>
+            </div>
+        </div>
+        <!-- End Pie Graph 1 -->
     </div>
 </div>

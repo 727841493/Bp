@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Styles.Render("~/Content/login")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/login")
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes" />
+</head>
+
+<body>
+    <div class="jumbotron">
+        <div class="logo">
+            <img src="../../Images/logo.png" />
+        </div>
+        <div class="txt">
+            <div id="before">
+                <img src="~/Images/2.png" />
+                <span id="bz">扫码下载</span>
+            </div>
+            <div id="show" class="mobile">
+                <img src="~/Images/2.png" />
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="login_l_img"><img src="../../Images/login-img.png" /></div>
+        <div class="login">
+            <div class="login_logo"><a href="#"><img src="../../Images/login_logo.png" /></a></div>
+            <div class="login_name">
+                <p>爆破信息服务平台</p>
+            </div>
+
+            <form class="form-signin">
+                <label for="inputName" class="sr-only">Name</label>
+                <input type="text" id="inputName" class="form-control" placeholder="用户名" required autofocus>
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" id="inputPassword" class="form-control" placeholder="密码" required>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="remember-me"> 记住密码
+                    </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+            </form>
+        </div>
+        <div class="copyright">某某有限公司 版权所有©2016-2018 技术支持电话：000-00000000</div>
+    </div>
+</body>
