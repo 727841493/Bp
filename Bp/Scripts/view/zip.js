@@ -5,34 +5,84 @@ function queryParams(id) {
     };
     return params;
 }
-
-function down(id) {
+//查询并预览图片
+function queryFilePicture(id) {
     $.ajax({
-        url: '/Zip/DownloadFile',
+        url: '/Zip/QueryFile',
         type: 'post',
         data: {
             "id": id,
         },
+        success: function (result) {
+
+            var Indicators = [];
+            var Wrapper = [];
+            var Button = [];
+
+            $.each(result, function (i, v) {
+                Indicators.push('<li data-target="#carousel-example-generic" data-slide-to="')
+                Indicators.push(i)
+                Indicators.push('"')
+                Wrapper.push('<div class="item')
+                if (i === 0) {
+                    Indicators.push(' class="active"')
+                    Wrapper.push(' active')
+                }
+                Indicators.push('></li>');
+
+                Wrapper.push('"><img src="')
+                Wrapper.push(v)
+                Wrapper.push('"></div>')
+            })
+
+            Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
+
+            $('#Indicators').html(Indicators.join(''));
+            $('#Wrapper').html(Wrapper.join(''));
+            $('#Button').html(Button.join(''));
+            $('#image').modal('show');
+        }
     });
 }
-
 //页面加载
 $(function () {
 
-    //下载
+    //下载文件
     function loadFormatter(value, row, index) {
         var disabled = value ? "" : "disabled";
         return [
             '<button  ', disabled,
-            ' data-toggle="modal" data-target="#loadModal" class="btn btn-primary" onclick="down(',
-            "'" + row.项目编码 + "'",
-            ')">',
+            ' type= "button" class="btn btn-primary" onclick="window.location.href=',
+            "'",
+            '/Zip/DownloadFile?id=',
+            row.项目编码,
+            "'",
+            '">',
             '下载',
             '</button>',
         ].join('');
     }
 
-
+    function lookFormatter(value, row, index) {
+        var flag = false;
+        for (var i = 0; i < value.length; i++) {
+            var index = value[i].lastIndexOf(".");
+            var img = value[i].substring(index + 1);
+            if (img == "bmp" || img == "png" || img == "gif" || img == "jpg" || img == "jpeg" || img == "JPG" || img == "PNG" || img == "JPEG" || img == "GIF") {
+                flag = true;
+                break;
+            }
+        }
+        var disabled = flag ? "" : "disabled";
+        return [
+            '<button  ', disabled,
+            ' data-toggle="modal" data-target="#loadModal" class="btn btn-primary" onclick="queryFilePicture(',
+            "'" + row.项目编码 + "'",
+            ')">',
+            '预览',
+            '</button>',
+        ].join('');
+    }
 
     $('#down').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
@@ -75,9 +125,8 @@ $(function () {
                     title: "下载",
                     valign: "middle",
                     align: "center",
-                    colspan: 1,
+                    colspan: 2,
                     rowspan: 1,
-                    formatter: loadFormatter
                 }
             ], [
                 {
@@ -105,9 +154,16 @@ $(function () {
                     align: "center"
                 }, {
                     field: '下载',
+                    title: '下载',
                     valign: "middle",
                     align: "center",
                     formatter: loadFormatter
+                }, {
+                    field: '预览',
+                    title: '预览',
+                    valign: "middle",
+                    align: "center",
+                    formatter: lookFormatter
                 }
             ]
         ]

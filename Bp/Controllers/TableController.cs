@@ -36,7 +36,7 @@ namespace Bp.Controllers
         {
             try
             {
-                //var name = CookieResult.CookieName();
+                var name = CookieResult.CookieName();
                 int pageSize = int.Parse(Request["pageSize"] ?? "10");
                 int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
                 string sortOrder = Request["sortOrder"];
@@ -65,7 +65,7 @@ namespace Bp.Controllers
                                根底平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.根底评分).Average(),
                                伞岩平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.伞岩评分).Average(),
                                总平均分 = (db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.块度评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.抛掷评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.根底评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.伞岩评分).Average()) / 4,
-                               可打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码),// && x.评论人 == name
+                               可打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.评论人 == name),
                                查看历史 = db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码),
                            };
 
@@ -140,7 +140,7 @@ namespace Bp.Controllers
         /// <returns>添加是否成功</returns>
         public string AddComment(string id, double? kd, double? pz, double? gd, double? sy, string text)
         {
-            //var name = CookieResult.CookieName();
+            var name = CookieResult.CookieName();
 
             if (kd == null)
             {
@@ -170,7 +170,7 @@ namespace Bp.Controllers
                 {
                     ID = Guid.NewGuid().ToString(),
                     项目编码 = id,
-                    //评论人 = name,
+                    评论人 = name,
                     块度评分 = kd,
                     抛掷评分 = pz,
                     根底评分 = gd,

@@ -1,4 +1,5 @@
 ﻿using Bp.Models;
+using Bp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -16,13 +17,13 @@ namespace Bp.Controllers
         {
             return View();
         }
-
+        //报表查询
         public JsonResult QueryStatistics()
         {
             try
             {
 
-                //var name = CookieResult.CookieName();
+                var name = CookieResult.CookieName();
                 int pageSize = int.Parse(Request["pageSize"] ?? "10");
                 int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
                 string sortOrder = Request["sortOrder"];
@@ -40,24 +41,27 @@ namespace Bp.Controllers
                 var lists = from xm in db.Bp_项目
                             join lp in db.BP_Data_lbastpreset on xm.ID equals lp.项目ID
                             join bb in db.BP_Data_Cal_BlastsDynamiteSet_Base on lp.项目ID equals bb.项目ID
-                            join bv in db.BP_Data_Cal_BlastsDynamiteSet_VolBase on bb.项目ID equals bv.项目ID
-                            join bd in db.BP_Data_Cal_BlastsDynamiteSet_Detail on bv.项目ID equals bd.项目ID
+                            //join bv in db.BP_Data_Cal_BlastsDynamiteSet_VolBase on bb.项目ID equals bv.项目ID
+                            join bd in db.BP_Data_Cal_BlastsDynamiteSet_Detail on bb.项目ID equals bd.项目ID
                             select new
                             {
                                 项目编码 = xm.项目编码,
                                 台阶水平 = lp.Z1,
                                 日期 = lp.lbastpresetname,
                                 岩性 = bb.mainRock,
-                                孔距 = bv.VolNo == "B" ? bv.ColLength : 0,
-                                排距 = bv.VolNo == "B" ? bv.VolLength : 0,
+                                //孔距 = bv.VolNo == "B" ? bv.ColLength : 0,
+                                //排距 = bv.VolNo == "B" ? bv.VolLength : 0,
+                                孔距 = db.BP_Data_Cal_BlastsDynamiteSet_VolBase.Where(x => x.项目ID == bb.项目ID).Select(x => x.ColLength).Average(),
+                                排距 = db.BP_Data_Cal_BlastsDynamiteSet_VolBase.Where(x => x.VolNo != "A" && x.项目ID == bb.项目ID).Select(x => x.VolLength).Average(),
                                 孔数 = bb.countBlast,
                                 平均孔深 = bb.LbastDepth,
                                 炸药量 = bb.countlg,
-                                抵抗线 = bv.VolNo == "A" ? bv.VolDikang : 0,
-                                超深 = bv.VolNo == "A" ? bv.BlastAddDepth : 0,
+                                //抵抗线 = bv.VolNo == "A" ? bv.VolDikang : 0,
+                                //超深 = bv.VolNo == "A" ? bv.BlastAddDepth : 0,
+                                抵抗线 = db.BP_Data_Cal_BlastsDynamiteSet_VolBase.Where(x => x.VolNo == "A" && x.项目ID == bb.项目ID).Select(x => x.VolDikang).FirstOrDefault(),
+                                超深 = db.BP_Data_Cal_BlastsDynamiteSet_VolBase.Where(x => x.项目ID == bb.项目ID).Select(x => x.BlastAddDepth).Average(),
                                 填充 = bd.l1,
                             };
-
                 List<Bp_项目数据> list = new List<Bp_项目数据>();
                 List<string> bm = new List<string>();
                 foreach (var item in lists)
@@ -81,10 +85,12 @@ namespace Bp.Controllers
                         bp.数量 = 1;
                         list.Add(bp);
                     }
-                    else {
+                    else
+                    {
                         foreach (var i in list)
                         {
-                            if (i.项目编码==item.项目编码) {
+                            if (i.项目编码 == item.项目编码)
+                            {
                                 i.孔距 = i.孔距 + item.孔距;
                                 i.排距 = i.排距 + item.排距;
                                 i.抵抗线 = i.抵抗线 + item.抵抗线;
@@ -107,14 +113,14 @@ namespace Bp.Controllers
                                孔距 = sj.孔距 / sj.数量,
                                排距 = sj.排距 / sj.数量,
                                孔数 = sj.孔数,
-                               平均孔深 =  sj.平均孔深,
+                               平均孔深 = sj.平均孔深,
                                炸药量 = sj.炸药量,
                                抵抗线 = sj.抵抗线 / sj.数量,
                                超深 = sj.超深 / sj.数量,
-                               填充 =sj.填充,
+                               填充 = sj.填充,
                                孔总深 = sj.平均孔深 * sj.孔数,
                                爆破量 = (sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65,
-                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65
+                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / (((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65)
                            };
                 switch (sortOrder)
                 {

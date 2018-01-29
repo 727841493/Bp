@@ -2,11 +2,10 @@
 using Bp.Utils;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using System.Web;
 
 namespace Bp.Controllers
 {
@@ -23,7 +22,7 @@ namespace Bp.Controllers
         {
             try
             {
-                //var name = CookieResult.CookieName();
+                var name = CookieResult.CookieName();
                 int pageSize = int.Parse(Request["pageSize"] ?? "10");
                 int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
                 string sortOrder = Request["sortOrder"];
@@ -41,6 +40,7 @@ namespace Bp.Controllers
                                根底平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.根底评分).Average(),
                                伞岩平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码).Select(b => b.伞岩评分).Average(),
                                下载 = db.Bp_项目资料.Any(x => x.项目编码 == sj.项目编码),
+                               预览 = db.Bp_项目资料.Where(x => x.项目编码 == sj.项目编码).Select(x => x.资料名称)
                            };
                 switch (sortOrder)
                 {
@@ -121,6 +121,106 @@ namespace Bp.Controllers
             Response.End();
             //删除备份
             System.IO.File.Delete(absoluFilePath);
+        }
+
+
+
+        /// <summary>
+        ///查询文件中的图片
+        /// </summary>
+        /// <param name="id">项目编码</param>
+        /// <returns>图片</returns>
+        public JsonResult QueryFile(string id)
+        {
+            //根据项目编码查询符合条件的资料
+            var list = db.Bp_项目资料.Where(x => x.项目编码 == id);
+
+            //存放查询出来的文件
+            List<string> files = new List<string>();
+
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+
+            //目标文件夹配置路径
+            string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
+
+            //目标文件夹的文件名
+            string desdir = Server.MapPath(load) + CookieResult.CookieName();
+            //判断文件夹是否存在
+            if (!Directory.Exists(desdir))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(desdir);
+            }
+
+            foreach (var s in list)
+            {
+                //动态拼接文件路径
+                string path = homePath + s.资料ID;
+
+                //文件路径集合
+                var ls = Directory.GetFiles(path).ToList();
+
+                foreach (var l in ls)
+                {
+                    try
+                    {
+                        //判断文件是否是图片格式
+                        System.Drawing.Image img = System.Drawing.Image.FromFile(l);
+
+                        //目标图片保存的路径和名称
+                        String imgPath = desdir + '\\' + l.Split('\\').Last();
+
+                        //true 覆盖已存在的同名文件,false则反之
+                        bool isrewrite = true;
+
+                        //从源文件复制到目标文件中
+                        System.IO.File.Copy(l, imgPath, isrewrite);
+
+                        //绝对路径转换为相对路径
+                        int j = imgPath.IndexOf("Data");
+                        string str = imgPath.Substring(j);
+                        string url = str.Replace(@"\", @"/");
+
+                        //添加到查询文件集合中
+                        files.Add("../" + url);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+            }
+            return Json(files);
+        }
+
+        /// <summary>
+        ///删除预览保存的图片
+        /// </summary>
+        /// <returns>空文件夹</returns>
+        public RedirectResult DeletePicture()
+        {
+            //目标文件夹配置路径
+            string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
+            // 判断文件夹是否存在 
+            string strPath = Server.MapPath(load) + CookieResult.CookieName();
+            if (Directory.Exists(strPath))
+            { // 获得文件夹数组 
+                string[] strDirs = Directory.GetDirectories(strPath);
+                // 获得文件数组 
+                string[] strFiles = Directory.GetFiles(strPath);
+                // 遍历所有子文件夹 
+                foreach (string strFile in strFiles)
+                { // 删除文件夹 
+                    System.IO.File.Delete(strFile);
+                } // 遍历所有文件 
+                foreach (string strdir in strDirs)
+                { // 删除文件 
+                    Directory.Delete(strdir, true);
+                }
+            } // 成功 
+            string redirect = System.Configuration.ConfigurationManager.AppSettings["redirect"];
+            return Redirect(redirect);
         }
 
     }

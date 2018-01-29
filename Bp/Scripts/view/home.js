@@ -1,5 +1,4 @@
-﻿
-//页面加载
+﻿//页面加载
 $(function () {
     $('#table').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
@@ -114,5 +113,44 @@ $(function () {
         return v.toFixed(2);
     }
 
+    function getCookie(cookie_name) {
+        var allcookies = document.cookie;
+        var cookie_pos = allcookies.indexOf(cookie_name);   //索引的长度
+
+        // 如果找到了索引，就代表cookie存在，
+        // 反之，就说明不存在。
+        if (cookie_pos != -1) {
+            // 把cookie_pos放在值的开始，只要给值加1即可。
+            cookie_pos += cookie_name.length + 1;      //这里容易出问题，所以请大家参考的时候自己好好研究一下
+            var cookie_end = allcookies.indexOf(";", cookie_pos);
+
+            if (cookie_end == -1) {
+                cookie_end = allcookies.length;
+            }
+
+            var value = unescape(allcookies.substring(cookie_pos, cookie_end));         //这里就可以得到你想要的cookie的值了。。。
+        }
+        return value;
+    }
+
+    // 调用函数
+    var cookie = getCookie("Xing");
+    if (cookie != undefined) {
+        var name = cookie.split("=");
+        $.ajax({
+            url: '/User/QueryUsers',
+            type: 'post',
+            data: {
+                "name": name[1],
+            },
+            success: function (result) {
+                $("#dlm").html("登录名：" + result.登录名)
+                $("#yhm").html("用户姓名：" + result.用户姓名)
+                $("#yhlb").html("用户类别：" + result.用户类别)
+                $("#lsbm").html("隶属部门：" + result.隶属部门)
+                $("#ywks").html("业务科室：" + result.业务科室)
+            }
+        });
+    }
 });
 

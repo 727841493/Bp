@@ -94,7 +94,8 @@ namespace Bp
                       "~/Scripts/js/fitvids.js",
                       "~/Scripts/js/jquery.sparkline.min.js",
                       "~/Scripts/js/main.js",
-                      "~/Scripts/js/respond.js"
+                      "~/Scripts/js/respond.js",
+                       "~/Scripts/jquery.cookie.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/login").Include(

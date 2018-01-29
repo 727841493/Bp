@@ -29,6 +29,10 @@ img {
     border: none;
 }
 
+#show img {
+    height: 70px;
+}
+
 .login_box {
     width: 1100px;
     margin: 120px auto 0;
@@ -147,9 +151,11 @@ input[type=submit], input[type=button] {
     text-align: center;
     height: 60px;
 }
+
     .logo img {
-        height:100%;
+        height: 100%;
     }
+
 .txt {
     width: 50%;
     text-align: center;
@@ -172,7 +178,7 @@ input[type=submit], input[type=button] {
 }
 
 .mobile {
-    display:none;
+    display: none;
 }
 
 /*手机端*/
@@ -190,11 +196,13 @@ input[type=submit], input[type=button] {
     .login {
         width: 100%
     }
+
     .jumbotron {
-        height:90px;
+        height: 90px;
     }
+
     .login_logo {
-        right:105px;
+        right: 105px;
     }
 }
 

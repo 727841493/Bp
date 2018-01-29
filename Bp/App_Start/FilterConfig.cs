@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using Bp.Filter;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Bp
@@ -8,6 +9,7 @@ namespace Bp
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new LoginFilter());
         }
     }
 }
