@@ -248,6 +248,7 @@ $(function () {
 
 //通知信息
 function read(id) {
+    $('#readMsg').bootstrapTable('destroy');  
     $('#readMsg').bootstrapTable({
         method: 'post',//请求方式
         url: '/Home/QueryMessages',//请求地址

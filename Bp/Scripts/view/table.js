@@ -1,5 +1,5 @@
 ﻿//筛选参数（开始时间，结束时间，台阶水平，岩性，爆破效果，历史记录（序号1，序号2，项目编码，爆破ID））
-function queryParams(id) {
+function queryBy(id) {
     var params = {
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(),
@@ -41,11 +41,12 @@ function sumbit() {
 //历史记录表格
 function records(id) {
     //评分的历史记录表格
+    $('#history').bootstrapTable('destroy');
     $('#history').bootstrapTable({
         method: 'post',//请求方式
         url: '/Table/QueryHistory',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryParams(id),
+        queryParams: queryBy(id),
         cardView: true,//是否显示详细视图
         columns: [
             {
@@ -130,7 +131,7 @@ $(function () {
         showExport: true,//导出按钮
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryParams,
+        queryParams: queryBy,
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
@@ -340,7 +341,7 @@ $(function () {
         showExport: true,//导出按钮
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryParams,
+        queryParams: queryBy,
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
