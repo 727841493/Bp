@@ -7,7 +7,7 @@
 <div class="container-fluid main-content">
     <div class="row">
         <!-- Area Charts:Morris -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="widget-container fluid-height" style="height:425px">
                 <div class="heading">
                     <i class="icon-bar-chart"></i>个人信息
@@ -18,49 +18,23 @@
                         <div class="col-md-8">
                             <p id="dlm"></p>
                             <p id="yhm"></p>
-                            <p id="yhlb"></p>
-                            <p id="ywks"></p>
+                            <p id="jb"></p>
                             <p id="lsbm"></p>
+                            <p id="ywks"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Area Charts:Morris --><!-- Chat -->
-        <div class="col-md-6">
-            <div class="widget-container scrollable chat" style="height: 427px;">
-                <div class="heading">
-                    <i class="icon-comments"></i>通知<span class="icon-smile pull-right">发布</span>
-                </div>
-                <div class="widget-content padded">
-                    <ul>
-                        <li>
-                            <div class="bubble">
-                                <a class="user-name" href="#">John Smith</a>
-                                <p class="message">
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.
-                                </p>
-                                <p class="time">
-                                    <strong>Today </strong>3:53 pm
-                                </p>
-                            </div>
-                        </li>
-                        <li class="current-user">
-                            <div class="bubble">
-                                <a class="user-name" href="#">Jane Smith</a>
-                                <p class="message">
-                                    Donec odio. Quisque volutpat mattis eros.
-                                </p>
-                                <p class="time">
-                                    <strong>Today </strong>3:53 pm
-                                </p>
-                            </div>
-                        </li>
+        <div class="col-md-8">
 
-                    </ul>
+            <div class="widget-container fluid-height">
+                <div class="heading">
+                    <i class="icon-comments"></i>通知<span class="icon-smile pull-right" data-toggle="modal" data-target="#AddMessages">发布</span>
                 </div>
-                <div class="post-message">
-                    @*<input class="form-control" placeholder="Write your message here..." type="text"><input type="submit" value="Send">*@
+                <div class="widget-content clearfix">
+                    <table id="showMsg" data-mobile-responsive="true" data-card-view="true"></table>
                 </div>
             </div>
         </div>
@@ -79,5 +53,47 @@
             </div>
         </div>
         <!-- End Pie Graph 1 -->
+    </div>
+</div>
+
+@* 发布通知 *@
+<div class="modal fade" id="AddMessages" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">通知</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-signin">
+                    <label for="Title">标题</label>
+                    <input type="text" id="Title" name="Title" class="form-control" placeholder="标题">
+                    <label for="Content">内容</label>
+                    <textarea class="form-control" rows="3" id="Content" name="Content" style="width:100%;max-width:100%;height:150px;resize: none;"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="addMsg">发布通知</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* 查看通知 *@
+<div class="modal fade" id="ReadMessages" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">通知</h4>
+            </div>
+            <div class="modal-body">
+                <table id="readMsg"></table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
     </div>
 </div>

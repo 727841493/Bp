@@ -1,4 +1,21 @@
-﻿//页面加载
+﻿//参数
+function queryBy(id) {
+    var params = {
+        "id": id,
+    };
+    return params;
+}
+//格式化时间
+function changeDateFormat(cellval) {
+    if (cellval != null) {
+        var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "-" + month + "-" + currentDate;
+    }
+}
+
+//页面加载
 $(function () {
     $('#table').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
@@ -9,7 +26,7 @@ $(function () {
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
-        pageSize: 10,//页面数据条数
+        pageSize: 5,//页面数据条数
         pageList: [2, 5, 10],//可选的每页显示数据个数
         columns: [
             {
@@ -113,44 +130,155 @@ $(function () {
         return v.toFixed(2);
     }
 
-    function getCookie(cookie_name) {
-        var allcookies = document.cookie;
-        var cookie_pos = allcookies.indexOf(cookie_name);   //索引的长度
-
-        // 如果找到了索引，就代表cookie存在，
-        // 反之，就说明不存在。
-        if (cookie_pos != -1) {
-            // 把cookie_pos放在值的开始，只要给值加1即可。
-            cookie_pos += cookie_name.length + 1;      //这里容易出问题，所以请大家参考的时候自己好好研究一下
-            var cookie_end = allcookies.indexOf(";", cookie_pos);
-
-            if (cookie_end == -1) {
-                cookie_end = allcookies.length;
-            }
-
-            var value = unescape(allcookies.substring(cookie_pos, cookie_end));         //这里就可以得到你想要的cookie的值了。。。
-        }
-        return value;
+    //查看信息
+    function readFormatter(value, row, index) {
+        return [
+            '<a data-toggle="modal" data-target="#ReadMessages" onclick = "read(',
+            "'" + row.ID + "'",
+            ')">',
+            value,
+            '</a>',
+        ].join('');
     }
 
-    // 调用函数
-    var cookie = getCookie("Xing");
-    if (cookie != undefined) {
-        var name = cookie.split("=");
-        $.ajax({
-            url: '/User/QueryUsers',
-            type: 'post',
-            data: {
-                "name": name[1],
+    $('#showMsg').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        url: '/Home/QueryMessages',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        pagination: true,//显示分页条
+        sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
+        pageNumber: 1,//首页页码
+        pageSize: 8,//页面数据条数
+        striped: true, // 是否显示行间隔色
+        smartDisplay: true,
+        showHeader: false,
+        classes: "table table-no-bordered",
+        columns: [
+            {
+                field: 'ID',
+                title: "ID",
+                valign: "middle",
+                align: "center",
+                visible: false,
             },
-            success: function (result) {
-                $("#dlm").html("登录名：" + result.登录名)
-                $("#yhm").html("用户姓名：" + result.用户姓名)
-                $("#yhlb").html("用户类别：" + result.用户类别)
-                $("#lsbm").html("隶属部门：" + result.隶属部门)
-                $("#ywks").html("业务科室：" + result.业务科室)
+            {
+                field: '状态',
+                title: "状态",
+                valign: "middle",
+                align: "center",
+                formatter: statusFormatter,
+                cellStyle: function (value, row, index) {
+                    if (value == -1) {
+                        return { css: { "color": "red" } }
+                    } else {
+                        return { css: { "color": "green" } }
+                    }
+                }
+            }, {
+                field: '标题',
+                title: "标题",
+                valign: "middle",
+                align: "center",
+                formatter: readFormatter,
+            }, {
+                field: '发布时间',
+                title: "发布时间",
+                valign: "middle",
+                align: "center",
+                formatter: function (value, row, index) {
+                    return changeDateFormat(value)
+                }
+            }, {
+                field: '发布人',
+                title: "发布人",
+                valign: "middle",
+                align: "center",
             }
-        });
+        ],
+        formatNoMatches: function () {
+            return "暂无通知";
+        },
+        formatLoadingMessage: function () {
+            return "请稍等，正在加载中。。。";
+        }
+    });
+
+    //状态
+    function statusFormatter(value) {
+        var flag = "[已读]";
+        if (value == -1) {
+            flag = "[未读]";
+        }
+        return flag;
     }
+
+
+    $("#addMsg").click(function () {
+        var title = $("#Title").val();
+        var context = $("#Content").val();
+        if (title == "") {
+            alert("标题不能为空！")
+            $("#Title").focus();
+        } else {
+            $.ajax({
+                url: '/Home/AddMessages',
+                type: 'post',
+                data: {
+                    "title": title,
+                    "context": context,
+                },
+                success: function (result) {
+                    alert(result.message);
+                    $('#AddMessages').modal('hide')
+                    $("#showMsg").bootstrapTable('refresh');
+                }
+            });
+        }
+    });
+
+    $('#AddMessages').on('hide.bs.modal', function () {
+        $("#Title").val("");
+        $("#Content").val("");
+    });
+    $('#ReadMessages').on('hide.bs.modal', function () {
+        $("#showMsg").bootstrapTable('refresh');
+    });
 });
 
+//通知信息
+function read(id) {
+    $('#readMsg').bootstrapTable({
+        method: 'post',//请求方式
+        url: '/Home/QueryMessages',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryBy(id),
+        cardView: true,//是否显示详细视图
+        columns: [
+            {
+                field: '标题',
+                title: "标题",
+                valign: "middle",
+                align: "center",
+            }, {
+                field: '发布时间',
+                title: "发布时间",
+                valign: "middle",
+                align: "center",
+                formatter: function (value, row, index) {
+                    return changeDateFormat(value)
+                }
+            }, {
+                field: '发布人',
+                title: "发布人",
+                valign: "middle",
+                align: "center",
+            }, {
+                field: '内容',
+                title: "内容",
+                valign: "middle",
+                align: "center",
+            }
+        ]
+    });
+}

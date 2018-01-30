@@ -201,6 +201,7 @@
     <Compile Include="Models\BP_Data_mytext.cs" />
     <Compile Include="Models\BP_Data_point.cs" />
     <Compile Include="Models\BP_Data_yinxin.cs" />
+    <Compile Include="Models\Bp_通知.cs" />
     <Compile Include="Models\Bp_项目.cs" />
     <Compile Include="Models\Bp_项目数据.cs" />
     <Compile Include="Models\Bp_项目权限.cs" />
@@ -350,6 +351,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\star-rating.js" />
     <Content Include="Scripts\view\table.js" />
+    <Content Include="Scripts\view\top.js" />
     <Content Include="Scripts\view\zip.js" />
     <Content Include="Scripts\view\user.js" />
     <Content Include="Scripts\view\home.js" />

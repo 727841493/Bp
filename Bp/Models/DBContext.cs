@@ -30,6 +30,7 @@
         public virtual DbSet<BP_Data_mytext> BP_Data_mytext { get; set; }
         public virtual DbSet<BP_Data_point> BP_Data_point { get; set; }
         public virtual DbSet<BP_Data_yinxin> BP_Data_yinxin { get; set; }
+        public virtual DbSet<Bp_通知> Bp_通知 { get; set; }
         public virtual DbSet<Bp_项目数据> Bp_项目数据 { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -120,6 +121,10 @@
 
             modelBuilder.Entity<Users>()
                 .Property(e => e.手机)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_通知>()
+                .Property(e => e.ID)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Bp_项目数据>()

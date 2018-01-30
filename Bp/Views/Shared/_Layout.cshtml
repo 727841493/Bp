@@ -11,6 +11,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Styles.Render("~/Content/kj")
     @Scripts.Render("~/bundles/kj")
+    @Scripts.Render("~/bundles/top")
     <link href="/Content/css/green.css" media="all" rel="alternate stylesheet" title="green-theme" type="text/css" />
     <link href="/Content/css/orange.css" media="all" rel="alternate stylesheet" title="orange-theme" type="text/css" />
     <link href="/Content/css/magenta.css" media="all" rel="alternate stylesheet" title="magenta-theme" type="text/css" />
@@ -66,15 +67,9 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="/User/index">
-                                        <i class="icon-user"></i>
-                                        我的帐户
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
+                                    <a data-toggle="modal" data-target="#changePass" href="#">
                                         <i class="icon-gear"></i>
-                                        帐户设置
+                                        修改密码
                                     </a>
                                 </li>
                                 <li>
@@ -140,35 +135,33 @@
         <!-- End Navigation -->
         @RenderBody()
     </div>
+
+    @*修改密码*@
+    <div class="modal fade" id="changePass" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" style="width:400px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-signin">
+                        <label for="inputName">用户名</label>
+                        <input type="text" id="Name" name="Name" class="form-control" placeholder="用户名" readonly>
+                        <label for="OldPassword">请输入旧密码</label>
+                        <input type="password" id="OldPassword" name="OldPassword" class="form-control" placeholder="旧密码" required autofocus>
+                        <label for="NewPassword">请输入新密码</label>
+                        <input type="password" id="NewPassword" name="NewPassword" class="form-control" placeholder="新密码" required>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="change">提交更改</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
-<script>
-    $(function () {
-        function getCookie(cookie_name) {
-            var allcookies = document.cookie;
-            var cookie_pos = allcookies.indexOf(cookie_name);   //索引的长度
 
-            // 如果找到了索引，就代表cookie存在，
-            // 反之，就说明不存在。
-            if (cookie_pos != -1) {
-                // 把cookie_pos放在值的开始，只要给值加1即可。
-                cookie_pos += cookie_name.length + 1;      //这里容易出问题，所以请大家参考的时候自己好好研究一下
-                var cookie_end = allcookies.indexOf(";", cookie_pos);
-
-                if (cookie_end == -1) {
-                    cookie_end = allcookies.length;
-                }
-
-                var value = unescape(allcookies.substring(cookie_pos, cookie_end));         //这里就可以得到你想要的cookie的值了。。。
-            }
-            return value;
-        }
-
-        // 调用函数
-        var cookie = getCookie("Xing");
-        if (cookie != undefined) {
-            var name = cookie.split("=");
-            $("#nm").html(name[1]);
-        }
-    })
-</script>

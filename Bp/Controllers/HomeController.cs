@@ -144,5 +144,89 @@ namespace Bp.Controllers
                 throw ex;
             }
         }
+        //查询通知
+        public JsonResult QueryMessages(string id)
+        {
+            var name = CookieResult.CookieName();
+            int pageSize = int.Parse(Request["pageSize"] ?? "10");
+            int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+            string sortOrder = Request["sortOrder"];
+            string searchText = Request["searchText"];
+            string sortName = Request["sortName"];
+            var list = from msg in db.Bp_通知
+                       select new
+                       {
+                           状态 = msg.查看人.IndexOf(name),
+                           ID = msg.ID,
+                           标题 = msg.标题,
+                           内容 = msg.内容,
+                           发布时间 = msg.发布时间,
+                           发布人 = msg.发布人,
+                       };
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                list = list.Where(x => x.ID == id);
+                if (list.Count() > 0)
+                {
+                    ChangeStatus(id, name);
+                }
+            }
+            switch (sortOrder)
+            {
+                case "desc":
+                    list = list.OrderByDescending(w => w.发布时间);
+                    break;
+                case "asc":
+                    list = list.OrderBy(w => w.发布时间);
+                    break;
+                default:
+                    list = list.OrderByDescending(w => w.发布时间);
+                    break;
+            };
+            return Json(list);
+        }
+
+        //修改状态
+        public void ChangeStatus(string id, string name)
+        {
+            var msg = db.Bp_通知.Where(x => x.ID == id).FirstOrDefault();
+            if (msg.查看人.IndexOf(name) == -1)
+            {
+                if (msg.查看人 == "")
+                {
+                    msg.查看人 = name;
+                }
+                msg.查看人 = msg.查看人 + "," + name;
+            }
+            db.SaveChanges();
+        }
+
+        //添加通知
+        public string AddMessages(string title, string context)
+        {
+            try
+            {
+                var name = CookieResult.CookieName();
+                var time = DateTime.Now;
+                Bp_通知 msg = new Bp_通知
+                {
+                    ID = Guid.NewGuid().ToString(),
+                    标题 = title,
+                    内容 = context,
+                    发布人 = name,
+                    查看人 = name,
+                    发布时间 = time,
+
+                };
+                db.Bp_通知.Add(msg);
+                db.SaveChanges();
+                return AjaxResult.Success(null, "发布成功").ToString();
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("发布失败！").ToString();
+            }
+        }
     }
 }

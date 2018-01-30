@@ -124,6 +124,10 @@ namespace Bp
             bundles.Add(new ScriptBundle("~/bundles/zip").Include(
                    "~/Scripts/view/zip.js"
                    ));
+
+            bundles.Add(new ScriptBundle("~/bundles/top").Include(
+                   "~/Scripts/view/top.js"
+                   ));
         }
     }
 }
