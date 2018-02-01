@@ -10,6 +10,7 @@ using System.Web.Script.Serialization;
 using System.Security.Cryptography;
 using System.Drawing;
 using System.Web.UI;
+using System.Text;
 
 namespace Bp.Controllers
 {
@@ -241,7 +242,7 @@ namespace Bp.Controllers
         //}
 
         [HttpPost]
-        public RedirectResult UploadFile()
+        public void UploadFile()
         {
             var name = CookieResult.CookieName();
             //流水号
@@ -273,8 +274,6 @@ namespace Bp.Controllers
             }
             //保存
             var filePath = string.Format("{0}", strPath);
-            file.SaveAs(Path.Combine(filePath, fileName));
-
 
             Bp_项目资料 zl = new Bp_项目资料
             {
@@ -288,8 +287,17 @@ namespace Bp.Controllers
                 流水号 = number + 1,
             };
             db.Bp_项目资料.Add(zl);
-            db.SaveChanges();
-            return Redirect("/Zip/Up");
+
+            try
+            {
+                file.SaveAs(Path.Combine(filePath, fileName));
+                db.SaveChanges();
+                Response.Write("<script>alert('上传成功');window.location.href='/Zip/Up';</script>");
+            }
+            catch (Exception)
+            {
+                Response.Write("<script>alert('上传失败');window.location.href='/Zip/Up';</script>");
+            }
         }
 
     }
