@@ -13,6 +13,7 @@
         }
 
         public virtual DbSet<Bp_Data_comment> Bp_Data_comment { get; set; }
+        public virtual DbSet<Bp_成本核算> Bp_成本核算 { get; set; }
         public virtual DbSet<Bp_项目> Bp_项目 { get; set; }
         public virtual DbSet<Bp_项目权限> Bp_项目权限 { get; set; }
         public virtual DbSet<Bp_项目资料> Bp_项目资料 { get; set; }
@@ -40,6 +41,22 @@
                 .IsUnicode(false);
 
             modelBuilder.Entity<Bp_Data_comment>()
+                .Property(e => e.项目编码)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_Data_comment>()
+                .Property(e => e.项目ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_成本核算>()
+                .Property(e => e.ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_成本核算>()
+                .Property(e => e.项目ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_成本核算>()
                 .Property(e => e.项目编码)
                 .IsUnicode(false);
 
@@ -125,6 +142,10 @@
 
             modelBuilder.Entity<Bp_通知>()
                 .Property(e => e.ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_项目数据>()
+                .Property(e => e.项目ID)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Bp_项目数据>()

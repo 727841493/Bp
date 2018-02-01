@@ -27,5 +27,8 @@ namespace Bp.Models
 
         [StringLength(50)]
         public string 项目编码 { get; set; }
+
+        [StringLength(50)]
+        public string 项目ID { get; set; }
     }
 }

@@ -9,6 +9,12 @@ namespace Bp.Models
     public partial class Bp_项目数据
     {
         [Key]
+        [Column(Order = 0)]
+        [StringLength(50)]
+        public string 项目ID { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
         [StringLength(50)]
         public string 项目编码 { get; set; }
 

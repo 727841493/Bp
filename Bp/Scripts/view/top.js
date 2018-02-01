@@ -85,10 +85,10 @@
         }
     });
 
-    $('#loadModal').on('show.bs.modal', function () {
+    $('#changePass').on('show.bs.modal', function () {
         $("#Name").val(name[1]);
     })
-    $('#loadModal').on('hide.bs.modal', function () {
+    $('#changePass').on('hide.bs.modal', function () {
         $("#OldPassword").val("");
         $("#NewPassword").val("");
     })

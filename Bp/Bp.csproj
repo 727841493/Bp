@@ -201,6 +201,7 @@
     <Compile Include="Models\BP_Data_mytext.cs" />
     <Compile Include="Models\BP_Data_point.cs" />
     <Compile Include="Models\BP_Data_yinxin.cs" />
+    <Compile Include="Models\Bp_成本核算.cs" />
     <Compile Include="Models\Bp_通知.cs" />
     <Compile Include="Models\Bp_项目.cs" />
     <Compile Include="Models\Bp_项目数据.cs" />
@@ -354,7 +355,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\star-rating.js" />
-    <Content Include="Scripts\view\ajaxfileupload.js" />
+    <Content Include="Scripts\view\edit.js" />
     <Content Include="Scripts\view\table.js" />
     <Content Include="Scripts\view\top.js" />
     <Content Include="Scripts\view\zip.js" />
@@ -379,6 +380,7 @@
     <Content Include="Views\Table\Mark.cshtml" />
     <Content Include="Views\Zip\Down.cshtml" />
     <Content Include="Views\Zip\Up.cshtml" />
+    <Content Include="Views\Table\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

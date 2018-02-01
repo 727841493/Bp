@@ -12,7 +12,7 @@
     </div>
 </div>
 
-@*图片预览框*@
+@*文件上传*@
 <div class="modal fade" id="upModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -22,16 +22,12 @@
             </div>
             <form enctype="multipart/form-data" id="form1" runat="server" action="/Zip/UploadFile" method="post">
                 <div class="modal-body">
-
-                    <label for="bm">项目编码：</label>
-                    <input type="text" id="ubm" name="ubm"  readonly/><br />
-                    <label for="bm">日期：</label>
-                    <input type="text" id="unm" name="unm"  readonly/><br />
+                    <label for="bm" style="display:none">项目编码：</label>
+                    <input type="text" id="ubm" name="ubm"  readonly style="display:none"/>
+                    <label for="bm" style="display:none">日期：</label>
+                    <input type="text" id="unm" name="unm"  readonly style="display:none"/>
                     <label for="file">选择文件：</label>
                     <input type="file" name="filename">
-                    @*<input type="submit" value="提交" />*@
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">提交更改</button>

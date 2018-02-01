@@ -22,7 +22,6 @@ namespace Bp.Controllers
         {
             try
             {
-
                 var name = CookieResult.CookieName();
                 int pageSize = int.Parse(Request["pageSize"] ?? "10");
                 int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
@@ -45,6 +44,7 @@ namespace Bp.Controllers
                             join bd in db.BP_Data_Cal_BlastsDynamiteSet_Detail on bb.项目ID equals bd.项目ID
                             select new
                             {
+                                项目ID = xm.ID,
                                 项目编码 = xm.项目编码,
                                 台阶水平 = lp.Z1,
                                 日期 = lp.lbastpresetname,
@@ -63,13 +63,16 @@ namespace Bp.Controllers
                                 填充 = bd.l1,
                             };
                 List<Bp_项目数据> list = new List<Bp_项目数据>();
+                List<string> id = new List<string>();
                 List<string> bm = new List<string>();
                 foreach (var item in lists)
                 {
-                    if (bm.IndexOf(item.项目编码) == -1)
+                    if (bm.IndexOf(item.项目编码) == -1 && id.IndexOf(item.项目ID)==-1)
                     {
                         bm.Add(item.项目编码);
+                        id.Add(item.项目ID);
                         Bp_项目数据 bp = new Bp_项目数据();
+                        bp.项目ID = item.项目ID;
                         bp.项目编码 = item.项目编码;
                         bp.台阶水平 = item.台阶水平;
                         bp.日期 = item.日期;
