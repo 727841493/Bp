@@ -20,7 +20,8 @@ namespace Bp.Models
         [StringLength(500)]
         public string 发布人 { get; set; }
 
-        public DateTime? 发布时间 { get; set; }
+        [StringLength(50)]
+        public string 发布时间 { get; set; }
 
         [StringLength(500)]
         public string 查看人 { get; set; }

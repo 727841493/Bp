@@ -142,14 +142,14 @@ $(function () {
     }
 
     $('#showMsg').bootstrapTable({
-        toolbar: "#toolbar",//工具按钮用哪个容器
+        //toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
         url: '/Home/QueryMessages',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
-        pageSize: 8,//页面数据条数
+        pageSize: 9,//页面数据条数
         striped: true, // 是否显示行间隔色
         smartDisplay: true,
         showHeader: false,
@@ -186,9 +186,9 @@ $(function () {
                 title: "发布时间",
                 valign: "middle",
                 align: "center",
-                formatter: function (value, row, index) {
-                    return changeDateFormat(value)
-                }
+                //formatter: function (value, row, index) {
+                //    return changeDateFormat(value)
+                //}
             }, {
                 field: '发布人',
                 title: "发布人",
@@ -213,6 +213,8 @@ $(function () {
         return flag;
     }
 
+    //一分钟刷新通知区
+    setInterval("refresh();", 1 * 60 * 1000);
 
     $("#addMsg").click(function () {
         var title = $("#Title").val();
@@ -246,6 +248,10 @@ $(function () {
     });
 });
 
+function refresh() {
+    $("#showMsg").bootstrapTable('refresh');
+}
+
 //通知信息
 function read(id) {
     $('#readMsg').bootstrapTable('destroy');  
@@ -266,9 +272,9 @@ function read(id) {
                 title: "发布时间",
                 valign: "middle",
                 align: "center",
-                formatter: function (value, row, index) {
-                    return changeDateFormat(value)
-                }
+                //formatter: function (value, row, index) {
+                //    return changeDateFormat(value)
+                //}
             }, {
                 field: '发布人',
                 title: "发布人",
@@ -277,6 +283,11 @@ function read(id) {
             }, {
                 field: '内容',
                 title: "内容",
+                valign: "middle",
+                align: "center",
+            }, {
+                field: '查看人',
+                title: "已查看",
                 valign: "middle",
                 align: "center",
             }

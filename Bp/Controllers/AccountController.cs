@@ -54,7 +54,7 @@ namespace Bp.Controllers
                     HttpCookie login = new HttpCookie("Porschev");
                     login["p"] = user.登录名;
                     login["n"] = RandKey + "-" + inputPassword + "-" + RandKey;
-                    login.Expires = DateTime.Now.AddMinutes(200);
+                    login.Expires = DateTime.Now.AddMinutes(1440);
                     Response.Cookies.Add(login);
                 }
                 else

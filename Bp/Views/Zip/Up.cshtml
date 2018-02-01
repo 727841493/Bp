@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "上传文件";
+}
+
+@Scripts.Render("~/bundles/zip")
+
+<div class="row">
+    <div id="toolbar"></div>
+    <div class="col-md-12">
+        @*报表展示*@
+        <table id="up" data-mobile-responsive="true" data-card-view="true"></table>
+    </div>
+</div>
+
+@*图片预览框*@
+<div class="modal fade" id="upModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">通知</h4>
+            </div>
+            <div class="modal-body">
+
+                <form enctype="multipart/form-data" id="form1" runat="server" action="/Zip/UploadFile" method="post">
+                    <label for="bm">项目编码：</label>
+                    <input type="text" id="ubm" name="ubm"/><br />
+                    <label for="bm">日期：</label>
+                    <input type="text" id="unm" name="unm" /><br />
+                    <label for="file">选择文件：</label>
+                    <input type="file" name="filename">
+                    <input type="submit" value="提交" />
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

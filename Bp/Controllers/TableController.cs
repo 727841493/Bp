@@ -68,14 +68,15 @@ namespace Bp.Controllers
                                可打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.评论人 == name),
                                查看历史 = db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码),
                            };
-
                 if (!string.IsNullOrEmpty(startTime))
                 {
-                    list = list.Where(lp => String.Compare(startTime, lp.日期) <= 0);
+                    //list = list.Where(x => String.Compare(startTime, x.日期) <= 0);
+                    list = list.Where(x => x.日期.CompareTo(startTime)>=0);
                 }
                 if (!string.IsNullOrEmpty(endTime))
                 {
-                    list = list.Where(lp => String.Compare(lp.日期, endTime) <= 0);
+                    //list = list.Where(x => String.Compare(x.日期, endTime) <= 0);
+                    list = list.Where(x => x.日期.CompareTo(endTime) < 0);
                 }
                 if (steps != null)
                 {
@@ -214,7 +215,7 @@ namespace Bp.Controllers
                                评论人 = cm.评论人,
                                评论 = cm.评论,
                            };
-               
+
                 if (!string.IsNullOrEmpty(id))
                 {
                     list = list.Where(cm => cm.项目编码 == id);

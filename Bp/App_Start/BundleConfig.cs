@@ -98,6 +98,13 @@ namespace Bp
                        "~/Scripts/jquery.cookie.js"
                       ));
 
+            bundles.Add(new ScriptBundle("~/bundles/time").Include(
+                      "~/Scripts/bootstrap-datetimepicker.js",
+                     "~/Scripts/bootstrap-datetimepicker.zh-CN.js"
+                     ));
+            bundles.Add(new StyleBundle("~/Content/time").Include(
+                      "~/Content/bootstrap-datetimepicker.css"
+                     ));
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/login.css"));
 
@@ -122,7 +129,8 @@ namespace Bp
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/zip").Include(
-                   "~/Scripts/view/zip.js"
+                   "~/Scripts/view/zip.js",
+                    "~/Scripts/view/ajaxfileupload.js"
                    ));
 
             bundles.Add(new ScriptBundle("~/bundles/top").Include(

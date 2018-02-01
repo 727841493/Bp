@@ -1,7 +1,7 @@
 $(function () {
     $.ajaxSetup(
         {
-            type: "POST",
+            type: "post",
             dataType: "json",
             error: function (err) {
                 alert(err);

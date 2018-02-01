@@ -162,8 +162,12 @@ namespace Bp.Controllers
                            内容 = msg.内容,
                            发布时间 = msg.发布时间,
                            发布人 = msg.发布人,
+                           查看人 = msg.查看人,
                        };
-
+            DateTime now = DateTime.Now;
+            DateTime d1 = new DateTime(now.Year, now.Month, 1);
+            string startTime = d1.ToString();
+            list = list.Where(x => String.Compare(startTime,x.发布时间) <= 0);
             if (!string.IsNullOrEmpty(id))
             {
                 list = list.Where(x => x.ID == id);
@@ -216,7 +220,7 @@ namespace Bp.Controllers
                     内容 = context,
                     发布人 = name,
                     查看人 = name,
-                    发布时间 = time,
+                    发布时间 = time.ToString(),
 
                 };
                 db.Bp_通知.Add(msg);

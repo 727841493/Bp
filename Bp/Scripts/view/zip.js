@@ -63,6 +63,7 @@ $(function () {
         ].join('');
     }
 
+
     function lookFormatter(value, row, index) {
         var flag = false;
         for (var i = 0; i < value.length; i++) {
@@ -168,5 +169,101 @@ $(function () {
             ]
         ]
     });
-});
 
+    //上传
+    $('#up').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        showExport: true,//导出按钮
+        url: '/Zip/QueryStatistics',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryBy,
+        pagination: true,//显示分页条
+        sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
+        pageNumber: 1,//首页页码
+        pageSize: 10,//页面数据条数
+        pageList: [2, 5, 10],//可选的每页显示数据个数
+        columns: [
+            [
+                {
+                    field: '项目编码',
+                    title: "项目编码",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    field: '日期',
+                    title: "日期",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    title: "爆破效果",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 4,
+                    rowspan: 1
+                },
+                {
+                    title: "上传",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 2,
+                    rowspan: 1,
+                }
+            ], [
+                {
+                    field: '块度平均分',
+                    title: '块度',
+                    valign: "middle",
+                    align: "center"
+                },
+                {
+                    field: '抛掷平均分',
+                    title: '抛掷',
+                    valign: "middle",
+                    align: "center"
+                },
+                {
+                    field: '根底平均分',
+                    title: '根底',
+                    valign: "middle",
+                    align: "center"
+                },
+                {
+                    field: '伞岩平均分',
+                    title: '伞岩',
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: '上传',
+                    valign: "middle",
+                    align: "center",
+                    formatter: upFormatter
+                }
+            ]
+        ]
+    });
+
+    //上传文件
+    function upFormatter(value, row, index) {
+        return [
+            '<button data-toggle="modal" data-target="#upModal" class="btn btn-primary" onclick="upFile(',
+            "'" + row.项目编码 + "'",
+            ',',
+            "'" + row.日期 + "'",
+            ')">',
+            '上传',
+            '</button>',
+        ].join('');
+    }
+
+});
+function upFile(id,nm) {
+    $("#ubm").val(id);
+    $("#unm").val(nm);
+}

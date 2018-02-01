@@ -218,6 +218,7 @@
     <Compile Include="Utils\ZipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\bootstrap-switch.css" />
@@ -286,12 +287,15 @@
     <Content Include="fonts\se7en.eot" />
     <Content Include="fonts\se7en.ttf" />
     <Content Include="fonts\se7en.woff" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.zh-CN.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -350,6 +354,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\star-rating.js" />
+    <Content Include="Scripts\view\ajaxfileupload.js" />
     <Content Include="Scripts\view\table.js" />
     <Content Include="Scripts\view\top.js" />
     <Content Include="Scripts\view\zip.js" />
@@ -373,6 +378,7 @@
     <Content Include="Views\Table\Query.cshtml" />
     <Content Include="Views\Table\Mark.cshtml" />
     <Content Include="Views\Zip\Down.cshtml" />
+    <Content Include="Views\Zip\Up.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

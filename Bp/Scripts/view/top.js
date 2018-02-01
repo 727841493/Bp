@@ -22,7 +22,7 @@
     //清除cookie    
     function clearCookie(name) {
         setCookie(name, "", -1);
-    }  
+    }
 
     // 调用函数
     var cookie = getCookie("Xing");
@@ -94,3 +94,20 @@
     })
 
 })
+
+function loginOut() {
+    window.location.href = "/Account/Index";
+    clearCookie("Xing");
+    clearCookie(".ASPXAUTH");
+    clearCookie("Porschev");
+}
+
+function show_confirm() {
+    var r = confirm("确定退出吗？");
+    if (r == true) {
+        window.location.href = "/Account/Index";
+        clearCookie("Xing");
+        clearCookie(".ASPXAUTH");
+        clearCookie("Porschev");
+    }
+}  

@@ -6,6 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web;
+using System.Web.Script.Serialization;
+using System.Security.Cryptography;
+using System.Drawing;
+using System.Web.UI;
 
 namespace Bp.Controllers
 {
@@ -17,7 +21,10 @@ namespace Bp.Controllers
         {
             return View();
         }
-
+        public ActionResult Up()
+        {
+            return View();
+        }
         public JsonResult QueryStatistics()
         {
             try
@@ -124,7 +131,6 @@ namespace Bp.Controllers
         }
 
 
-
         /// <summary>
         ///查询文件中的图片
         /// </summary>
@@ -221,6 +227,69 @@ namespace Bp.Controllers
             } // 成功 
             string redirect = System.Configuration.ConfigurationManager.AppSettings["redirect"];
             return Redirect(redirect);
+        }
+
+
+        //上传文件
+        //[HttpPost]
+        //public RedirectResult UploadFile(HttpPostedFileBase file)
+        //{
+        //    var fileName = file.FileName;
+        //    var filePath = Server.MapPath(string.Format("~/{0}", "Zip"));
+        //    file.SaveAs(Path.Combine(filePath, fileName));
+        //    return Redirect("/Zip/Up");
+        //}
+
+        [HttpPost]
+        public RedirectResult UploadFile()
+        {
+            var name = CookieResult.CookieName();
+            //流水号
+            var number = db.Bp_项目资料.Select(x => x.流水号).Max();
+            //项目编码
+            var bm = Request["ubm"].ToString();
+            //项目名称
+            var nm = Request["unm"].ToString();
+            //上传时间
+            var time = DateTime.Now;
+            //文件
+            HttpPostedFileBase file = Request.Files["filename"];
+            //文件名称
+            var fileName = file.FileName;
+            //上传电脑
+            System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);//根据目标IP地址获取IP对象
+            System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);//根据IP对象创建主机对象
+            string clientPCName = ihe.HostName;//获取客户端主机名称
+            //上传根路径
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+            //文件夹
+            var guid = Guid.NewGuid().ToString();
+            string strPath = homePath + "\\" + guid;
+            //判断文件夹是否存在
+            if (!Directory.Exists(strPath))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(strPath);
+            }
+            //保存
+            var filePath = string.Format("{0}", strPath);
+            file.SaveAs(Path.Combine(filePath, fileName));
+
+
+            Bp_项目资料 zl = new Bp_项目资料
+            {
+                项目名称 = nm,
+                项目编码 = bm,
+                资料ID = guid,
+                上传人 = name,
+                上传时间 = time,
+                资料名称 = fileName,
+                上传电脑 = clientPCName,
+                流水号 = number + 1,
+            };
+            db.Bp_项目资料.Add(zl);
+            db.SaveChanges();
+            return Redirect("/Zip/Up");
         }
 
     }

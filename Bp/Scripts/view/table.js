@@ -1,5 +1,5 @@
 ﻿//筛选参数（开始时间，结束时间，台阶水平，岩性，爆破效果，历史记录（序号1，序号2，项目编码，爆破ID））
-function queryBy(id) {
+function queryParams(id) {
     var params = {
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(),
@@ -46,7 +46,7 @@ function records(id) {
         method: 'post',//请求方式
         url: '/Table/QueryHistory',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryBy(id),
+        queryParams: queryParams(id),
         cardView: true,//是否显示详细视图
         columns: [
             {
@@ -93,7 +93,7 @@ function records(id) {
 $(function () {
 
     //日期控件
-    $(".form_datetime").datepicker({
+    $(".form_datetime").datetimepicker({
         format: "yyyy-mm-d",
         autoclose: true,
         todayBtn: true,
@@ -131,7 +131,7 @@ $(function () {
         showExport: true,//导出按钮
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryBy,
+        queryParams: queryParams,
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
@@ -341,7 +341,7 @@ $(function () {
         showExport: true,//导出按钮
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
-        queryParams: queryBy,
+        queryParams: queryParams,
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
