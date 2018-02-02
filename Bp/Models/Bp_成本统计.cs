@@ -6,16 +6,12 @@ namespace Bp.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Bp_成本核算
+    public partial class Bp_成本统计
     {
         [StringLength(50)]
         public string ID { get; set; }
 
-        [StringLength(50)]
-        public string 项目ID { get; set; }
-
-        [StringLength(50)]
-        public string 项目编码 { get; set; }
+        public int 月份 { get; set; }
 
         public double? 钻孔 { get; set; }
 
@@ -32,5 +28,7 @@ namespace Bp.Models
         public double? 其他 { get; set; }
 
         public double? 合计 { get; set; }
+
+        public int yearID { get; set; }
     }
 }

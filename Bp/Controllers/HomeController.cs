@@ -3,6 +3,7 @@ using Bp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -67,7 +68,7 @@ namespace Bp.Controllers
                 List<string> bm = new List<string>();
                 foreach (var item in lists)
                 {
-                    if (bm.IndexOf(item.项目编码) == -1 && id.IndexOf(item.项目ID)==-1)
+                    if (bm.IndexOf(item.项目编码) == -1 && id.IndexOf(item.项目ID) == -1)
                     {
                         bm.Add(item.项目编码);
                         id.Add(item.项目ID);
@@ -170,7 +171,7 @@ namespace Bp.Controllers
             DateTime now = DateTime.Now;
             DateTime d1 = new DateTime(now.Year, now.Month, 1);
             string startTime = d1.ToString();
-            list = list.Where(x => String.Compare(startTime,x.发布时间) <= 0);
+            list = list.Where(x => String.Compare(startTime, x.发布时间) <= 0);
             if (!string.IsNullOrEmpty(id))
             {
                 list = list.Where(x => x.ID == id);
@@ -234,6 +235,145 @@ namespace Bp.Controllers
             {
                 return AjaxResult.Error("发布失败！").ToString();
             }
+        }
+
+        //查询共享文件
+        public JsonResult QueryAllShare()
+        {
+            var name = CookieResult.CookieName();
+            int pageSize = int.Parse(Request["pageSize"] ?? "10");
+            int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+            string sortOrder = Request["sortOrder"];
+            string searchText = Request["searchText"];
+            string sortName = Request["sortName"];
+
+            var list = from s in db.Bp_分享资料
+                       select new
+                       {
+                           ID = s.ID,
+                           资料名称 = s.资料名称,
+                           上传时间 = s.上传时间,
+                           上传人 = s.上传人,
+                       };
+            switch (sortOrder)
+            {
+                case "desc":
+                    list = list.OrderByDescending(w => w.上传时间);
+                    break;
+                case "asc":
+                    list = list.OrderBy(w => w.上传时间);
+                    break;
+                default:
+                    list = list.OrderByDescending(w => w.上传时间);
+                    break;
+            };
+            return Json(list);
+        }
+
+
+        //上传共享文件
+        [HttpPost]
+        public void UpShareFile()
+        {
+            //上传人
+            var name = CookieResult.CookieName();
+            //上传时间
+            var time = DateTime.Now;
+            //文件
+            HttpPostedFileBase file = Request.Files["shareName"];
+            //文件名称
+            var fileName = file.FileName;
+
+            //文件存放路径
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+            var guid = Guid.NewGuid().ToString();
+            string strPath = Server.MapPath(homePath) + guid;
+            //判断文件夹是否存在
+            if (!Directory.Exists(strPath))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(strPath);
+            }
+            //保存
+            var filePath = string.Format("{0}", strPath);
+
+            Bp_分享资料 zl = new Bp_分享资料
+            {
+                ID = guid,
+                上传人 = name,
+                上传时间 = time,
+                资料名称 = fileName,
+            };
+            db.Bp_分享资料.Add(zl);
+
+            try
+            {
+                file.SaveAs(Path.Combine(filePath, fileName));
+                db.SaveChanges();
+                Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
+            }
+            catch (Exception)
+            {
+                Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
+            }
+        }
+
+        /// <summary>
+        ///下载文件
+        /// </summary>
+        /// <param name="id">文档的guid</param>
+        public void DownloadShare(string id)
+        {
+            //根据项目编码查询符合条件的资料
+            var list = db.Bp_分享资料.Where(x => x.ID == id);
+
+            //存放查询出来的文件
+            List<string> files = new List<string>();
+
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+
+            foreach (var s in list)
+            {
+                //动态拼接文件路径
+                string path = Server.MapPath(homePath) + s.ID;
+                var ls = Directory.GetFiles(path).ToList();
+                files.AddRange(ls);
+            }
+            //压缩包名称
+            string fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + @".zip";
+            //string absoluFilePath = @"C:\Program Files (x86)\MicroStarSoft\中矿微星后台服务程序\UserFiles\Zip\"+date+@".zip";
+            //压缩包备份路径
+            string absolu = System.Configuration.ConfigurationManager.AppSettings["absoluSrc"];
+            //压缩包备份
+            string absoluFilePath = Server.MapPath(absolu) + fileName;
+            ZipHelper.ZipManyFilesOrDictorys(files, absoluFilePath, null);
+            //string absoluFilePath = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentPath"] + filePath);
+            //下载
+            Response.ClearHeaders();
+            Response.Clear();
+            Response.Expires = 0;
+            Response.Buffer = true;
+            Response.AddHeader("Accept-Language", "zh-tw");
+            FileStream fileStream = new FileStream(absoluFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            byte[] byteFile = null;
+            if (fileStream.Length == 0)
+            {
+                byteFile = new byte[1];
+            }
+            else
+            {
+                byteFile = new byte[fileStream.Length];
+            }
+            fileStream.Read(byteFile, 0, (int)byteFile.Length);
+            fileStream.Close();
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(fileName, System.Text.Encoding.UTF8));
+            Response.ContentType = "application/octet-stream";
+            Response.BinaryWrite(byteFile);
+            Response.Flush();
+            Response.End();
+            //删除备份
+            System.IO.File.Delete(absoluFilePath);
         }
     }
 }

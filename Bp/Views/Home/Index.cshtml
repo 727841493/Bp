@@ -7,34 +7,44 @@
 <div class="container-fluid main-content">
     <div class="row">
         <!-- Area Charts:Morris -->
-        <div class="col-md-4">
-            <div class="widget-container fluid-height" style="height:425px">
+        <div class="col-md-2">
+            <div class="widget-container fluid-height">
                 <div class="heading">
                     <i class="icon-bar-chart"></i>个人信息
                 </div>
                 <div class="widget-content padded text-center">
-                    <div class="graph-container" style="padding-top: 60px;">
-                        <div class="col-md-4"><img src="../../Images/login_logo.png" /></div>
-                        <div class="col-md-8">
-                            <p id="dlm"></p>
-                            <p id="yhm"></p>
-                            <p id="jb"></p>
-                            <p id="lsbm"></p>
-                            <p id="ywks"></p>
-                        </div>
+                    <div class="graph-container">
+                        <p id="dlm"></p>
+                        <p id="yhm"></p>
+                        <p id="jb"></p>
+                        <p id="lsbm"></p>
+                        <p id="ywks"></p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-md-5">
+
+            <div class="widget-container fluid-height">
+                <div class="heading">
+                    <i class="icon-comments"></i>文档<span class="icon-smile pull-right" data-toggle="modal" data-target="#upShare">上传</span>
+                </div>
+                <div class="widget-content clearfix" style="min-height:200px;">
+                    <table id="showFlie"></table>
+                </div>
+            </div>
+        </div>
+
         <!-- Area Charts:Morris --><!-- Chat -->
-        <div class="col-md-8">
+        <div class="col-md-5">
 
             <div class="widget-container fluid-height">
                 <div class="heading">
                     <i class="icon-comments"></i>通知<span class="icon-smile pull-right" data-toggle="modal" data-target="#AddMessages">发布</span>
                 </div>
-                <div class="widget-content clearfix">
-                    <table id="showMsg" data-mobile-responsive="true" data-card-view="true"></table>
+                <div class="widget-content clearfix" style="min-height:200px;">
+                    <table id="showMsg"></table>
                 </div>
             </div>
         </div>
@@ -48,7 +58,7 @@
                     <i class="icon-bar-chart"></i>爆破项目@*<span class="pull-right"></span>*@
                 </div>
                 <div class="widget-content clearfix">
-                    <table id="table" data-mobile-responsive="true" data-card-view="true"></table>
+                    <table id="table" data-detail-view="true" data-detail-formatter="detailFormatter"></table>
                 </div>
             </div>
         </div>
@@ -94,6 +104,28 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
+        </div>
+    </div>
+</div>
+
+@*文件上传*@
+<div class="modal fade" id="upShare" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">上传</h4>
+            </div>
+            <form enctype="multipart/form-data" id="form1" runat="server" action="/Home/UpShareFile" method="post">
+                <div class="modal-body">
+                    <label for="file">选择文件：</label>
+                    <input type="file" name="shareName">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">上传</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

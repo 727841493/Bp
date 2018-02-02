@@ -84,7 +84,7 @@ $(function () {
             '</button>',
         ].join('');
     }
-
+    $('#down').bootstrapTable('destroy');
     $('#down').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
@@ -171,6 +171,7 @@ $(function () {
     });
 
     //上传
+    $('#up').bootstrapTable('destroy');
     $('#up').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式

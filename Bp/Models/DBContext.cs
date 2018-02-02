@@ -13,7 +13,9 @@
         }
 
         public virtual DbSet<Bp_Data_comment> Bp_Data_comment { get; set; }
-        public virtual DbSet<Bp_成本核算> Bp_成本核算 { get; set; }
+        public virtual DbSet<Bp_成本年份> Bp_成本年份 { get; set; }
+        public virtual DbSet<Bp_成本统计> Bp_成本统计 { get; set; }
+        public virtual DbSet<Bp_分享资料> Bp_分享资料 { get; set; }
         public virtual DbSet<Bp_项目> Bp_项目 { get; set; }
         public virtual DbSet<Bp_项目权限> Bp_项目权限 { get; set; }
         public virtual DbSet<Bp_项目资料> Bp_项目资料 { get; set; }
@@ -33,6 +35,7 @@
         public virtual DbSet<BP_Data_yinxin> BP_Data_yinxin { get; set; }
         public virtual DbSet<Bp_通知> Bp_通知 { get; set; }
         public virtual DbSet<Bp_项目数据> Bp_项目数据 { get; set; }
+        public virtual DbSet<Bp_真实数据> Bp_真实数据 { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -48,16 +51,8 @@
                 .Property(e => e.项目ID)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Bp_成本核算>()
+            modelBuilder.Entity<Bp_成本统计>()
                 .Property(e => e.ID)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Bp_成本核算>()
-                .Property(e => e.项目ID)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Bp_成本核算>()
-                .Property(e => e.项目编码)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Bp_项目>()
@@ -149,6 +144,14 @@
                 .IsUnicode(false);
 
             modelBuilder.Entity<Bp_项目数据>()
+                .Property(e => e.项目编码)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_真实数据>()
+                .Property(e => e.项目ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Bp_真实数据>()
                 .Property(e => e.项目编码)
                 .IsUnicode(false);
         }

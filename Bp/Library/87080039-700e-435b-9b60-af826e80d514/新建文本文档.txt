@@ -1,0 +1,80 @@
+select
+xm.ID,
+XM.项目编码,
+LP.lbastpreset_id,
+lp.Z1 as 台阶水平,
+lp.lbastpresetname as 日期,
+bb.mainRock as 岩性,
+case bv.VolNo when 'B' then bv.ColLength end as 孔距,
+case bv.VolNo when 'B' then bv.VolLength end as 排距,
+bb.countBlast as 孔数,
+bb.LbastDepth*bb.countBlast as 孔总深,
+bb.LbastDepth as 平均孔深,
+bb.countlg as 炸药量,
+case bv.VolNo when 'A' then bv.VolDikang end as 抵抗线,
+case bv.VolNo when 'A' then bv.BlastAddDepth end as 超深,
+bd.l1 as 填充,
+bv.ColLength * bv.VolLength * (bb.LbastDepth - bv.BlastAddDepth) * bb.countBlast * 2.65 as 爆破量,
+case when (bv.ColLength * bv.VolLength * (bb.LbastDepth - bv.BlastAddDepth) * bb.countBlast * 2.65)/2.65=0 then 0 else bb.countlg/(bv.ColLength * bv.VolLength * (bb.LbastDepth - bv.BlastAddDepth) * bb.countBlast * 2.65)/2.65 end as 炸药单耗
+from dbo.Bp_项目 xm
+INNER JOIN dbo.BP_Data_lbastpreset lp ON xm.ID = lp.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_Base bb  ON xm.ID = bb.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_VolBase bv ON xm.ID=bv.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_Detail bd ON xm.ID=bd.项目ID
+  
+select * from Users
+
+select * from dbo.Bp_项目
+
+select * from dbo.BP_Data_Cal_BlastsDynamiteSet_Base
+
+SELECT * FROM dbo.BP_Data_lbastpreset
+
+select * from dbo.Bp_Data_comment
+
+select * from dbo.BP_Data_Cal_BlastsDynamiteSet_Detail
+
+
+
+select * from Users
+
+select * from Bp_项目 xm 
+
+select * from Bp_项目资料
+
+select * from BP_Data_lbastpreset lp
+
+select * from BP_Data_Cal_BlastsDynamiteSet_Base bb
+
+select * from BP_Data_Cal_BlastsDynamiteSet_VolBase bv
+
+select * from BP_Data_Cal_BlastsDynamiteSet_Detail bd
+
+select * from Bp_Data_comment
+ 
+select
+bv.内部ID,
+bd.内部ID,
+LP.内部ID,
+bb.内部ID
+from dbo.Bp_项目 xm
+INNER JOIN dbo.BP_Data_lbastpreset lp ON xm.ID = lp.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_Base bb  ON xm.ID = bb.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_VolBase bv ON xm.ID=bv.项目ID
+INNER JOIN dbo.BP_Data_Cal_BlastsDynamiteSet_Detail bd ON xm.ID=bd.项目ID
+
+
+
+select b.块度评分
+from dbo.Bp_项目 xm
+, dbo.BP_Data_lbastpreset lp 
+,dbo.BP_Data_Cal_BlastsDynamiteSet_Base bb  
+,dbo.BP_Data_Cal_BlastsDynamiteSet_VolBase bv 
+,dbo.BP_Data_Cal_BlastsDynamiteSet_Detail bd
+,dbo.Bp_Data_comment b
+where b.项目编码 = xm.项目编码 
+and b.爆破ID = lp.lbastpreset_id 
+and b. = lp.内部ID 
+and b.bbInsideId=bb.内部ID 
+and b.bdInsideId =bd.内部ID 
+and b.bvInsideId=bv.内部ID

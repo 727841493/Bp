@@ -237,9 +237,6 @@ namespace Bp.Controllers
 
         }
 
-        /// <summary>
-        ///成本核算
-        /// </summary>
         public JsonResult QueryCost(string id, string bm)
         {
             try
@@ -250,43 +247,41 @@ namespace Bp.Controllers
                 string searchText = Request["searchText"];
                 string sortName = Request["sortName"];
 
-                var list = from sj in db.Bp_项目数据
+                var list = from tj in db.Bp_成本统计
                            select new
                            {
-                               项目ID = sj.项目ID,
-                               项目编码 = sj.项目编码,
-                               台阶水平 = sj.台阶水平,
-                               日期 = sj.日期,
-                               钻孔 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.钻孔).FirstOrDefault(),
-                               火工品 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.火工品).FirstOrDefault(),
-                               冲击炮 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.冲击炮).FirstOrDefault(),
-                               装载 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.装载).FirstOrDefault(),
-                               运输 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.运输).FirstOrDefault(),
-                               辅助 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.辅助).FirstOrDefault(),
-                               其他 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.其他).FirstOrDefault(),
-                               总计 = db.Bp_成本核算.Where(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID).Select(x => x.合计).FirstOrDefault(),
-                               添加 = !db.Bp_成本核算.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID),
-                               修改 = db.Bp_成本核算.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID),
+                               月份 = tj.月份,
+                               年份 = tj.yearID,
+                               钻孔 = tj.钻孔,
+                               火工品 = tj.火工品,
+                               冲击炮 = tj.冲击炮,
+                               装载 = tj.装载,
+                               运输 = tj.运输,
+                               辅助 = tj.辅助,
+                               其他 = tj.其他,
+                               总计 = tj.合计,
                            };
 
                 if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(bm))
                 {
-                    list = list.Where(x => x.项目ID == id && x.项目编码 == bm);
+                    var month = int.Parse(id);
+                    var yearID = int.Parse(bm);
+                    list = list.Where(x => x.月份 == month && x.年份 == yearID);
                 }
 
                 switch (sortOrder)
                 {
                     case "a":
-                        list = list.OrderByDescending(w => w.项目编码);
+                        list = list.OrderByDescending(w => w.月份);
                         break;
                     case "last_desc":
-                        list = list.OrderByDescending(w => w.项目编码);
+                        list = list.OrderByDescending(w => w.月份);
                         break;
                     case "last":
-                        list = list.OrderBy(w => w.项目编码);
+                        list = list.OrderBy(w => w.月份);
                         break;
                     default:
-                        list = list.OrderBy(w => w.项目编码);
+                        list = list.OrderBy(w => w.月份);
                         break;
                 };
                 return Json(list);
@@ -298,37 +293,31 @@ namespace Bp.Controllers
             }
         }
 
-        //添加或修改
+        //添加或修改(id -- 月份,bm -- 年份)
         public string SaveOrChange(string id, string bm, string zk, string hgp, string cjp, string zz, string ys, string fz, string qt)
         {
-            //float id, float bm, float zk, float hgp, float cjp, float zz, float ys, float fz, float qt
-
-            var xm = db.Bp_项目数据.Where(x => x.项目ID == id && x.项目编码 == bm).FirstOrDefault();
-            var cost = db.Bp_成本核算.Where(x => x.项目ID == id && x.项目编码 == bm).FirstOrDefault();
-            //默认最大,减少返回false(显示红字)
-            var flag ="";
             try
             {
                 Double sum = Double.Parse(zk) + Double.Parse(hgp) + Double.Parse(cjp) + Double.Parse(zz) + Double.Parse(ys) + Double.Parse(fz) + Double.Parse(qt);
-                if (xm != null)
+                var monthID = int.Parse(id);
+                var yearID = int.Parse(bm);
+                var cost = db.Bp_成本统计.Where(x => x.月份 == monthID && x.yearID == yearID).FirstOrDefault();
+                //默认最大,减少返回false(显示红字)
+                var flag = "";
+                if (cost != null)
                 {
-                    if (cost == null)
+                    if (cost.合计 == null)
                     {
-                        Bp_成本核算 bp = new Bp_成本核算
-                        {
-                            ID = Guid.NewGuid().ToString(),
-                            项目ID = xm.项目ID,
-                            项目编码 = xm.项目编码,
-                            钻孔 = Double.Parse(zk),
-                            火工品 = Double.Parse(hgp),
-                            冲击炮 = Double.Parse(cjp),
-                            装载 = Double.Parse(zz),
-                            运输 = Double.Parse(ys),
-                            辅助 = Double.Parse(fz),
-                            其他 = Double.Parse(qt),
-                            合计 = sum,
-                        };
-                        db.Bp_成本核算.Add(bp);
+                        cost.钻孔 = Double.Parse(zk);
+                        cost.火工品 = Double.Parse(hgp);
+                        cost.冲击炮 = Double.Parse(cjp);
+                        cost.装载 = Double.Parse(zz);
+                        cost.运输 = Double.Parse(ys);
+                        cost.辅助 = Double.Parse(fz);
+                        cost.其他 = Double.Parse(qt);
+                        cost.合计 = sum;
+                        db.SaveChanges();
+                        return AjaxResult.Success(flag, "操作成功").ToString();
                     }
                     else
                     {
@@ -348,15 +337,161 @@ namespace Bp.Controllers
                         cost.辅助 = Double.Parse(fz);
                         cost.其他 = Double.Parse(qt);
                         cost.合计 = sum;
+                        db.SaveChanges();
+                        return AjaxResult.Success(flag, "操作成功").ToString();
                     }
                 }
-                db.SaveChanges();
-                return AjaxResult.Success(flag, "操作成功").ToString();
+                return AjaxResult.Error("操作失败").ToString();
             }
             catch (Exception e)
             {
                 return AjaxResult.Error("操作失败", e).ToString();
             }
         }
+
+        //添加成本年份和月份
+        public string AddOneYear(string year)
+        {
+            try
+            {
+                var i = int.Parse(year);
+                var ye = db.Bp_成本年份.Where(x => x.年份 == i).FirstOrDefault();
+                if (ye != null)
+                {
+                    return AjaxResult.Error("已添加过该年份！").ToString();
+                }
+                else
+                {
+                    Bp_成本年份 y = new Bp_成本年份
+                    {
+                        年份 = i,
+                    };
+                    db.Bp_成本年份.Add(y);
+                    db.SaveChanges();
+                    var tye = db.Bp_成本年份.Where(x => x.年份 == i).FirstOrDefault();
+                    for (int m = 1; m < 13; m++)
+                    {
+                        Bp_成本统计 o = new Bp_成本统计
+                        {
+                            ID = Guid.NewGuid().ToString(),
+                            月份 = m,
+                            yearID = tye.id,
+                        };
+                        db.Bp_成本统计.Add(o);
+                        db.SaveChanges();
+                    }
+                    return AjaxResult.Success(null, "添加成功").ToString();
+                }
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("添加失败").ToString();
+            }
+        }
+
+        //成本年份查询
+        public JsonResult QueryCostYears()
+        {
+            try
+            {
+                int pageSize = int.Parse(Request["pageSize"] ?? "10");
+                int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+                string sortOrder = Request["sortOrder"];
+                string searchText = Request["searchText"];
+                string sortName = Request["sortName"];
+
+                var list = from y in db.Bp_成本年份
+                           select new
+                           {
+                               年份 = y.年份,
+                               钻孔 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.钻孔).Sum(),
+                               火工品 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.火工品).Sum(),
+                               冲击炮 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.冲击炮).Sum(),
+                               装载 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.装载).Sum(),
+                               运输 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.运输).Sum(),
+                               辅助 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.辅助).Sum(),
+                               其他 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.其他).Sum(),
+                               合计 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.合计).Sum(),
+                           };
+                switch (sortOrder)
+                {
+                    case "a":
+                        list = list.OrderByDescending(w => w.年份);
+                        break;
+                    case "last_desc":
+                        list = list.OrderByDescending(w => w.年份);
+                        break;
+                    case "last":
+                        list = list.OrderBy(w => w.年份);
+                        break;
+                    default:
+                        list = list.OrderBy(w => w.年份);
+                        break;
+                };
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        ///查询该年每月成本
+        /// </summary>
+        public JsonResult QueryYearCost(string id)
+        {
+            try
+            {
+                int pageSize = int.Parse(Request["pageSize"] ?? "10");
+                int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+                string sortOrder = Request["sortOrder"];
+                string searchText = Request["searchText"];
+                string sortName = Request["sortName"];
+
+                var list = from mon in db.Bp_成本统计
+                           select new
+                           {
+                               月份 = mon.月份,
+                               钻孔 = mon.钻孔,
+                               火工品 = mon.火工品,
+                               冲击炮 = mon.冲击炮,
+                               装载 = mon.装载,
+                               运输 = mon.运输,
+                               辅助 = mon.辅助,
+                               其他 = mon.其他,
+                               总计 = mon.合计,
+                               年份 = mon.yearID,
+                           };
+                if (!string.IsNullOrEmpty(id))
+                {
+                    int year = int.Parse(id);
+                    var ye = db.Bp_成本年份.Where(x => x.年份 == year).FirstOrDefault();
+                    list = list.Where(x => x.年份 == ye.id);
+                }
+                switch (sortOrder)
+                {
+                    case "a":
+                        list = list.OrderByDescending(w => w.月份);
+                        break;
+                    case "last_desc":
+                        list = list.OrderByDescending(w => w.月份);
+                        break;
+                    case "last":
+                        list = list.OrderBy(w => w.月份);
+                        break;
+                    default:
+                        list = list.OrderBy(w => w.月份);
+                        break;
+                };
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
     }
 }

@@ -7,14 +7,20 @@ function queryBy(id) {
 }
 //格式化时间
 function changeDateFormat(cellval) {
-    if (cellval != null) {
+    if (cellval !== null) {
         var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
         var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
         var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
         return date.getFullYear() + "-" + month + "-" + currentDate;
     }
 }
-
+function detailFormatter(index, row) {
+    var html = [];
+    $.each(row, function (key, value) {
+        html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+    });
+    return html.join('');
+}
 //页面加载
 $(function () {
     $('#table').bootstrapTable({
@@ -26,7 +32,7 @@ $(function () {
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
-        pageSize: 5,//页面数据条数
+        pageSize: 10,//页面数据条数
         pageList: [2, 5, 10],//可选的每页显示数据个数
         columns: [
             {
@@ -140,6 +146,18 @@ $(function () {
             '</a>',
         ].join('');
     }
+    //下载共享文件
+    function shareFormatter(value, row, index) {
+        return [
+            '<a  href="',
+            "/Home/DownloadShare?id=",
+            row.ID,
+            '">',
+            value,
+            '</a>',
+        ].join('');
+    }
+
 
     $('#showMsg').bootstrapTable({
         //toolbar: "#toolbar",//工具按钮用哪个容器
@@ -149,7 +167,7 @@ $(function () {
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
-        pageSize: 9,//页面数据条数
+        pageSize: 4,//页面数据条数
         striped: true, // 是否显示行间隔色
         smartDisplay: true,
         showHeader: false,
@@ -169,7 +187,7 @@ $(function () {
                 align: "center",
                 formatter: statusFormatter,
                 cellStyle: function (value, row, index) {
-                    if (value == -1) {
+                    if (value === -1) {
                         return { css: { "color": "red" } }
                     } else {
                         return { css: { "color": "green" } }
@@ -204,10 +222,53 @@ $(function () {
         }
     });
 
+    $('#showFlie').bootstrapTable({
+        //toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        url: '/Home/QueryAllShare',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        pagination: true,//显示分页条
+        sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
+        pageNumber: 1,//首页页码
+        pageSize: 4,//页面数据条数
+        striped: true, // 是否显示行间隔色
+        smartDisplay: true,
+        showHeader: false,
+        classes: "table table-no-bordered",
+        columns: [
+            {
+                field: 'ID',
+                title: "ID",
+                valign: "middle",
+                align: "center",
+                visible: false,
+            }, {
+                field: '资料名称',
+                title: "资料名称",
+                valign: "middle",
+                align: "center",
+                formatter: shareFormatter,
+            }, {
+                field: '上传时间',
+                title: "上传时间",
+                valign: "middle",
+                align: "center",
+                formatter: function (value, row, index) {
+                    return changeDateFormat(value)
+                }
+            }, {
+                field: '上传人',
+                title: "上传人",
+                valign: "middle",
+                align: "center",
+            }
+        ],
+    });
+
     //状态
     function statusFormatter(value) {
         var flag = "[已读]";
-        if (value == -1) {
+        if (value === -1) {
             flag = "[未读]";
         }
         return flag;
@@ -219,7 +280,7 @@ $(function () {
     $("#addMsg").click(function () {
         var title = $("#Title").val();
         var context = $("#Content").val();
-        if (title == "") {
+        if (title === "") {
             alert("标题不能为空！")
             $("#Title").focus();
         } else {
@@ -243,18 +304,24 @@ $(function () {
         $("#Title").val("");
         $("#Content").val("");
     });
+
     $('#ReadMessages').on('hide.bs.modal', function () {
         $("#showMsg").bootstrapTable('refresh');
+    });
+
+    $('#upShare').on('hide.bs.modal', function () {
+        $("#showFlie").bootstrapTable('refresh');
     });
 });
 
 function refresh() {
     $("#showMsg").bootstrapTable('refresh');
+    $("#showFlie").bootstrapTable('refresh');
 }
 
 //通知信息
 function read(id) {
-    $('#readMsg').bootstrapTable('destroy');  
+    $('#readMsg').bootstrapTable('destroy');
     $('#readMsg').bootstrapTable({
         method: 'post',//请求方式
         url: '/Home/QueryMessages',//请求地址

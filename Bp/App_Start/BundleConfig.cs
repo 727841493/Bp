@@ -138,6 +138,20 @@ namespace Bp
             bundles.Add(new ScriptBundle("~/bundles/edit").Include(
                    "~/Scripts/view/edit.js"
                    ));
+
+            bundles.Add(new StyleBundle("~/Content/echarts").Include(
+                   "~/Content/echarts/drop-down.css",
+                   "~/Content/echarts/system.css"
+                  ));
+
+            bundles.Add(new ScriptBundle("~/bundles/echarts").Include(
+                    "~/Scripts/echarts/jquery-ui.min.js",
+                     "~/Scripts/echarts/select-widget-min.js",
+                    "~/Scripts/echarts/jquery.animsition.min.js",
+                    "~/Scripts/echarts/echarts.js",
+                    "~/Scripts/echarts/macarons.js",
+                    "~/Scripts/echarts/common.js"
+                    ));
         }
     }
 }

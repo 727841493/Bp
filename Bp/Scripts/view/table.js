@@ -38,6 +38,15 @@ function sumbit() {
     });
 }
 
+//点击查看详情
+function detailFormatter(index, row) {
+    var html = [];
+    $.each(row, function (key, value) {
+        html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+    });
+    return html.join('');
+}
+
 //历史记录表格
 function records(id) {
     //评分的历史记录表格
@@ -121,14 +130,19 @@ $(function () {
             return;
         }
         $('#table').bootstrapTable("refresh");
+        getEchartsDate();
     });
 
 
     //查询
+    selections = [];
     $('#table').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
         showExport: true,//导出按钮
+        showColumns: "true",//选择显示的列
+        showToggle: "table",//切换视图
+        showRefresh: "true",//刷新
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         queryParams: queryParams,
@@ -137,9 +151,19 @@ $(function () {
         pageNumber: 1,//首页页码
         pageSize: 10,//页面数据条数
         pageList: [2, 5, 10],//可选的每页显示数据个数
+        maintainSelected: true, //checkbox的选择项
+        responseHandler: myHandler,
         columns: [
             [
                 {
+                    field: 'state',
+                    checkbox: true,
+                    align: 'center',
+                    valign: 'middle',
+                    colspan: 1,
+                    rowspan: 2,
+                    formatter: stateFormatter
+                }, {
                     field: '项目编码',
                     title: "项目编码",
                     valign: "middle",
@@ -301,6 +325,19 @@ $(function () {
             ]
         ]
     });
+    //复选框监听事件
+    $('#table').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        var data = $('#table').bootstrapTable('getAllSelections')
+        getEchartsDate(data)
+    });
+
+    //checkbox全选
+    function stateFormatter(value, row, index) {
+        return {
+            disabled: false,//设置是否可用
+            checked: true//设置选中
+        };
+    }
 
     //数据保留两位小数
     function numberFormatter(v) {
@@ -319,7 +356,6 @@ $(function () {
             '</button>',
         ].join('');
     }
-
 
     //查看评分记录
     function loadFormatter(value, row, index) {
@@ -420,4 +456,326 @@ $(function () {
             ]
         ]
     });
+
+
+    //Echarts
+
+    //初始化切换
+    $(".animsition").animsition({
+
+        inClass: 'fade-in-right',
+        outClass: 'fade-out',
+        inDuration: 1500,
+        outDuration: 800,
+        linkElement: '.animsition-link',
+        // e.g. linkElement   :   'a:not([target="_blank"]):not([href^=#])'
+        loading: true,
+        loadingParentElement: 'body', //animsition wrapper element
+        loadingClass: 'animsition-loading',
+        unSupportCss: ['animation-duration',
+            '-webkit-animation-duration',
+            '-o-animation-duration'
+        ],
+        //"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser.
+        //The default setting is to disable the "animsition" in a browser that does not support "animation-duration".
+
+        overlay: false,
+
+        overlayClass: 'animsition-overlay-slide',
+        overlayParentElement: 'body'
+    });
+
+    // 基于准备好的dom，初始化echarts实例
+
+    var myChart3 = echarts.init(document.getElementById('main3'), 'macarons');
+
+    // 指定图表的配置项和数据
+
+    var date = ['2016/11/1', '2016/11/2', '2016/11/3', '2016/11/4', '2016/11/5', '2016/11/6', '2016/11/7', '2016/11/8', '2016/11/9', '2016/11/10',
+        '2016/11/11', '2016/11/12', '2016/11/13', '2016/11/14', '2016/11/15', '2016/11/16', '2016/11/17', '2016/11/18'
+        , '2016/11/19', '2016/11/20', '2016/11/21', '2016/11/22', '2016/11/23', '2016/11/24', '2016/11/25', '2016/11/26', '2016/11/27'
+        , '2016/11/28', '2016/11/29', '2016/11/30'];
+
+    function myHandler(data) {
+        getEchartsDate(data)
+        return data;
+    }
+
+    function getEchartsDate(res) {
+        var data = res
+        myChart3.setOption({
+            xAxis: {
+                data: data.map(function (v, i) {
+                    return v.日期
+                })
+            },
+            series: [
+                {
+                    // 根据名字对应到相应的系列
+                    name: '孔距',
+                    data: data.map(function (v, i) {
+                        return v.孔距
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '排距',
+                    data: data.map(function (v, i) {
+                        return v.排距
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '孔数',
+                    data: data.map(function (v, i) {
+                        return v.孔数
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '孔总深',
+                    data: data.map(function (v, i) {
+                        return v.孔总深
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '平均孔深',
+                    data: data.map(function (v, i) {
+                        return v.孔总深
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '炸药量',
+                    data: data.map(function (v, i) {
+                        return v.炸药量
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '抵抗线',
+                    data: data.map(function (v, i) {
+                        return v.抵抗线
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '超深',
+                    data: data.map(function (v, i) {
+                        return v.超深
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '填充',
+                    data: data.map(function (v, i) {
+                        return v.填充
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '爆破量',
+                    data: data.map(function (v, i) {
+                        return v.爆破量.toFixed(2)
+                    })
+                },
+                {
+                    // 根据名字对应到相应的系列
+                    name: '炸药单耗',
+                    data: data.map(function (v, i) {
+                        return v.炸药单耗.toFixed(2)
+                    })
+                }
+            ]
+        });
+    }
+
+    function my_data() {
+        var data = [];
+        for (var i = 0; i < 30; i++) {
+            data.push(Math.round(Math.random() * (1000 - 100) + 100));
+        };
+        return data;
+    }
+
+    var option3 = {
+        title: {
+            text: '项目报表柱状图'
+        },
+        tooltip: {
+            trigger: 'axis',
+            /* axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }*/
+        },
+        legend: {
+            x: 'center',
+            top: '8%',
+            data: ['孔距', '排距', '孔数', '孔总深', '平均孔深', '炸药量', '抵抗线', '超深', '填充', '爆破量', '炸药单耗']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: { show: true },
+                //数据视图
+                dataView: {
+                    show: true, readOnly: true, optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var table = '<table style="width:100%;text-align:center"><tbody><tr>'
+                            + '<td>日期</td>';
+                        for (var n = 0; n < series.length; n++) {
+                            table += '<td>' + series[n].name + '</td>';
+                        }
+                        table += '</tr>';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            table += '<tr>'
+                                + '<td>' + axisData[i] + '</td>';
+                            for (var j = 0; j < series.length; j++) {
+                                table += '<td>' + series[j].data[i] + '</td>';
+                            }
+                            table += '</tr>';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+                //刷新
+                //restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        calculable: true,
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: true,
+                data: []
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        grid: {
+            left: '3%',
+            right: '4%',
+            top: '37%',
+            containLabel: true
+        },
+        dataZoom: [{
+            type: 'inside',
+            start: 0,
+            end: 100,
+        }, {
+            start: 74,
+            end: 100,
+            handleSize: '80%',
+            handleStyle: {
+                color: '#fff',
+                shadowBlur: 3,
+                shadowColor: 'rgba(0, 0, 0, 0.6)',
+                shadowOffsetX: 2,
+                shadowOffsetY: 2
+            }
+        }],
+        series: [
+            {
+                // 根据名字对应到相应的系列
+                name: '孔距',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '排距',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '孔数',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '孔总深',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '平均孔深',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '炸药量',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '抵抗线',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '超深',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '填充',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '爆破量',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }, {
+                // 根据名字对应到相应的系列
+                name: '炸药单耗',
+                type: 'bar',
+                stack: '总量',
+                barMaxWidth: 30,
+                data: []
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+
+    myChart3.setOption(option3);
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔距" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "排距" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔数" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔总深" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "平均孔深" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "抵抗线" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "超深" })
+    myChart3.dispatchAction({ type: 'legendUnSelect', name: "填充" })
+
+    window.onresize = myChart3.resize;
+
 });

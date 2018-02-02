@@ -201,7 +201,10 @@
     <Compile Include="Models\BP_Data_mytext.cs" />
     <Compile Include="Models\BP_Data_point.cs" />
     <Compile Include="Models\BP_Data_yinxin.cs" />
-    <Compile Include="Models\Bp_成本核算.cs" />
+    <Compile Include="Models\Bp_分享资料.cs" />
+    <Compile Include="Models\Bp_成本年份.cs" />
+    <Compile Include="Models\Bp_成本统计.cs" />
+    <Compile Include="Models\Bp_真实数据.cs" />
     <Compile Include="Models\Bp_通知.cs" />
     <Compile Include="Models\Bp_项目.cs" />
     <Compile Include="Models\Bp_项目数据.cs" />
@@ -245,9 +248,11 @@
     <Content Include="Content\css\timepicker.css" />
     <Content Include="Content\css\typeahead.css" />
     <Content Include="Content\css\wizard.css" />
+    <Content Include="Content\echarts\drop-down.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\star-rating.css" />
+    <Content Include="Content\echarts\system.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -296,8 +301,14 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\echarts\common.js" />
+    <Content Include="Scripts\echarts\echarts.js" />
+    <Content Include="Scripts\echarts\jquery-ui.min.js" />
+    <Content Include="Scripts\echarts\jquery.animsition.min.js" />
+    <Content Include="Scripts\echarts\macarons .js" />
+    <Content Include="Scripts\echarts\select-widget-min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -385,6 +396,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Data\" />
+    <Folder Include="Library\" />
     <Folder Include="Zip\" />
   </ItemGroup>
   <ItemGroup>

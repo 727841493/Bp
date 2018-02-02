@@ -5,15 +5,46 @@
 @Scripts.Render("~/bundles/edit")
 
 <div class="row">
-    <div id="toolbar"></div>
+    <div id="toolbar">
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addYear">添加年份</button>
+    </div>
     <div class="col-md-12">
 
         @*报表展示*@
-        <table id="showCost" data-mobile-responsive="true" data-card-view="true"></table>
-
+        <table id="showYear" data-detail-view="true"></table>
+        <span id="total"></span>
     </div>
 </div>
-@*成本拟态框*@
+
+@*添加成本年份拟态框*@
+<div class="modal fade" id="addYear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">年份</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <table style="width:100%;text-align: center;line-height: 20px;font-size: 20px;">
+                        <tr>
+                            <td style="width:30%;">年份：</td>
+                            <td style="float:left;"><input id="year" type="text" name="text" /></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addOneYear()">提交</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*添加成本拟态框*@
 <div class="modal fade" id="editCost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -22,39 +53,40 @@
                 <h4 class="modal-title" id="myModalLabel">项目成本</h4>
             </div>
             <div class="modal-body">
-                <h4 class="modal-title" id="myModalLabel" style="display:none">项目ID：<span id="id"></span></h4>
-                <h4 class="modal-title" id="myModalLabel" style="display:none">项目编码：<span id="bm"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" >月份：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" >年份：<span id="bm"></span></h4>
                 <div>
                     <table style="width:100%;text-align: center;line-height: 20px;font-size: 20px;">
                         <tr>
                             <td style="width:30%;">钻孔：</td>
-                            <td style="float:left;"><input id="zk" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="zk" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>火工品:</td>
-                            <td style="float:left;"><input id="hgp" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="hgp" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>冲击炮:</td>
-                            <td style="float:left;"><input id="cjp" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="cjp" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>装载：</td>
-                            <td style="float:left;"><input id="zz" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="zz" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>运输：</td>
-                            <td style="float:left;"> <input id="ys" type="text" name="text"/></td>
+                            <td style="float:left;"> <input id="ys" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>辅助：</td>
-                            <td style="float:left;"><input id="fz" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="fz" type="text" name="v" /></td>
                         </tr>
                         <tr>
                             <td>其他：</td>
-                            <td style="float:left;"><input id="qt" type="text" name="text"/></td>
+                            <td style="float:left;"><input id="qt" type="text" name="v" /></td>
                         </tr>
                     </table>
+
                 </div>
 
             </div>

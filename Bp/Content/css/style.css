@@ -2694,7 +2694,7 @@ input[type="text"] {
     }
 
 .opacity input[type="checkbox"], .opacity input[type="radio"] {
-    display: none;
+    /*display: none;*/
 }
 
     .opacity input[type="checkbox"] + span:before, .opacity input[type="radio"] + span:before {
