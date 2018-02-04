@@ -38,9 +38,17 @@
             success: function (result) {
                 $("#dlm").html("登录名：" + result.登录名)
                 $("#yhm").html("用户姓名：" + result.用户姓名)
-                $("#jb").html("级别：" + result.级别)
-                $("#lsbm").html("隶属部门：" + result.隶属部门)
-                $("#ywks").html("业务科室：" + result.业务科室)
+                $("#yhlb").html("用户类别：" + result.用户类别)
+                if (result.邮箱 == null) {
+                    $("#yx").html("邮箱：" + 无)
+                } else {
+                    $("#yx").html("邮箱：" + result.邮箱)
+                }
+                if (result.手机 == null) {
+                    $("#sj").html("手机：" + 无)
+                } else {
+                    $("#sj").html("手机：" + result.手机)
+                }
             }
         });
     }

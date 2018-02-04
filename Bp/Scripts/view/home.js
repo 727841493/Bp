@@ -261,9 +261,27 @@ $(function () {
                 title: "上传人",
                 valign: "middle",
                 align: "center",
+            }, {
+                title: "操作",
+                valign: "middle",
+                align: "center",
+                formatter:deleteFormatter
             }
         ],
     });
+    //删除
+    function deleteFormatter(value, row, index) {
+        return [
+            '<a href="#"',
+            'onclick="deleteFile(',
+            "'",
+            row.ID,
+            "'",
+            ')">',
+            '删除',
+            '</a>',
+        ].join('');
+    }
 
     //状态
     function statusFormatter(value) {
@@ -274,9 +292,10 @@ $(function () {
         return flag;
     }
 
-    //一分钟刷新通知区
+    //一分钟刷新
     setInterval("refresh();", 1 * 60 * 1000);
 
+    //添加留言
     $("#addMsg").click(function () {
         var title = $("#Title").val();
         var context = $("#Content").val();
@@ -300,15 +319,16 @@ $(function () {
         }
     });
 
+    //添加留言模态框关闭
     $('#AddMessages').on('hide.bs.modal', function () {
         $("#Title").val("");
         $("#Content").val("");
     });
-
+    //查看留言模态框关闭
     $('#ReadMessages').on('hide.bs.modal', function () {
         $("#showMsg").bootstrapTable('refresh');
     });
-
+    //上传共享文件模态框关闭
     $('#upShare').on('hide.bs.modal', function () {
         $("#showFlie").bootstrapTable('refresh');
     });
@@ -317,6 +337,24 @@ $(function () {
 function refresh() {
     $("#showMsg").bootstrapTable('refresh');
     $("#showFlie").bootstrapTable('refresh');
+}
+
+//删除共享文件
+function deleteFile(id) {
+    $.ajax({
+        url: '/Home/DeleteShareFile',
+        type: 'post',
+        data: {
+            "id": id,
+        },
+        success: function (result) {
+            if (!result.success) {
+                alert(result.message);
+            } else {
+                window.location.reload();
+            }
+        }
+    });
 }
 
 //通知信息

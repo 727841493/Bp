@@ -64,7 +64,7 @@ namespace Bp.Controllers
                                填充 = sj.填充,
                                孔总深 = sj.平均孔深 * sj.孔数,
                                爆破量 = (sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65,
-                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65,
+                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / (((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65),
                                块度平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.块度评分).Average(),
                                抛掷平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.抛掷评分).Average(),
                                根底平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.根底评分).Average(),

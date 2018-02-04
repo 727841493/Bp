@@ -265,7 +265,7 @@ namespace Bp.Controllers
             var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
             //文件夹
             var guid = Guid.NewGuid().ToString();
-            string strPath = homePath + "\\" + guid;
+            string strPath = homePath + guid;
             //判断文件夹是否存在
             if (!Directory.Exists(strPath))
             {

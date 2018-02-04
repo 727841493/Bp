@@ -542,7 +542,7 @@ $(function () {
                     // 根据名字对应到相应的系列
                     name: '平均孔深',
                     data: data.map(function (v, i) {
-                        return v.孔总深
+                        return v.平均孔深
                     })
                 },
                 {

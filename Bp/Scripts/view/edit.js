@@ -35,7 +35,7 @@
                     rowspan: 2,
                 },
                 {
-                    title: "项目成本",
+                    title: "采矿成本",
                     valign: "middle",
                     align: "center",
                     colspan: 8,
@@ -209,7 +209,7 @@ function buildTable($el, cells, rows, all) {
                 rowspan: 2,
             },
             {
-                title: "项目成本",
+                title: "采矿成本",
                 valign: "middle",
                 align: "center",
                 colspan: 8,
