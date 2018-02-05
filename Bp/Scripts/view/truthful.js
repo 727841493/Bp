@@ -3,6 +3,8 @@ $(function () {
     //项目设计数据
     $('#showTrue').bootstrapTable({
         method: "post",//请求方式
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        showExport: true,//导出按钮
         url: '/Table/QueryStatistics',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         pagination: true,//显示分页条
@@ -187,8 +189,18 @@ $(function () {
 
 //数据保留两位小数
 function numberFormatter(v) {
-    return v.toFixed(2);
+    if (v != null) {
+        return v.toFixed(2);
+    }
 }
+
+//数据百分比显示
+function numberFormatter1(v) {
+    var str = Number(v * 100).toFixed(2);
+    str += "%";
+    return str;
+}
+
 //点击查看详情
 function detailFormatter(index, row) {
     var html = [];
@@ -270,67 +282,67 @@ function cost(id, name) {
                 title: "孔距",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '排距',
                 title: "排距",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '孔数',
                 title: "孔数",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '平均孔深',
                 title: "平均孔深",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '炸药量',
                 title: "炸药量",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '抵抗线',
                 title: "抵抗线",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '超深',
                 title: "超深",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '填充',
                 title: "填充",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '孔总深',
                 title: "孔总深",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '爆破量',
                 title: "爆破量",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             }, {
                 field: '炸药单耗',
                 title: "炸药单耗",
                 valign: "middle",
                 align: "center",
-                formatter: numberFormatter
+                formatter: numberFormatter1
             },
         ],
     })
@@ -361,6 +373,8 @@ function buildTable($el, cells, rows, id, name) {
     }
     $el.bootstrapTable({
         method: "post",//请求方式
+        //toolbar: "#toolbar",//工具按钮用哪个容器
+        //showExport: true,//导出按钮
         url: '/Table/QueryTureData',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         queryParams: queryBy(id, name),
