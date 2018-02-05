@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "爆破项目";
+}
+
+@Scripts.Render("~/bundles/truthful")
+
+<div class="row">
+    <div id="toolbar">
+    </div>
+    <div class="col-md-12">
+        @*报表展示*@
+        <table id="showTrue"></table>
+    </div>
+</div>
+
+@*真实数据拟态框*@
+<div class="modal fade" id="myTure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">添加/修改</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title" id="myModalLabel" style="display:none">项目编码：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" style="display:none">日期：<span id="name"></span></h4>
+                <div>
+                    <table style="width:100%;text-align: center;line-height: 20px;font-size: 20px;">
+                        <tr>
+                            <td style="width:30%;">孔距：</td>
+                            <td style="float:left;"><input id="tkj" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>排距:</td>
+                            <td style="float:left;"><input id="tpj" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>孔数:</td>
+                            <td style="float:left;"><input id="tks" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>平均孔深：</td>
+                            <td style="float:left;"><input id="tpjks" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>炸药量：</td>
+                            <td style="float:left;"> <input id="tzyl" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>抵抗线：</td>
+                            <td style="float:left;"><input id="tdkx" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>超深：</td>
+                            <td style="float:left;"><input id="tcs" type="text" name="sc" /></td>
+                        </tr>
+                        <tr>
+                            <td>填充：</td>
+                            <td style="float:left;"><input id="ttc" type="text" name="sc" /></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="SaveChange()">提交</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*真实数据与设计数据对比*@
+<div class="modal fade" id="myContrast" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">对比</h4>
+            </div>
+            <div class="modal-body">
+                <h4>误差值（设计值与实际值绝对值差值/实际值）</h4>
+                <table id="wc"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -129,16 +129,16 @@ namespace Bp.Controllers
                 switch (sortOrder)
                 {
                     case "a":
-                        xmsj = xmsj.OrderByDescending(w => w.项目编码);
+                        xmsj = xmsj.OrderByDescending(w => w.日期);
                         break;
                     case "last_desc":
-                        xmsj = xmsj.OrderByDescending(w => w.项目编码);
+                        xmsj = xmsj.OrderByDescending(w => w.日期);
                         break;
                     case "last":
-                        xmsj = xmsj.OrderBy(w => w.项目编码);
+                        xmsj = xmsj.OrderBy(w => w.日期);
                         break;
                     default:
-                        xmsj = xmsj.OrderBy(w => w.项目编码);
+                        xmsj = xmsj.OrderByDescending(w => w.日期);
                         break;
                 };
                 return Json(xmsj);
@@ -237,6 +237,22 @@ namespace Bp.Controllers
             }
         }
 
+        //删除通知
+        public string DeleteMessage(string id, string title)
+        {
+            try
+            {
+                var list = db.Bp_通知.Where(x => x.ID == id && x.标题 == title);
+                db.Bp_通知.RemoveRange(list);
+                db.SaveChanges();
+                return AjaxResult.Success(null, "删除成功").ToString();
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("删除失败！").ToString();
+            }
+        }
+
         //查询共享文件
         public JsonResult QueryAllShare()
         {
@@ -287,7 +303,8 @@ namespace Bp.Controllers
             //文件存放路径
             var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
             var guid = Guid.NewGuid().ToString();
-            string strPath = Server.MapPath(homePath) + guid;
+            //string strPath = Server.MapPath(homePath) + guid;
+            string strPath = homePath + guid;
             //判断文件夹是否存在
             if (!Directory.Exists(strPath))
             {
@@ -374,6 +391,48 @@ namespace Bp.Controllers
             Response.End();
             //删除备份
             System.IO.File.Delete(absoluFilePath);
+        }
+
+        /// <summary>
+        ///删除共享文件
+        /// </summary>
+        /// <param name="id">文档的guid</param>
+        public string DeleteShareFile(string id)
+        {
+
+            var list = db.Bp_分享资料.Where(x => x.ID == id);
+
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+
+            try
+            {
+                foreach (var l in list)
+                {
+                    //文件路径
+                    string path = homePath + l.ID;
+                    DirectoryInfo dir = new DirectoryInfo(path);
+                    if (dir.Exists)
+                    {
+                        DirectoryInfo[] childs = dir.GetDirectories();
+                        foreach (DirectoryInfo child in childs)
+                        {
+                            child.Delete(true);
+                        }
+                        dir.Delete(true);
+                    }
+                }
+
+                db.Bp_分享资料.RemoveRange(list);
+                db.SaveChanges();
+                return AjaxResult.Success(null, "删除成功").ToString();
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("删除失败").ToString();
+            }
+
+
         }
     }
 }

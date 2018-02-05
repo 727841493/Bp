@@ -2,6 +2,7 @@
 using Bp.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,16 +14,33 @@ namespace Bp.Controllers
 
         DBContext db = new DBContext();
 
+        /// <summary>
+        ///查询页面
+        /// </summary>
         public ActionResult Query()
         {
             return View();
         }
 
-        public ActionResult Mark()
+        /// <summary>
+        ///操作页面
+        /// </summary>
+        public ActionResult Operation()
         {
             return View();
         }
 
+        /// <summary>
+        ///真实数据页面
+        /// </summary>
+        public ActionResult Truthful()
+        {
+            return View();
+        }
+
+        /// <summary>
+        ///成本页面
+        /// </summary>
         public ActionResult Edit()
         {
             return View();
@@ -64,24 +82,24 @@ namespace Bp.Controllers
                                填充 = sj.填充,
                                孔总深 = sj.平均孔深 * sj.孔数,
                                爆破量 = (sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65,
-                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65,
+                               炸药单耗 = ((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) == 0 ? 0 : sj.炸药量 / (((sj.孔距 / sj.数量) * (sj.排距 / sj.数量) * (sj.平均孔深 - (sj.超深 / sj.数量)) * sj.孔数 * 2.65) / 2.65),
                                块度平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.块度评分).Average(),
                                抛掷平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.抛掷评分).Average(),
                                根底平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.根底评分).Average(),
                                伞岩平均分 = db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.伞岩评分).Average(),
                                总平均分 = (db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.块度评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.抛掷评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.根底评分).Average() + db.Bp_Data_comment.Where(b => b.项目编码 == sj.项目编码 && b.项目ID == sj.项目ID).Select(b => b.伞岩评分).Average()) / 4,
-                               可打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID && x.评论人 == name),
-                               查看历史 = db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID),
+                               打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID && x.评论人 == name),
+                               查看 = db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID),
+                               下载 = db.Bp_项目资料.Any(x => x.项目编码 == sj.项目编码),
+                               预览 = db.Bp_项目资料.Where(x => x.项目编码 == sj.项目编码).Select(x => x.资料名称)
                            };
                 if (!string.IsNullOrEmpty(startTime))
                 {
-                    //list = list.Where(x => String.Compare(startTime, x.日期) <= 0);
-                    list = list.Where(x => x.日期.CompareTo(startTime) >= 0);
+                    list = list.Where(x => String.Compare(startTime, x.日期) <= 0);
                 }
                 if (!string.IsNullOrEmpty(endTime))
                 {
-                    //list = list.Where(x => String.Compare(x.日期, endTime) <= 0);
-                    list = list.Where(x => x.日期.CompareTo(endTime) < 0);
+                    list = list.Where(x => String.Compare(x.日期, endTime) <= 0);
                 }
                 if (steps != null)
                 {
@@ -114,16 +132,16 @@ namespace Bp.Controllers
                 switch (sortOrder)
                 {
                     case "a":
-                        list = list.OrderByDescending(w => w.项目编码);
+                        list = list.OrderByDescending(w => w.日期);
                         break;
                     case "last_desc":
-                        list = list.OrderByDescending(w => w.项目编码);
+                        list = list.OrderByDescending(w => w.日期);
                         break;
                     case "last":
-                        list = list.OrderBy(w => w.项目编码);
+                        list = list.OrderBy(w => w.日期);
                         break;
                     default:
-                        list = list.OrderBy(w => w.项目编码);
+                        list = list.OrderByDescending(w => w.日期);
                         break;
                 };
                 return Json(list);
@@ -237,6 +255,201 @@ namespace Bp.Controllers
 
         }
 
+        /// <summary>
+        ///下载文件
+        /// </summary>
+        /// <param name="id">项目编码</param>
+        public void DownloadFile(string id)
+        {
+            //根据项目编码查询符合条件的资料
+            var list = db.Bp_项目资料.Where(x => x.项目编码 == id);
+
+            //存放查询出来的文件
+            List<string> files = new List<string>();
+
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+
+            foreach (var s in list)
+            {
+                //动态拼接文件路径
+                string path = homePath + s.资料ID;
+                var ls = Directory.GetFiles(path).ToList();
+                files.AddRange(ls);
+            }
+            //压缩包名称
+            string fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + @".zip";
+            //string absoluFilePath = @"C:\Program Files (x86)\MicroStarSoft\中矿微星后台服务程序\UserFiles\Zip\"+date+@".zip";
+            //压缩包备份路径
+            string absolu = System.Configuration.ConfigurationManager.AppSettings["absoluSrc"];
+            //压缩包备份
+            string absoluFilePath = Server.MapPath(absolu) + fileName;
+            ZipHelper.ZipManyFilesOrDictorys(files, absoluFilePath, null);
+            //string absoluFilePath = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentPath"] + filePath);
+            //下载
+            Response.ClearHeaders();
+            Response.Clear();
+            Response.Expires = 0;
+            Response.Buffer = true;
+            Response.AddHeader("Accept-Language", "zh-tw");
+            FileStream fileStream = new FileStream(absoluFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            byte[] byteFile = null;
+            if (fileStream.Length == 0)
+            {
+                byteFile = new byte[1];
+            }
+            else
+            {
+                byteFile = new byte[fileStream.Length];
+            }
+            fileStream.Read(byteFile, 0, (int)byteFile.Length);
+            fileStream.Close();
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(fileName, System.Text.Encoding.UTF8));
+            Response.ContentType = "application/octet-stream";
+            Response.BinaryWrite(byteFile);
+            Response.Flush();
+            Response.End();
+            //删除备份
+            System.IO.File.Delete(absoluFilePath);
+        }
+
+        /// <summary>
+        ///查询文件中的图片
+        /// </summary>
+        /// <param name="id">项目编码</param>
+        /// <returns>图片</returns>
+        public JsonResult QueryFile(string id)
+        {
+            //根据项目编码查询符合条件的资料
+            var list = db.Bp_项目资料.Where(x => x.项目编码 == id);
+
+            //存放查询出来的文件
+            List<string> files = new List<string>();
+
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+
+            //目标文件夹配置路径
+            string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
+
+            //目标文件夹的文件名
+            string desdir = Server.MapPath(load) + CookieResult.CookieName();
+            //判断文件夹是否存在
+            if (!Directory.Exists(desdir))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(desdir);
+            }
+
+            foreach (var s in list)
+            {
+                //动态拼接文件路径
+                string path = homePath + s.资料ID;
+
+                //文件路径集合
+                var ls = Directory.GetFiles(path).ToList();
+
+                foreach (var l in ls)
+                {
+                    try
+                    {
+                        //判断文件是否是图片格式
+                        System.Drawing.Image img = System.Drawing.Image.FromFile(l);
+
+                        //目标图片保存的路径和名称
+                        String imgPath = desdir + '\\' + l.Split('\\').Last();
+
+                        //true 覆盖已存在的同名文件,false则反之
+                        bool isrewrite = true;
+
+                        //从源文件复制到目标文件中
+                        System.IO.File.Copy(l, imgPath, isrewrite);
+
+                        //绝对路径转换为相对路径
+                        int j = imgPath.IndexOf("Data");
+                        string str = imgPath.Substring(j);
+                        string url = str.Replace(@"\", @"/");
+
+                        //添加到查询文件集合中
+                        files.Add("../" + url);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+            }
+            return Json(files);
+        }
+
+        /// <summary>
+        ///上传文件
+        /// </summary>
+        [HttpPost]
+        public void UploadFile()
+        {
+            var name = CookieResult.CookieName();
+            //流水号
+            var number = db.Bp_项目资料.Select(x => x.流水号).Max();
+            //项目编码
+            var bm = Request["ubm"].ToString();
+            //项目名称
+            var nm = Request["unm"].ToString();
+            //上传时间
+            var time = DateTime.Now;
+            //文件
+            HttpPostedFileBase file = Request.Files["filename"];
+            //文件名称
+            var fileName = file.FileName;
+            //上传电脑
+            System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);//根据目标IP地址获取IP对象
+            System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);//根据IP对象创建主机对象
+            string clientPCName = ihe.HostName;//获取客户端主机名称
+            //上传根路径
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+            //文件夹
+            var guid = Guid.NewGuid().ToString();
+            string strPath = homePath + guid;
+            //判断文件夹是否存在
+            if (!Directory.Exists(strPath))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(strPath);
+            }
+            //保存
+            var filePath = string.Format("{0}", strPath);
+
+            Bp_项目资料 zl = new Bp_项目资料
+            {
+                项目名称 = nm,
+                项目编码 = bm,
+                资料ID = guid,
+                上传人 = name,
+                上传时间 = time,
+                资料名称 = fileName,
+                上传电脑 = clientPCName,
+                流水号 = number + 1,
+            };
+            db.Bp_项目资料.Add(zl);
+
+            try
+            {
+                file.SaveAs(Path.Combine(filePath, fileName));
+                db.SaveChanges();
+                Response.Write("<script>alert('上传成功');window.location.href='/Table/Operation';</script>");
+            }
+            catch (Exception)
+            {
+                Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
+            }
+        }
+
+        /// <summary>
+        ///查看成本统计
+        /// </summary>
+        /// <param name="id">月份</param>
+        /// <param name="bm">年份</param>
+        /// <returns>成本统计</returns>
         public JsonResult QueryCost(string id, string bm)
         {
             try
@@ -293,7 +506,13 @@ namespace Bp.Controllers
             }
         }
 
-        //添加或修改(id -- 月份,bm -- 年份)
+
+        /// <summary>
+        ///添加或修改
+        /// </summary>
+        /// <param name="id">月份</param>
+        /// <param name="bm">年份</param>
+        /// <returns>是否成功</returns>
         public string SaveOrChange(string id, string bm, string zk, string hgp, string cjp, string zz, string ys, string fz, string qt)
         {
             try
@@ -349,7 +568,11 @@ namespace Bp.Controllers
             }
         }
 
-        //添加成本年份和月份
+        /// <summary>
+        ///添加成本年份和月份
+        /// </summary>
+        /// <param name="year">年份</param>
+        /// <returns>是否成功</returns>
         public string AddOneYear(string year)
         {
             try
@@ -389,7 +612,10 @@ namespace Bp.Controllers
             }
         }
 
-        //成本年份查询
+        /// <summary>
+        ///成本年份查询
+        /// </summary>
+        /// <returns>成本年份</returns>
         public JsonResult QueryCostYears()
         {
             try
@@ -438,6 +664,7 @@ namespace Bp.Controllers
 
         /// <summary>
         ///查询该年每月成本
+        ///<param name="id">月份</param>
         /// </summary>
         public JsonResult QueryYearCost(string id)
         {
@@ -493,5 +720,141 @@ namespace Bp.Controllers
             }
         }
 
+        /// <summary>
+        ///查询该次爆破的真实数据
+        ///<param name="id">项目编码</param>
+        ///<param name="name">项目名称(日期)</param>
+        /// </summary>
+        public JsonResult QueryTureData(string id, string name)
+        {
+            try
+            {
+                var f = db.Bp_项目数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
+                var t = db.Bp_真实数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
+                if (f != null && t == null)
+                {
+                    Bp_真实数据 bp = new Bp_真实数据
+                    {
+                        项目ID = f.项目ID,
+                        项目编码 = f.项目编码,
+                        日期 = f.日期,
+                    };
+                    db.Bp_真实数据.Add(bp);
+                    db.SaveChanges();
+                }
+                var list = from tu in db.Bp_真实数据
+                           select new
+                           {
+                               项目编码 = tu.项目编码,
+                               日期 = tu.日期,
+                               孔距 = tu.孔距,
+                               排距 = tu.排距,
+                               孔数 = tu.孔数,
+                               平均孔深 = tu.平均孔深,
+                               炸药量 = tu.炸药量,
+                               抵抗线 = tu.抵抗线,
+                               超深 = tu.超深,
+                               填充 = tu.填充,
+                               孔总深 = tu.平均孔深 * tu.孔数,
+                               爆破量 = tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65,
+                               炸药单耗 = (tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65) / 2.65 == 0 ? 0 : tu.炸药量 / ((tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65) / 2.65),
+                           };
+                return Json(list);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        ///添加或修改该次爆破的真实数据
+        /// </summary>
+        public string SaveOrChangeData(string id, string name, double? tkj, double? tpj, int? tks, double? tpjks, double? tzyl, double? tdkx, double? tcs, double? ttc)
+        {
+            try
+            {
+                var t = db.Bp_真实数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
+                if (t != null)
+                {
+                    t.孔距 = tkj;
+                    t.排距 = tpj;
+                    t.孔数 = tks;
+                    t.平均孔深 = tpjks;
+                    t.炸药量 = tzyl;
+                    t.抵抗线 = tdkx;
+                    t.超深 = tcs;
+                    t.填充 = ttc;
+                }
+                db.SaveChanges();
+                return AjaxResult.Success(null, "操作成功").ToString();
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("操作失败").ToString();
+            }
+
+        }
+
+        /// <summary>
+        ///该次爆破的真实数据与设计数据对比
+        /// </summary>
+        public JsonResult TdContrastFd(string id, string name)
+        {
+            int pageSize = int.Parse(Request["pageSize"] ?? "10");
+            int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+            string sortOrder = Request["sortOrder"];
+            string searchText = Request["searchText"];
+            string sortName = Request["sortName"];
+
+            var list = from f in db.Bp_项目数据
+                       join t in db.Bp_真实数据 on f.项目编码 equals t.项目编码
+                       select new
+                       {
+                           项目编码 = f.项目编码,
+                           日期 = f.日期,
+
+                           //孔距 排距 抵抗线 超深 
+
+
+                           孔距 = t.孔距 == 0 ? 0 : f.孔距 / f.数量 - t.孔距 < 0 ? (f.孔距 / f.数量 - t.孔距) * (-1) / t.孔距 : (f.孔距 / f.数量 - t.孔距) / t.孔距,
+
+                           排距 = t.排距 == 0 ? 0 : f.排距 / f.数量 - t.排距 < 0 ? (f.排距 / f.数量 - t.排距) * (-1) / t.排距 : (f.排距 / f.数量 - t.排距) / t.排距,
+
+                           孔数 = t.孔数 == 0 ? 0 : f.孔数 - t.孔数 < 0 ? (f.孔数 - t.孔数) * (-1) / t.孔数 : (f.孔数  - t.孔数) / t.孔数,
+
+                           平均孔深 = t.平均孔深 == 0 ? 0 : f.平均孔深  - t.平均孔深 < 0 ? (f.平均孔深  - t.平均孔深) * (-1) / t.平均孔深 : (f.平均孔深  - t.平均孔深) / t.平均孔深,
+
+                           炸药量 = t.炸药量 == 0 ? 0 : f.炸药量  - t.炸药量 < 0 ? (f.炸药量 - t.炸药量) * (-1) / t.炸药量 : (f.炸药量 - t.炸药量) / t.炸药量,
+
+                           抵抗线 = t.抵抗线 == 0 ? 0 : f.抵抗线 / f.数量 - t.抵抗线 < 0 ? (f.抵抗线 / f.数量 - t.抵抗线) * (-1) / t.抵抗线 : (f.抵抗线 / f.数量 - t.抵抗线) / t.抵抗线,
+
+                           超深 = t.超深 == 0 ? 0 : f.超深 / f.数量 - t.超深 < 0 ? (f.超深 / f.数量 - t.超深) * (-1) / t.超深 : (f.超深 / f.数量 - t.超深 )/ t.超深,
+
+                           填充 = t.填充 == 0 ? 0 : f.填充  - t.填充 < 0 ? (f.填充  - t.填充) * (-1) / t.填充 : (f.填充 - t.填充) / t.填充,
+
+                           孔总深 = t.平均孔深 * t.孔数 == 0 ? 0 : (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) < 0 ? (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) * (-1) / (t.平均孔深 * t.孔数) : (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) / (t.平均孔深 * t.孔数),
+
+                           爆破量 = t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65 == 0 ? 0 : ((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深  - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) < 0 ? (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65)) * (-1) / (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) : (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) )/ (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65),
+
+                           炸药单耗 = (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65 == 0 ? 0 : (f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) < 0 ? ((f.炸药量  / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) * (-1) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) : ((f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - (f.超深 / f.数量)) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)),
+                       };
+            switch (sortOrder)
+            {
+                case "a":
+                    list = list.OrderByDescending(w => w.日期);
+                    break;
+                case "last_desc":
+                    list = list.OrderByDescending(w => w.日期);
+                    break;
+                case "last":
+                    list = list.OrderBy(w => w.日期);
+                    break;
+                default:
+                    list = list.OrderBy(w => w.日期);
+                    break;
+            };
+            return Json(list);
+        }
     }
 }

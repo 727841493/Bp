@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "爆破项目";
+}
+
+@Styles.Render("~/Content/comment")
+@Scripts.Render("~/bundles/comment")
+@Scripts.Render("~/bundles/table")
+
+<div class="row">
+    <div id="toolbar"></div>
+    <div class="col-md-12">
+
+        @*报表展示*@
+        @*<table id="mark" data-mobile-responsive="true" data-card-view="true"></table>*@
+        <table id="mark"></table>
+    </div>
+</div>
+
+@*打分拟态框*@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">评分</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title" id="myModalLabel" style="display:none;">项目编码：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel"> 块度：</h4>
+                <input id="kd" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 抛掷：</h4>
+                <input id="pz" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 根底：</h4>
+                <input id="gd" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <h4 class="modal-title" id="myModalLabel"> 伞岩：</h4>
+                <input id="sy" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="sm">
+                <div class="form-group">
+                    <label for="message-text" class="control-label">评论:</label>
+                    <textarea class="form-control" id="message-text" style="resize:none;height:120px;max-width:80%"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="sumbit()">提交</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*查看评分历史拟态框*@
+<div class="modal fade" id="seeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">评分记录</h4>
+            </div>
+            <div class="modal-body">
+
+                <table id="history"></table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*文件上传*@
+<div class="modal fade" id="upModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">上传</h4>
+            </div>
+            <form enctype="multipart/form-data" id="form1" runat="server" action="/Table/UploadFile" method="post">
+                <div class="modal-body">
+                    <label for="bm" style="display:none">项目编码：</label>
+                    <input type="text" id="ubm" name="ubm" readonly style="display:none" />
+                    <label for="bm" style="display:none">日期：</label>
+                    <input type="text" id="unm" name="unm" readonly style="display:none" />
+                    <label for="file">选择文件：</label>
+                    <input type="file" name="filename">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">上传</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*图片预览框*@
+<div id="image" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width:100%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="carousel-example-generic" class="carousel slide">
+                    <!-- Indicators -->
+                    <ol id="Indicators" class="carousel-indicators"></ol>
+                    <!-- Wrapper for slides -->
+                    <div id="Wrapper" class="carousel-inner" role="listbox">
+                    </div>
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <!-- 关闭按钮 -->
+            <div id="Button" class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

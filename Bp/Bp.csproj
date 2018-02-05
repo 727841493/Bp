@@ -178,10 +178,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ZipController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TableController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filter\LoginFilter.cs" />
     <Compile Include="Filter\WebApiExceptionFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -301,7 +300,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\echarts\common.js" />
     <Content Include="Scripts\echarts\echarts.js" />
@@ -366,13 +364,13 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\star-rating.js" />
+    <Content Include="Scripts\view\account.js" />
+    <Content Include="Scripts\view\truthful.js" />
     <Content Include="Scripts\view\edit.js" />
+    <Content Include="Scripts\view\home.js" />
     <Content Include="Scripts\view\table.js" />
     <Content Include="Scripts\view\top.js" />
-    <Content Include="Scripts\view\zip.js" />
     <Content Include="Scripts\view\user.js" />
-    <Content Include="Scripts\view\home.js" />
-    <Content Include="Scripts\view\account.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -382,21 +380,20 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\Index.cshtml" />
-    <Content Include="Views\User\Index.cshtml" />
-    <Content Include="Views\Table\Query.cshtml" />
-    <Content Include="Views\Table\Mark.cshtml" />
-    <Content Include="Views\Zip\Down.cshtml" />
-    <Content Include="Views\Zip\Up.cshtml" />
     <Content Include="Views\Table\Edit.cshtml" />
+    <Content Include="Views\Table\Operation.cshtml" />
+    <Content Include="Views\Table\Query.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\Table\Truthful.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Data\" />
-    <Folder Include="Library\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Zip\" />
   </ItemGroup>
   <ItemGroup>

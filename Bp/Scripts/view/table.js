@@ -42,11 +42,56 @@ function sumbit() {
 function detailFormatter(index, row) {
     var html = [];
     $.each(row, function (key, value) {
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+        if (key == "项目编码" || key == "预览" || value == true || value == false) {
+            return true;
+        }
+        if (typeof value == "number") {
+            html.push('<p><b>' + key + ':</b> ' + value.toFixed(2) + '</p>');
+        } else {
+            html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+        }
     });
     return html.join('');
 }
+//查询并预览图片
+function queryFilePicture(id) {
+    $.ajax({
+        url: '/Table/QueryFile',
+        type: 'post',
+        data: {
+            "id": id,
+        },
+        success: function (result) {
 
+            var Indicators = [];
+            var Wrapper = [];
+            var Button = [];
+
+            $.each(result, function (i, v) {
+                Indicators.push('<li data-target="#carousel-example-generic" data-slide-to="')
+                Indicators.push(i)
+                Indicators.push('"')
+                Wrapper.push('<div class="item')
+                if (i === 0) {
+                    Indicators.push(' class="active"')
+                    Wrapper.push(' active')
+                }
+                Indicators.push('></li>');
+
+                Wrapper.push('"><img src="')
+                Wrapper.push(v)
+                Wrapper.push('"></div>')
+            })
+
+            Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
+
+            $('#Indicators').html(Indicators.join(''));
+            $('#Wrapper').html(Wrapper.join(''));
+            $('#Button').html(Button.join(''));
+            $('#image').modal('show');
+        }
+    });
+}
 //历史记录表格
 function records(id) {
     //评分的历史记录表格
@@ -97,7 +142,10 @@ function records(id) {
         ]
     });
 }
-
+function upFile(id, nm) {
+    $("#ubm").val(id);
+    $("#unm").val(nm);
+}
 
 $(function () {
 
@@ -140,7 +188,7 @@ $(function () {
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
         showExport: true,//导出按钮
-        showColumns: "true",//选择显示的列
+        //showColumns: "true",//选择显示的列
         showToggle: "table",//切换视图
         showRefresh: "true",//刷新
         url: '/Table/QueryStatistics',//请求地址
@@ -150,7 +198,11 @@ $(function () {
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
         pageSize: 10,//页面数据条数
-        pageList: [2, 5, 10],//可选的每页显示数据个数
+        pageList: [5, 10, "All"],//可选的每页显示数据个数
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
         maintainSelected: true, //checkbox的选择项
         responseHandler: myHandler,
         columns: [
@@ -169,6 +221,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     visible: false,
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 }, {
@@ -176,6 +229,7 @@ $(function () {
                     title: "台阶水平",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -184,6 +238,7 @@ $(function () {
                     title: "日期",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -192,6 +247,7 @@ $(function () {
                     title: "岩性",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -200,6 +256,7 @@ $(function () {
                     title: "孔距 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -209,6 +266,7 @@ $(function () {
                     title: "排距 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -218,6 +276,7 @@ $(function () {
                     title: "孔数",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -226,6 +285,7 @@ $(function () {
                     title: "孔总深 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -235,6 +295,7 @@ $(function () {
                     title: "平均孔深 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -243,6 +304,7 @@ $(function () {
                     title: "炸药量 /kg",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -251,6 +313,7 @@ $(function () {
                     title: "抵抗线 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -260,6 +323,7 @@ $(function () {
                     title: "超深 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -269,6 +333,7 @@ $(function () {
                     title: "填充 /m",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -277,6 +342,7 @@ $(function () {
                     title: "爆破量 /吨",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -286,6 +352,7 @@ $(function () {
                     title: "炸药单耗 kg/m³",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                     formatter: numberFormatter
@@ -302,25 +369,29 @@ $(function () {
                     field: '块度平均分',
                     title: '块度',
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    sortable: true,
                 },
                 {
                     field: '抛掷平均分',
                     title: '抛掷',
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    sortable: true,
                 },
                 {
                     field: '根底平均分',
                     title: '根底',
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    sortable: true,
                 },
                 {
                     field: '伞岩平均分',
                     title: '伞岩',
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    sortable: true,
                 },
             ]
         ]
@@ -358,11 +429,11 @@ $(function () {
     }
 
     //查看评分记录
-    function loadFormatter(value, row, index) {
+    function seeFormatter(value, row, index) {
         var disabled = value ? "" : "disabled";
         return [
             '<button  ', disabled,
-            ' data-toggle="modal" data-target="#loadModal" class="btn btn-primary" onclick="records(',
+            ' data-toggle="modal" data-target="#seeModal" class="btn btn-primary" onclick="records(',
             "'" + row.项目编码 + "'",
             ')">',
             '历史记录',
@@ -370,7 +441,58 @@ $(function () {
         ].join('');
     }
 
+    //上传文件
+    function upFormatter(value, row, index) {
+        return [
+            '<button data-toggle="modal" data-target="#upModal" class="btn btn-primary" onclick="upFile(',
+            "'" + row.项目编码 + "'",
+            ',',
+            "'" + row.日期 + "'",
+            ')">',
+            '上传',
+            '</button>',
+        ].join('');
+    }
+
+    //预览图片
+    function lookFormatter(value, row, index) {
+        var flag = false;
+        for (var i = 0; i < value.length; i++) {
+            var index = value[i].lastIndexOf(".");
+            var img = value[i].substring(index + 1);
+            if (img == "bmp" || img == "png" || img == "gif" || img == "jpg" || img == "jpeg" || img == "JPG" || img == "PNG" || img == "JPEG" || img == "GIF") {
+                flag = true;
+                break;
+            }
+        }
+        var disabled = flag ? "" : "disabled";
+        return [
+            '<button  ', disabled,
+            ' data-toggle="modal" data-target="#loadModal" class="btn btn-primary" onclick="queryFilePicture(',
+            "'" + row.项目编码 + "'",
+            ')">',
+            '预览',
+            '</button>',
+        ].join('');
+    }
+
+    //下载文件
+    function loadFormatter(value, row, index) {
+        var disabled = value ? "" : "disabled";
+        return [
+            '<button  ', disabled,
+            ' type= "button" class="btn btn-primary" onclick="window.location.href=',
+            "'",
+            '/Table/DownloadFile?id=',
+            row.项目编码,
+            "'",
+            '">',
+            '下载',
+            '</button>',
+        ].join('');
+    }
     //打分
+    $('#mark').bootstrapTable('destroy');
     $('#mark').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
@@ -382,7 +504,11 @@ $(function () {
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
         pageSize: 10,//页面数据条数
-        pageList: [2, 5, 10],//可选的每页显示数据个数
+        pageList: [5, 10, "All"],//可选的每页显示数据个数
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
         columns: [
             [
                 {
@@ -399,6 +525,7 @@ $(function () {
                     title: "日期",
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     colspan: 1,
                     rowspan: 2,
                 },
@@ -409,10 +536,10 @@ $(function () {
                     colspan: 4,
                     rowspan: 1
                 }, {
-                    title: "评论",
+                    title: "操作",
                     valign: "middle",
                     align: "center",
-                    colspan: 2,
+                    colspan: 5,
                     rowspan: 1,
                     formatter: commentFormatter
                 }
@@ -420,35 +547,56 @@ $(function () {
                 {
                     field: '块度平均分',
                     title: '块度',
+                    sortable: true,
                     valign: "middle",
                     align: "center"
                 },
                 {
                     field: '抛掷平均分',
                     title: '抛掷',
+                    sortable: true,
                     valign: "middle",
                     align: "center"
                 },
                 {
                     field: '根底平均分',
                     title: '根底',
+                    sortable: true,
                     valign: "middle",
                     align: "center"
                 },
                 {
                     field: '伞岩平均分',
                     title: '伞岩',
+                    sortable: true,
                     valign: "middle",
                     align: "center"
                 }, {
-                    field: '可打分',
+                    field: '打分',
                     title: "评分",
                     valign: "middle",
                     align: "center",
                     formatter: commentFormatter
                 }, {
-                    field: '查看历史',
+                    field: '查看',
                     title: "查看",
+                    valign: "middle",
+                    align: "center",
+                    formatter: seeFormatter
+                }, {
+                    title: '上传',
+                    valign: "middle",
+                    align: "center",
+                    formatter: upFormatter
+                },{
+                    field: '预览',
+                    title: "预览",
+                    valign: "middle",
+                    align: "center",
+                    formatter: lookFormatter
+                }, {
+                    field: '下载',
+                    title: "下载",
                     valign: "middle",
                     align: "center",
                     formatter: loadFormatter
@@ -542,7 +690,7 @@ $(function () {
                     // 根据名字对应到相应的系列
                     name: '平均孔深',
                     data: data.map(function (v, i) {
-                        return v.孔总深
+                        return v.平均孔深
                     })
                 },
                 {
@@ -633,7 +781,11 @@ $(function () {
                             table += '<tr>'
                                 + '<td>' + axisData[i] + '</td>';
                             for (var j = 0; j < series.length; j++) {
-                                table += '<td>' + series[j].data[i] + '</td>';
+                                if (typeof series[j].data[i] == "number") {
+                                    table += '<td>' + series[j].data[i].toFixed(2) + '</td>';
+                                } else {
+                                    table += '<td>' + series[j].data[i] + '</td>';
+                                }
                             }
                             table += '</tr>';
                         }
@@ -669,7 +821,7 @@ $(function () {
         dataZoom: [{
             type: 'inside',
             start: 0,
-            end: 100,
+            end: 20,
         }, {
             start: 74,
             end: 100,

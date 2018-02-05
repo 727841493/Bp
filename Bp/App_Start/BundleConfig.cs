@@ -27,7 +27,7 @@ namespace Bp
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-
+            //框架css
             bundles.Add(new StyleBundle("~/Content/kj").Include(
                       "~/Content/css/font-awesome.css",
                       "~/Content/css/se7en-font.css",
@@ -49,7 +49,7 @@ namespace Bp
                       "~/Content/css/pygments.css",
                       "~/Content/css/style.css"
                       ));
-
+            //框架js
             bundles.Add(new ScriptBundle("~/bundles/kj").Include(
                       "~/Scripts/js/jquery-ui-1.10.2.js",
                       "~/Scripts/js/raphael.min.js",
@@ -98,6 +98,7 @@ namespace Bp
                        "~/Scripts/jquery.cookie.js"
                       ));
 
+            //文本框时间插件
             bundles.Add(new ScriptBundle("~/bundles/time").Include(
                       "~/Scripts/bootstrap-datetimepicker.js",
                      "~/Scripts/bootstrap-datetimepicker.zh-CN.js"
@@ -105,21 +106,24 @@ namespace Bp
             bundles.Add(new StyleBundle("~/Content/time").Include(
                       "~/Content/bootstrap-datetimepicker.css"
                      ));
+            //登录页
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/login.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/login").Include(
                       "~/Scripts/view/account.js"));
-
+            //首页
             bundles.Add(new ScriptBundle("~/bundles/home").Include(
                      "~/Scripts/view/home.js"));
-
+            //用户
             bundles.Add(new ScriptBundle("~/bundles/user").Include(
                      "~/Scripts/view/user.js"));
 
+            //项目页面
             bundles.Add(new ScriptBundle("~/bundles/table").Include(
                      "~/Scripts/view/table.js"));
 
+            //项目评价
             bundles.Add(new StyleBundle("~/Content/comment").Include(
                     "~/Content/star-rating.css"
                    ));
@@ -128,17 +132,22 @@ namespace Bp
                     "~/Scripts/star-rating.js"
                     ));
 
-            bundles.Add(new ScriptBundle("~/bundles/zip").Include(
-                   "~/Scripts/view/zip.js"
-                   ));
-
+            //头部
             bundles.Add(new ScriptBundle("~/bundles/top").Include(
                    "~/Scripts/view/top.js"
                    ));
+
+            //项目成本页面
             bundles.Add(new ScriptBundle("~/bundles/edit").Include(
                    "~/Scripts/view/edit.js"
                    ));
 
+            //项目真实数据页面
+            bundles.Add(new ScriptBundle("~/bundles/truthful").Include(
+                  "~/Scripts/view/truthful.js"
+                  ));
+
+            //Echarts图表
             bundles.Add(new StyleBundle("~/Content/echarts").Include(
                    "~/Content/echarts/drop-down.css",
                    "~/Content/echarts/system.css"

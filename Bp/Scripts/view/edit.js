@@ -20,7 +20,8 @@
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
         pageSize: 10,//页面数据条数
-        pageList: [2, 5, 10],//可选的每页显示数据个数
+        pageList: [5, 10, "All"],//可选的每页显示数据个数
+        detailView: true,
         onExpandRow: function (index, row, $detail) {
             expandTable($detail, 9, 12, row.年份);
         },
@@ -35,7 +36,7 @@
                     rowspan: 2,
                 },
                 {
-                    title: "项目成本",
+                    title: "采矿成本",
                     valign: "middle",
                     align: "center",
                     colspan: 8,
@@ -152,12 +153,18 @@ function changeCostFormatter(value, row, index) {
     ].join('');
 }
 
-
-//一列详情
+//点击查看详情
 function detailFormatter(index, row) {
     var html = [];
     $.each(row, function (key, value) {
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+        if (key == "项目编码" || key == "预览" || value == true || value == false) {
+            return true;
+        }
+        if (typeof value == "number") {
+            html.push('<p><b>' + key + ':</b> ' + value.toFixed(2) + '</p>');
+        } else {
+            html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+        }
     });
     return html.join('');
 }
@@ -209,7 +216,7 @@ function buildTable($el, cells, rows, all) {
                 rowspan: 2,
             },
             {
-                title: "项目成本",
+                title: "采矿成本",
                 valign: "middle",
                 align: "center",
                 colspan: 8,
