@@ -339,8 +339,6 @@ $(function () {
         return flag;
     }
 
-    //一分钟刷新
-    setInterval("refresh();", 1 * 60 * 1000);
 
     //添加留言
     $("#addMsg").click(function () {
@@ -379,12 +377,8 @@ $(function () {
     $('#upShare').on('hide.bs.modal', function () {
         $("#showFlie").bootstrapTable('refresh');
     });
-});
 
-function refresh() {
-    $("#showMsg").bootstrapTable('refresh');
-    $("#showFlie").bootstrapTable('refresh');
-}
+});
 
 //删除共享文件
 function delete_file(id) {

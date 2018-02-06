@@ -473,6 +473,7 @@ namespace Bp.Controllers
                                辅助 = tj.辅助,
                                其他 = tj.其他,
                                总计 = tj.合计,
+                               产量 = tj.产量,
                            };
 
                 if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(bm))
@@ -513,7 +514,7 @@ namespace Bp.Controllers
         /// <param name="id">月份</param>
         /// <param name="bm">年份</param>
         /// <returns>是否成功</returns>
-        public string SaveOrChange(string id, string bm, string zk, string hgp, string cjp, string zz, string ys, string fz, string qt)
+        public string SaveOrChange(string id, string bm, string zk, string hgp, string cjp, string zz, string ys, string fz, string qt, string ycl)
         {
             try
             {
@@ -535,6 +536,7 @@ namespace Bp.Controllers
                         cost.辅助 = Double.Parse(fz);
                         cost.其他 = Double.Parse(qt);
                         cost.合计 = sum;
+                        cost.产量 = Double.Parse(ycl);
                         db.SaveChanges();
                         return AjaxResult.Success(flag, "操作成功").ToString();
                     }
@@ -556,6 +558,7 @@ namespace Bp.Controllers
                         cost.辅助 = Double.Parse(fz);
                         cost.其他 = Double.Parse(qt);
                         cost.合计 = sum;
+                        cost.产量 = Double.Parse(ycl);
                         db.SaveChanges();
                         return AjaxResult.Success(flag, "操作成功").ToString();
                     }
@@ -638,6 +641,7 @@ namespace Bp.Controllers
                                辅助 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.辅助).Sum(),
                                其他 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.其他).Sum(),
                                合计 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.合计).Sum(),
+                               产量 = db.Bp_成本统计.Where(x => x.yearID == y.id).Select(x => x.产量).Sum()
                            };
                 switch (sortOrder)
                 {
@@ -663,8 +667,8 @@ namespace Bp.Controllers
         }
 
         /// <summary>
-        ///查询该年每月成本
-        ///<param name="id">月份</param>
+        ///查询该年每月成本产量
+        ///<param name="id">年份</param>
         /// </summary>
         public JsonResult QueryYearCost(string id)
         {
@@ -689,6 +693,7 @@ namespace Bp.Controllers
                                其他 = mon.其他,
                                总计 = mon.合计,
                                年份 = mon.yearID,
+                               产量 = mon.产量,
                            };
                 if (!string.IsNullOrEmpty(id))
                 {
@@ -717,6 +722,90 @@ namespace Bp.Controllers
             {
 
                 throw ex;
+            }
+        }
+
+        /// <summary>
+        ///查询该年每月成本占比
+        ///<param name="id">年份</param>
+        /// </summary>
+        public JsonResult lookCost(string ye, string mon, string tye)
+        {
+            int pageSize = int.Parse(Request["pageSize"] ?? "10");
+            int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+            string sortOrder = Request["sortOrder"];
+            string searchText = Request["searchText"];
+            string sortName = Request["sortName"];
+
+            var list = from y in db.Bp_成本年份
+                       join m in db.Bp_成本统计 on y.id equals m.yearID
+                       select new
+                       {
+                           年份ID = m.yearID,
+                           年份 = y.年份,
+                           月份 = m.月份,
+                           钻孔 = m.钻孔 / m.产量,
+                           火工品 = m.火工品 / m.产量,
+                           冲击炮 = m.冲击炮 / m.产量,
+                           装载 = m.装载 / m.产量,
+                           运输 = m.运输 / m.产量,
+                           辅助 = m.辅助 / m.产量,
+                           其他 = m.其他 / m.产量,
+                           总计 = m.合计 / m.产量,
+                       };
+            if (!string.IsNullOrEmpty(ye))
+            {
+                var yearID = int.Parse(ye);
+                list = list.Where(x => x.年份ID == yearID);
+            }
+            if (!string.IsNullOrEmpty(tye))
+            {
+                var year = int.Parse(tye);
+                list = list.Where(x => x.年份 == year);
+            }
+            if (!string.IsNullOrEmpty(mon))
+            {
+                var month = int.Parse(mon);
+                list = list.Where(x => x.月份 == month);
+            }
+            switch (sortOrder)
+            {
+                case "a":
+                    list = list.OrderByDescending(w => w.月份);
+                    break;
+                case "last_desc":
+                    list = list.OrderByDescending(w => w.月份);
+                    break;
+                case "last":
+                    list = list.OrderBy(w => w.月份);
+                    break;
+                default:
+                    list = list.OrderBy(w => w.月份);
+                    break;
+            };
+            return Json(list);
+
+
+        }
+        /// <summary>
+        ///删除该年成本
+        ///<param name="id">年份</param>
+        /// </summary>
+        public string deleteYear(string id)
+        {
+            try
+            {
+                var i = int.Parse(id);
+                var ye = db.Bp_成本年份.Where(x => x.年份 == i).FirstOrDefault();
+                var list = db.Bp_成本统计.Where(x => x.yearID == ye.id);
+                db.Bp_成本统计.RemoveRange(list);
+                db.Bp_成本年份.Remove(ye);
+                db.SaveChanges();
+                return AjaxResult.Success(null, "删除成功").ToString();
+            }
+            catch (Exception)
+            {
+                return AjaxResult.Error("删除失败").ToString();
             }
         }
 
@@ -759,7 +848,8 @@ namespace Bp.Controllers
                                爆破量 = tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65,
                                炸药单耗 = (tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65) / 2.65 == 0 ? 0 : tu.炸药量 / ((tu.孔距 * tu.排距 * (tu.平均孔深 - tu.超深) * tu.孔数 * 2.65) / 2.65),
                            };
-                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(name)) {
+                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(name))
+                {
                     list = list.Where(x => x.项目编码 == id && x.日期 == name);
                 }
                 return Json(list);
@@ -823,23 +913,23 @@ namespace Bp.Controllers
 
                            排距 = t.排距 == 0 ? 0 : f.排距 / f.数量 - t.排距 < 0 ? (f.排距 / f.数量 - t.排距) * (-1) / t.排距 : (f.排距 / f.数量 - t.排距) / t.排距,
 
-                           孔数 = t.孔数 == 0 ? 0 : f.孔数 - t.孔数 < 0 ? (f.孔数 - t.孔数) * (-1) / t.孔数 : (f.孔数  - t.孔数) / t.孔数,
+                           孔数 = t.孔数 == 0 ? 0 : f.孔数 - t.孔数 < 0 ? (f.孔数 - t.孔数) * (-1) / t.孔数 : (f.孔数 - t.孔数) / t.孔数,
 
-                           平均孔深 = t.平均孔深 == 0 ? 0 : f.平均孔深  - t.平均孔深 < 0 ? (f.平均孔深  - t.平均孔深) * (-1) / t.平均孔深 : (f.平均孔深  - t.平均孔深) / t.平均孔深,
+                           平均孔深 = t.平均孔深 == 0 ? 0 : f.平均孔深 - t.平均孔深 < 0 ? (f.平均孔深 - t.平均孔深) * (-1) / t.平均孔深 : (f.平均孔深 - t.平均孔深) / t.平均孔深,
 
-                           炸药量 = t.炸药量 == 0 ? 0 : f.炸药量  - t.炸药量 < 0 ? (f.炸药量 - t.炸药量) * (-1) / t.炸药量 : (f.炸药量 - t.炸药量) / t.炸药量,
+                           炸药量 = t.炸药量 == 0 ? 0 : f.炸药量 - t.炸药量 < 0 ? (f.炸药量 - t.炸药量) * (-1) / t.炸药量 : (f.炸药量 - t.炸药量) / t.炸药量,
 
                            抵抗线 = t.抵抗线 == 0 ? 0 : f.抵抗线 / f.数量 - t.抵抗线 < 0 ? (f.抵抗线 / f.数量 - t.抵抗线) * (-1) / t.抵抗线 : (f.抵抗线 / f.数量 - t.抵抗线) / t.抵抗线,
 
-                           超深 = t.超深 == 0 ? 0 : f.超深 / f.数量 - t.超深 < 0 ? (f.超深 / f.数量 - t.超深) * (-1) / t.超深 : (f.超深 / f.数量 - t.超深 )/ t.超深,
+                           超深 = t.超深 == 0 ? 0 : f.超深 / f.数量 - t.超深 < 0 ? (f.超深 / f.数量 - t.超深) * (-1) / t.超深 : (f.超深 / f.数量 - t.超深) / t.超深,
 
-                           填充 = t.填充 == 0 ? 0 : f.填充  - t.填充 < 0 ? (f.填充  - t.填充) * (-1) / t.填充 : (f.填充 - t.填充) / t.填充,
+                           填充 = t.填充 == 0 ? 0 : f.填充 - t.填充 < 0 ? (f.填充 - t.填充) * (-1) / t.填充 : (f.填充 - t.填充) / t.填充,
 
-                           孔总深 = t.平均孔深 * t.孔数 == 0 ? 0 : (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) < 0 ? (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) * (-1) / (t.平均孔深 * t.孔数) : (f.平均孔深  * f.孔数 - t.平均孔深 * t.孔数) / (t.平均孔深 * t.孔数),
+                           孔总深 = t.平均孔深 * t.孔数 == 0 ? 0 : (f.平均孔深 * f.孔数 - t.平均孔深 * t.孔数) < 0 ? (f.平均孔深 * f.孔数 - t.平均孔深 * t.孔数) * (-1) / (t.平均孔深 * t.孔数) : (f.平均孔深 * f.孔数 - t.平均孔深 * t.孔数) / (t.平均孔深 * t.孔数),
 
-                           爆破量 = t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65 == 0 ? 0 : ((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深  - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) < 0 ? (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65)) * (-1) / (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) : (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数  * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) )/ (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65),
+                           爆破量 = t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65 == 0 ? 0 : ((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) < 0 ? (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65)) * (-1) / (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) : (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) - (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65)) / (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65),
 
-                           炸药单耗 = (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65 == 0 ? 0 : (f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) < 0 ? ((f.炸药量  / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) * (-1) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) : ((f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - (f.超深 / f.数量)) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)),
+                           炸药单耗 = (t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65 == 0 ? 0 : (f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) < 0 ? ((f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - f.超深 / f.数量) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) * (-1) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)) : ((f.炸药量 / (((f.孔距 / f.数量) * (f.排距 / f.数量) * (f.平均孔深 - (f.超深 / f.数量)) * f.孔数 * 2.65) / 2.65)) - (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65))) / (t.炸药量 / ((t.孔距 * t.排距 * (t.平均孔深 - t.超深) * t.孔数 * 2.65) / 2.65)),
                        };
             if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(name))
             {

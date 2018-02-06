@@ -29,6 +29,8 @@ namespace Bp.Models
 
         public double? 合计 { get; set; }
 
+        public double? 产量 { get; set; }
+
         public int yearID { get; set; }
     }
 }

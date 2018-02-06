@@ -1,4 +1,5 @@
 ﻿$(function () {
+
     function getCookie(cookie_name) {
         var allcookies = document.cookie;
         var cookie_pos = allcookies.indexOf(cookie_name);   //索引的长度
@@ -101,7 +102,17 @@
         $("#NewPassword").val("");
     })
 
-})
+    //一分钟刷新
+    setInterval("refresh();", 1 * 60 * 1000);
+
+});
+
+function refresh() {
+    $("#mark").bootstrapTable('refresh');
+    $("#showFlie").bootstrapTable('refresh');
+    $("#showMsg").bootstrapTable('refresh');
+    $("#showYear").bootstrapTable('refresh');
+}
 
 function loginOut() {
     window.location.href = "/Account/Index";

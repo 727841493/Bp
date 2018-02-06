@@ -53,8 +53,8 @@
                 <h4 class="modal-title" id="myModalLabel">项目成本</h4>
             </div>
             <div class="modal-body">
-                <h4 class="modal-title" id="myModalLabel" >月份：<span id="id"></span></h4>
-                <h4 class="modal-title" id="myModalLabel" >年份：<span id="bm"></span></h4>
+                <h4 class="modal-title" id="myModalLabel"  style="display:none">月份：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel"  style="display:none">年份：<span id="bm"></span></h4>
                 <div>
                     <table style="width:100%;text-align: center;line-height: 20px;font-size: 20px;">
                         <tr>
@@ -85,6 +85,10 @@
                             <td>其他：</td>
                             <td style="float:left;"><input id="qt" type="text" name="v" /></td>
                         </tr>
+                        <tr>
+                            <td>月产量：</td>
+                            <td style="float:left;"><input id="ycl" type="text" name="v" /></td>
+                        </tr>
                     </table>
 
                 </div>
@@ -92,6 +96,25 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="save()">提交</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*查看成本拟态框*@
+<div class="modal fade" id="lookCost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">采矿成本</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title" id="myModalLabel" style="display:none">年份：<span id="ye"></span><span id="tye"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" style="display:none">月份：<span id="mon"></span></h4>
+                <table id="monCost"></table>
+            </div>
+            <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>

@@ -128,6 +128,7 @@ function records(id) {
                 title: '总分',
                 align: 'center',
                 valign: 'middle',
+              
             }, {
                 field: '评论人',
                 title: '评论人',
@@ -148,7 +149,11 @@ function upFile(id, nm) {
 }
 
 $(function () {
-
+    //预览轮播图(设置不自动播放)
+    $('#carousel-example-generic').carousel({
+        pause: true,
+        interval: false
+    });
     //日期控件
     $(".form_datetime").datetimepicker({
         format: "yyyy-mm-d",
@@ -298,6 +303,7 @@ $(function () {
                     sortable: true,
                     colspan: 1,
                     rowspan: 2,
+                    formatter: numberFormatter
                 },
                 {
                     field: '炸药量',
@@ -307,6 +313,7 @@ $(function () {
                     sortable: true,
                     colspan: 1,
                     rowspan: 2,
+                    formatter: numberFormatter
                 },
                 {
                     field: '抵抗线',
@@ -371,6 +378,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     sortable: true,
+                    formatter: numberFormatter
                 },
                 {
                     field: '抛掷平均分',
@@ -378,6 +386,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     sortable: true,
+                    formatter: numberFormatter
                 },
                 {
                     field: '根底平均分',
@@ -385,6 +394,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     sortable: true,
+                    formatter: numberFormatter
                 },
                 {
                     field: '伞岩平均分',
@@ -392,6 +402,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     sortable: true,
+                    formatter: numberFormatter
                 },
             ]
         ]
@@ -412,7 +423,10 @@ $(function () {
 
     //数据保留两位小数
     function numberFormatter(v) {
-        return v.toFixed(2);
+        if (v != null) {
+            return v.toFixed(2);
+        }
+
     }
 
     //打分评论
@@ -549,28 +563,32 @@ $(function () {
                     title: '块度',
                     sortable: true,
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    formatter: numberFormatter
                 },
                 {
                     field: '抛掷平均分',
                     title: '抛掷',
                     sortable: true,
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    formatter: numberFormatter
                 },
                 {
                     field: '根底平均分',
                     title: '根底',
                     sortable: true,
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    formatter: numberFormatter
                 },
                 {
                     field: '伞岩平均分',
                     title: '伞岩',
                     sortable: true,
                     valign: "middle",
-                    align: "center"
+                    align: "center",
+                    formatter: numberFormatter
                 }, {
                     field: '打分',
                     title: "评分",
@@ -588,7 +606,7 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     formatter: upFormatter
-                },{
+                }, {
                     field: '预览',
                     title: "预览",
                     valign: "middle",
@@ -606,8 +624,7 @@ $(function () {
     });
 
 
-    //Echarts
-
+    //查询Echarts
     //初始化切换
     $(".animsition").animsition({
 
