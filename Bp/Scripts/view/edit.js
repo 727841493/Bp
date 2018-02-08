@@ -24,6 +24,7 @@
         pageSize: 10,//页面数据条数
         pageList: [5, 10, "All"],//可选的每页显示数据个数
         detailView: true,
+        responseHandler: costHandler,
         onExpandRow: function (index, row, $detail) {
             expandTable($detail, 9, 12, row.年份);
         },
@@ -164,6 +165,8 @@
             pageNumber: 1,//首页页码
             pageSize: 12,//页面数据条数
             pageList: [5, 10, "All"],//可选的每页显示数据个数
+            detailView: true,
+            detailFormatter: detailFormatter,
             columns: [
                 {
                     field: '月份',
@@ -230,6 +233,116 @@
             ]
         });
     });
+
+    //Echarts
+    function costHandler(data) {
+        buildChart(data);
+        return data;
+    }
+
+    var ua = navigator.userAgent;
+
+    var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+
+        isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+
+        isAndroid = ua.match(/(Android)\s+([\d.]+)/),
+
+        isMobile = isIphone || isAndroid;
+
+    if (isMobile) {
+        $("#t").val('40%')
+    } else {
+        $("#t").val(60)
+    }
+
+    function buildChart(res) {
+        var list = [];
+        var ser = [];
+        for (var i = 0; i < res.length; i++) {
+            list.push(res[i].年份.toString());
+            ser.push({
+                name: res[i].年份.toString(),
+                type: 'bar',
+                data: [res[i].钻孔, res[i].火工品, res[i].冲击炮, res[i].装载, res[i].运输, res[i].辅助, res[i].其他, res[i].合计],
+            });
+        }
+        var mainContainer = document.getElementById('myColumn');
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeMainContainer = function () {
+            mainContainer.style.width = mainContainer.style.width;
+            mainContainer.style.height = window.innerHeight * 0.8 + 'px';
+        };
+        //设置div容器高宽
+        resizeMainContainer();
+        // 初始化图表
+        var myChart = echarts.init(mainContainer);
+        $(window).on('resize', function () {
+            //屏幕大小自适应，重置容器高宽
+            resizeMainContainer();
+            myChart.resize();
+        });
+        var app = {};
+        option = null;
+        app.title = '数据对比';
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                orient: 'vertical',
+                feature: {
+                    //dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    //restore: { show: true },
+                    //saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                width: '90%',
+                height: 1000,
+                x: 'center',
+                data: list,
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ["钻孔", "火工品", "冲击炮", "装载", "运输", "辅助", "其他", "合计"],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            grid: {
+                top: $("#t").val(),
+                containLabel: true
+            },
+            series: ser
+        };
+
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+        }
+    }
+
+
+
 
 });
 //方法调用
@@ -361,7 +474,8 @@ function buildTable($el, cells, rows, all) {
         url: '/Table/QueryYearCost',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         queryParams: queryBy(all),
-        //detailFormatter: detailFormatter,
+        detailView: true,
+        detailFormatter: detailFormatter,
         columns: [
             [{
                 field: '月份',

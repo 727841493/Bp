@@ -116,16 +116,17 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title" id="myModalLabel">上传</h4>
             </div>
-            <form enctype="multipart/form-data" id="form1" runat="server" action="/Home/UpShareFile" method="post">
+            @*new { enctype = "multipart/form-data" }比不可少，否则上传文件不会成功 *@
+            @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
                 <div class="modal-body">
-                    <label for="file">选择文件：</label>
-                    <input type="file" name="shareName">
+                    <text>选择上传文件：</text><input name="file" type="file" id="file" />
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">上传</button>
+                    <button type="submit" name="Upload" value="Upload" class="btn btn-primary">上传</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
-            </form>
+            }
         </div>
     </div>
 </div>

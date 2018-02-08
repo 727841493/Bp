@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 
@@ -18,6 +19,59 @@ namespace Bp.Controllers
         {
             return View();
         }
+
+        //上传
+        [HttpPost]
+        public void Upload(FormCollection form)
+        {
+            //if (Request.Files.Count == 0)
+            //{
+            //Request.Files.Count 文件数为0上传不成功
+            //Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
+            //}
+            var file = Request.Files["file"];
+            if (file.ContentLength == 0)
+            {
+                //文件大小大（以字节为单位）为0时，做一些操作
+                Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
+            }
+            else
+            {
+                //上传人
+                var name = CookieResult.CookieName();
+                //上传时间
+                var time = DateTime.Now;
+                //文件存放路径
+                var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+                var guid = Guid.NewGuid().ToString();
+
+                //文件大小不为0
+                file = Request.Files["file"];
+                //保存成自己的文件全路径,newfile就是你上传后保存的文件,
+                //服务器上的UpLoadFile文件夹必须有读写权限
+                string target = homePath + guid;//取得目标文件夹的路径
+                //判断文件夹是否存在
+                if (!Directory.Exists(target))
+                {
+                    // 目录不存在，建立目录
+                    Directory.CreateDirectory(target);
+                }
+                string filename = file.FileName;//取得文件名字
+                string path = target + "\\" + filename;//获取存储的目标地址
+                file.SaveAs(path);
+                Bp_分享资料 fxzl = new Bp_分享资料
+                {
+                    ID = guid,
+                    资料名称 = filename,
+                    上传时间 = time,
+                    上传人 = name,
+                };
+                db.Bp_分享资料.Add(fxzl);
+                db.SaveChanges();
+                Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
+            }
+        }
+
         //报表查询
         public JsonResult QueryStatistics()
         {
@@ -168,10 +222,11 @@ namespace Bp.Controllers
                            发布人 = msg.发布人,
                            查看人 = msg.查看人,
                        };
-            DateTime now = DateTime.Now;
-            DateTime d1 = new DateTime(now.Year, now.Month, 1);
-            string startTime = d1.ToString();
-            list = list.Where(x => String.Compare(startTime, x.发布时间) <= 0);
+            //查询本月通知
+            //DateTime now = DateTime.Now;
+            //DateTime d1 = new DateTime(now.Year, now.Month, 1);
+            //string startTime = d1.ToString();
+            //list = list.Where(x => String.Compare(startTime, x.发布时间) <= 0);
             if (!string.IsNullOrEmpty(id))
             {
                 list = list.Where(x => x.ID == id);
@@ -242,10 +297,20 @@ namespace Bp.Controllers
         {
             try
             {
+                var name = CookieResult.CookieName();
+                var user = db.Users.Where(x => x.登录名 == name).FirstOrDefault();
                 var list = db.Bp_通知.Where(x => x.ID == id && x.标题 == title);
-                db.Bp_通知.RemoveRange(list);
-                db.SaveChanges();
-                return AjaxResult.Success(null, "删除成功").ToString();
+                if (user.级别 == 1)
+                {
+
+                    db.Bp_通知.RemoveRange(list);
+                    db.SaveChanges();
+                    return AjaxResult.Success(null, "删除成功").ToString();
+                }
+                else
+                {
+                    return AjaxResult.Error("权限不足！").ToString();
+                }
             }
             catch (Exception)
             {
@@ -284,55 +349,6 @@ namespace Bp.Controllers
                     break;
             };
             return Json(list);
-        }
-
-
-        //上传共享文件
-        [HttpPost]
-        public void UpShareFile()
-        {
-            //上传人
-            var name = CookieResult.CookieName();
-            //上传时间
-            var time = DateTime.Now;
-            //文件
-            HttpPostedFileBase file = Request.Files["shareName"];
-            //文件名称
-            var fileName = file.FileName;
-
-            //文件存放路径
-            var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
-            var guid = Guid.NewGuid().ToString();
-            //string strPath = Server.MapPath(homePath) + guid;
-            string strPath = homePath + guid;
-            //判断文件夹是否存在
-            if (!Directory.Exists(strPath))
-            {
-                // 目录不存在，建立目录
-                Directory.CreateDirectory(strPath);
-            }
-            //保存
-            var filePath = string.Format("{0}", strPath);
-
-            Bp_分享资料 zl = new Bp_分享资料
-            {
-                ID = guid,
-                上传人 = name,
-                上传时间 = time,
-                资料名称 = fileName,
-            };
-            db.Bp_分享资料.Add(zl);
-
-            try
-            {
-                file.SaveAs(Path.Combine(filePath, fileName));
-                db.SaveChanges();
-                Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
-            }
-            catch (Exception)
-            {
-                Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
-            }
         }
 
         /// <summary>
@@ -399,6 +415,8 @@ namespace Bp.Controllers
         /// <param name="id">文档的guid</param>
         public string DeleteShareFile(string id)
         {
+            var name = CookieResult.CookieName();
+            var user = db.Users.Where(x => x.登录名 == name).FirstOrDefault();
 
             var list = db.Bp_分享资料.Where(x => x.ID == id);
 
@@ -423,9 +441,17 @@ namespace Bp.Controllers
                     }
                 }
 
-                db.Bp_分享资料.RemoveRange(list);
-                db.SaveChanges();
-                return AjaxResult.Success(null, "删除成功").ToString();
+                if (user.级别 == 1)
+                {
+                    db.Bp_分享资料.RemoveRange(list);
+                    db.SaveChanges();
+                    return AjaxResult.Success(null, "删除成功").ToString();
+                }
+                else
+                {
+                    return AjaxResult.Error("权限不足！").ToString();
+                }
+
             }
             catch (Exception)
             {

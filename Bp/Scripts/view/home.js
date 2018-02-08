@@ -28,8 +28,12 @@ function detailFormatter(index, row) {
     });
     return html.join('');
 }
+
+
 //页面加载
 $(function () {
+
+
     $('#table').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式

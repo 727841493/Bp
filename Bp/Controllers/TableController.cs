@@ -382,65 +382,78 @@ namespace Bp.Controllers
             return Json(files);
         }
 
-        /// <summary>
-        ///上传文件
-        /// </summary>
+        //上传
         [HttpPost]
-        public void UploadFile()
+        public void UploadFile(FormCollection form)
         {
-            var name = CookieResult.CookieName();
-            //流水号
-            var number = db.Bp_项目资料.Select(x => x.流水号).Max();
-            //项目编码
-            var bm = Request["ubm"].ToString();
-            //项目名称
-            var nm = Request["unm"].ToString();
-            //上传时间
-            var time = DateTime.Now;
-            //文件
-            HttpPostedFileBase file = Request.Files["filename"];
-            //文件名称
-            var fileName = file.FileName;
-            //上传电脑
-            System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);//根据目标IP地址获取IP对象
-            System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);//根据IP对象创建主机对象
-            string clientPCName = ihe.HostName;//获取客户端主机名称
-            //上传根路径
-            var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
-            //文件夹
-            var guid = Guid.NewGuid().ToString();
-            string strPath = homePath + guid;
-            //判断文件夹是否存在
-            if (!Directory.Exists(strPath))
+            //if (Request.Files.Count == 0)
+            //{
+            //Request.Files.Count 文件数为0上传不成功
+            //Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
+            //}
+            var files = Request.Files["files"];
+            if (files.ContentLength == 0)
             {
-                // 目录不存在，建立目录
-                Directory.CreateDirectory(strPath);
+                //文件大小大（以字节为单位）为0时，做一些操作
+                Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
             }
-            //保存
-            var filePath = string.Format("{0}", strPath);
-
-            Bp_项目资料 zl = new Bp_项目资料
+            else
             {
-                项目名称 = nm,
-                项目编码 = bm,
-                资料ID = guid,
-                上传人 = name,
-                上传时间 = time,
-                资料名称 = fileName,
-                上传电脑 = clientPCName,
-                流水号 = number + 1,
-            };
-            db.Bp_项目资料.Add(zl);
+                //上传人
+                var name = CookieResult.CookieName();
+                var number = 0;
+                //流水号
+                if (db.Bp_项目资料.Select(x => x.流水号).Count() == 0)
+                {
+                    number = 0;
+                }
+                else
+                {
+                    number = db.Bp_项目资料.Select(x => x.流水号).Max();
+                }
 
-            try
-            {
-                file.SaveAs(Path.Combine(filePath, fileName));
+                //项目编码
+                var bm = Request["ubm"].ToString();
+                //项目名称
+                var nm = Request["unm"].ToString();
+                //上传时间
+                var time = DateTime.Now;
+                //上传电脑
+                System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);//根据目标IP地址获取IP对象
+                System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);//根据IP对象创建主机对象
+                string clientPCName = ihe.HostName;//获取客户端主机名称
+                //文件存放路径
+                var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+                var guid = Guid.NewGuid().ToString();
+                files = Request.Files["files"];
+                //保存成自己的文件全路径,newfile就是你上传后保存的文件,
+                //服务器上的UpLoadFile文件夹必须有读写权限
+                string target = homePath + guid;//取得目标文件夹的路径
+                //判断文件夹是否存在
+                if (!Directory.Exists(target))
+                {
+                    // 目录不存在，建立目录
+                    Directory.CreateDirectory(target);
+                }
+                //文件大小不为0
+                string filename = files.FileName;//取得文件名字
+                string path = target + '\\' + filename;//获取存储的目标地址\
+                files.SaveAs(path);
+                Bp_项目资料 xmzl = new Bp_项目资料
+                {
+                    项目编码 = bm,
+                    项目名称 = nm,
+                    资料ID = guid,
+                    资料名称 = filename,
+                    上传时间 = time,
+                    上传人 = name,
+                    上传电脑 = clientPCName,
+                    流水号 = number + 1,
+                };
+                db.Bp_项目资料.Add(xmzl);
                 db.SaveChanges();
                 Response.Write("<script>alert('上传成功');window.location.href='/Table/Operation';</script>");
-            }
-            catch (Exception)
-            {
-                Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
+
             }
         }
 
@@ -795,13 +808,40 @@ namespace Bp.Controllers
         {
             try
             {
+                var flag = false;
+                var name = CookieResult.CookieName();
                 var i = int.Parse(id);
+                var user = db.Users.Where(x => x.登录名 == name).FirstOrDefault();
                 var ye = db.Bp_成本年份.Where(x => x.年份 == i).FirstOrDefault();
                 var list = db.Bp_成本统计.Where(x => x.yearID == ye.id);
-                db.Bp_成本统计.RemoveRange(list);
-                db.Bp_成本年份.Remove(ye);
-                db.SaveChanges();
-                return AjaxResult.Success(null, "删除成功").ToString();
+                foreach (var l in list)
+                {
+                    if (l.合计 != null)
+                    {
+                        flag = true;
+                    }
+                }
+                if (flag)
+                {
+                    if (user.级别 == 1)
+                    {
+                        db.Bp_成本统计.RemoveRange(list);
+                        db.Bp_成本年份.Remove(ye);
+                        db.SaveChanges();
+                        return AjaxResult.Success(null, "删除成功").ToString();
+                    }
+                    else
+                    {
+                        return AjaxResult.Error("权限不足").ToString();
+                    }
+                }
+                else
+                {
+                    db.Bp_成本统计.RemoveRange(list);
+                    db.Bp_成本年份.Remove(ye);
+                    db.SaveChanges();
+                    return AjaxResult.Success(null, "删除成功").ToString();
+                }
             }
             catch (Exception)
             {
@@ -818,6 +858,11 @@ namespace Bp.Controllers
         {
             try
             {
+                int pageSize = int.Parse(Request["pageSize"] ?? "10");
+                int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+                string sortOrder = Request["sortOrder"];
+                string searchText = Request["searchText"];
+                string sortName = Request["sortName"];
                 var f = db.Bp_项目数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
                 var t = db.Bp_真实数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
                 if (f != null && t == null)
@@ -852,6 +897,21 @@ namespace Bp.Controllers
                 {
                     list = list.Where(x => x.项目编码 == id && x.日期 == name);
                 }
+                switch (sortOrder)
+                {
+                    case "a":
+                        list = list.OrderByDescending(w => w.日期);
+                        break;
+                    case "last_desc":
+                        list = list.OrderByDescending(w => w.日期);
+                        break;
+                    case "last":
+                        list = list.OrderBy(w => w.日期);
+                        break;
+                    default:
+                        list = list.OrderByDescending(w => w.日期);
+                        break;
+                };
                 return Json(list);
             }
             catch (Exception e)

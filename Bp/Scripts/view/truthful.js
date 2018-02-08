@@ -151,467 +151,445 @@ $(function () {
             ]
         ]
     });
+
     //Echarts 对比
-    //初始化切换
-
-    //var dom = document.getElementById("container");
-    //var myChart = echarts.init(dom);
-
-    var mainContainer = document.getElementById('container');
-    //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
-    var resizeMainContainer = function () {
-        mainContainer.style.width = window.innerWidth + 'px';
-        mainContainer.style.height = window.innerHeight * 0.8 + 'px';
-    };
-    //设置div容器高宽
-    resizeMainContainer();
-    // 初始化图表
-    var myChart = echarts.init(mainContainer);
-    $(window).on('resize', function () {//
-        //屏幕大小自适应，重置容器高宽
-        resizeMainContainer();
-        mainChart.resize();
-    });
-
-    var app = {};
-    option = null;
-    // Generate data
-    var category = [];
-    var dottedBase = +new Date();
-    var lineData = [];
-    var barData = [];
-
-    for (var i = 0; i < 20; i++) {
-        var date = new Date(dottedBase += 3600 * 24 * 1000);
-        category.push([
-            date.getFullYear(),
-            date.getMonth() + 1,
-            date.getDate()
-        ].join('-'));
-        var b = Math.random() * 200;
-        var d = Math.random() * 200;
-        barData.push(b)
-        lineData.push(d + b);
-    }
-
-
-    // option
-    option = {
-        backgroundColor: '#0f375f',
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        legend: {
-            data: ['line', 'bar'],
-            textStyle: {
-                color: '#ccc'
-            }
-        },
-        xAxis: {
-            data: category,
-            axisLine: {
-                lineStyle: {
-                    color: '#ccc'
-                }
-            }
-        },
-        yAxis: {
-            splitLine: { show: false },
-            axisLine: {
-                lineStyle: {
-                    color: '#ccc'
-                }
-            }
-        },
-        series: [{
-            name: 'line',
-            type: 'line',
-            smooth: true,
-            showAllSymbol: true,
-            symbol: 'emptyCircle',
-            symbolSize: 15,
-            data: lineData
-        }, {
-            name: 'bar',
-            type: 'bar',
-            barWidth: 10,
-            itemStyle: {
-                normal: {
-                    barBorderRadius: 5,
-                    color: new echarts.graphic.LinearGradient(
-                        0, 0, 0, 1,
-                        [
-                            { offset: 0, color: '#14c8d4' },
-                            { offset: 1, color: '#43eec6' }
-                        ]
-                    )
-                }
-            },
-            data: barData
-        }, {
-            name: 'line',
-            type: 'bar',
-            barGap: '-100%',
-            barWidth: 10,
-            itemStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(
-                        0, 0, 0, 1,
-                        [
-                            { offset: 0, color: 'rgba(20,200,212,0.5)' },
-                            { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
-                            { offset: 1, color: 'rgba(20,200,212,0)' }
-                        ]
-                    )
-                }
-            },
-            z: -12,
-            data: lineData
-        }, {
-            name: 'dotted',
-            type: 'pictorialBar',
-            symbol: 'rect',
-            itemStyle: {
-                normal: {
-                    color: '#0f375f'
-                }
-            },
-            symbolRepeat: true,
-            symbolSize: [12, 4],
-            symbolMargin: 1,
-            z: -10,
-            data: lineData
-        }]
-    };;
-    if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-    }
-
-
-
-    $(".animsitiontf").animsition({
-
-        inClass: 'fade-in-right',
-        outClass: 'fade-out',
-        inDuration: 1500,
-        outDuration: 800,
-        linkElement: '.animsition-link',
-        // e.g. linkElement   :   'a:not([target="_blank"]):not([href^=#])'
-        loading: true,
-        loadingParentElement: 'body', //animsition wrapper element
-        loadingClass: 'animsition-loading',
-        unSupportCss: ['animation-duration',
-            '-webkit-animation-duration',
-            '-o-animation-duration'
-        ],
-        //"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser.
-        //The default setting is to disable the "animsition" in a browser that does not support "animation-duration".
-
-        overlay: false,
-
-        overlayClass: 'animsition-overlay-slide',
-        overlayParentElement: 'body'
-    });
-
-    // 基于准备好的dom，初始化echarts实例
-
-    var myChart3 = echarts.init(document.getElementById('main3'), 'macarons');
-
-    // 指定图表的配置项和数据
-
-    var date = ['2016/11/1', '2016/11/2', '2016/11/3', '2016/11/4', '2016/11/5', '2016/11/6', '2016/11/7', '2016/11/8', '2016/11/9', '2016/11/10',
-        '2016/11/11', '2016/11/12', '2016/11/13', '2016/11/14', '2016/11/15', '2016/11/16', '2016/11/17', '2016/11/18'
-        , '2016/11/19', '2016/11/20', '2016/11/21', '2016/11/22', '2016/11/23', '2016/11/24', '2016/11/25', '2016/11/26', '2016/11/27'
-        , '2016/11/28', '2016/11/29', '2016/11/30'];
 
     function falseHandler(data) {
-        getEchartsDate(data)
+        //查询真实数据
+        var tada = new Array();
+        for (var i = 0; i < data.length; i++) {
+            $.ajax({
+                url: '/Table/QueryTureData',
+                type: 'post',
+                async: false,
+                data: {
+                    "id": data[i].项目编码,
+                    "name": data[i].日期,
+                },
+                success: function (result) {
+                    if (result.length > 0) {
+                        for (var res of result) {
+                            tada.push({
+                                "孔距": res.孔距,
+                                "排距": res.排距,
+                                "孔数": res.孔数,
+                                "孔总深": res.孔总深,
+                                "平均孔深": res.平均孔深,
+                                "炸药量": res.炸药量,
+                                "抵抗线": res.抵抗线,
+                                "超深": res.超深,
+                                "填充": res.填充,
+                                "爆破量": res.爆破量,
+                                "炸药单耗": res.炸药单耗,
+                            });
+                        }
+                    }
+                }
+            });
+        }
+        buildChart(data, tada);
         return data;
     }
 
-    function getEchartsDate(res) {
-        var data = res
-        myChart3.setOption({
-            xAxis: {
-                data: data.map(function (v, i) {
-                    return v.日期
-                })
+    var ua = navigator.userAgent;
+
+    var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+
+        isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+
+        isAndroid = ua.match(/(Android)\s+([\d.]+)/),
+
+        isMobile = isIphone || isAndroid;
+
+    if (isMobile) {
+        $("#t").val('40%')
+    } else {
+        $("#t").val(60)
+    }
+
+    function buildChart(data, tada) {
+        var mainContainer = document.getElementById('manyColumn');
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeMainContainer = function () {
+            mainContainer.style.width = mainContainer.style.width;
+            mainContainer.style.height = window.innerHeight * 0.8 + 'px';
+        };
+        //设置div容器高宽
+        resizeMainContainer();
+        // 初始化图表
+        var myChart = echarts.init(mainContainer);
+        $(window).on('resize', function () {
+            //屏幕大小自适应，重置容器高宽
+            resizeMainContainer();
+            myChart.resize();
+        });
+        var app = {};
+        option = null;
+        app.title = '数据对比';
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                orient: 'vertical',
+                feature: {
+                    //dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    //restore: { show: true },
+                    //saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                width: '90%',
+                height: 1000,
+                x: 'center',
+                data: ["设-孔距", "真-孔距", "设-排距", "真-排距", "设-孔数", "真-孔数",
+                    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
+                    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
+                    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: data.map(function (v, i) {
+                        return v.日期
+                    }),
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            grid: {
+                top: $("#t").val(),
+                containLabel: true
             },
             series: [
                 {
-                    // 根据名字对应到相应的系列
-                    name: '孔距',
+                    name: '设-孔距',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.孔距
+                        if (v.孔距 != null) {
+                            return v.孔距.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-孔距',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.孔距 != null) {
+                            return v.孔距.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '排距',
+                    name: '设-排距',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.排距
+                        if (v.排距 != null) {
+                            return v.排距.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-排距',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.排距 != null) {
+                            return v.排距.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '孔数',
+                    name: '设-孔数',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.孔数
+                        if (v.孔数 != null) {
+                            return v.孔数.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-孔数',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.孔数 != null) {
+                            return v.孔数.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '孔总深',
+                    name: '设-孔总深',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.孔总深
+                        if (v.孔总深 != null) {
+                            return v.孔总深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-孔总深',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.孔总深 != null) {
+                            return v.孔总深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '平均孔深',
+                    name: '设-平均孔深',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.平均孔深
+                        if (v.平均孔深 != null) {
+                            return v.平均孔深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-平均孔深',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.平均孔深 != null) {
+                            return v.平均孔深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '炸药量',
+                    name: '设-炸药量',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.炸药量
+                        if (v.炸药量 != null) {
+                            return v.炸药量.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-炸药量',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.炸药量 != null) {
+                            return v.炸药量.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '抵抗线',
+                    name: '设-抵抗线',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.抵抗线
+                        if (v.抵抗线 != null) {
+                            return v.抵抗线.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '超深',
-                    data: data.map(function (v, i) {
-                        return v.超深
+                    name: '真-抵抗线',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.抵抗线 != null) {
+                            return v.抵抗线.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '填充',
+                    name: '设-超深',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.填充
+                        if (v.超深 != null) {
+                            return v.超深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-超深',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.超深 != null) {
+                            return v.超深.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '爆破量',
+                    name: '设-填充',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.爆破量.toFixed(2)
+                        if (v.填充 != null) {
+                            return v.填充.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-填充',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.填充 != null) {
+                            return v.填充.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 },
                 {
-                    // 根据名字对应到相应的系列
-                    name: '炸药单耗',
+                    name: '设-爆破量',
+                    type: 'bar',
                     data: data.map(function (v, i) {
-                        return v.炸药单耗.toFixed(2)
+                        if (v.爆破量 != null) {
+                            return v.爆破量.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                }, {
+                    name: '真-爆破量',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.爆破量 != null) {
+                            return v.爆破量.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                },
+                {
+                    name: '设-炸药单耗',
+                    type: 'bar',
+                    data: data.map(function (v, i) {
+                        if (v.炸药单耗 != null) {
+                            return v.炸药单耗.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    })
+                },
+                {
+                    name: '真-炸药单耗',
+                    type: 'bar',
+                    data: tada.map(function (v, i) {
+                        if (v.炸药单耗 != null) {
+                            return v.炸药单耗.toFixed(2)
+                        } else {
+                            return 0;
+                        }
                     })
                 }
-            ]
-        });
-    }
-
-    function my_data() {
-        var data = [];
-        for (var i = 0; i < 30; i++) {
-            data.push(Math.round(Math.random() * (1000 - 100) + 100));
-        };
-        return data;
-    }
-
-    var option3 = {
-        title: {
-            text: '项目报表柱状图'
-        },
-        tooltip: {
-            trigger: 'axis',
-            /* axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }*/
-        },
-        legend: {
-            x: 'center',
-            top: '8%',
-            data: ['孔距', '排距', '孔数', '孔总深', '平均孔深', '炸药量', '抵抗线', '超深', '填充', '爆破量', '炸药单耗']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                mark: { show: true },
-                //数据视图
-                dataView: {
-                    show: true, readOnly: true, optionToContent: function (opt) {
-                        var axisData = opt.xAxis[0].data;
-                        var series = opt.series;
-                        var table = '<table style="width:100%;text-align:center"><tbody><tr>'
-                            + '<td>日期</td>';
-                        for (var n = 0; n < series.length; n++) {
-                            table += '<td>' + series[n].name + '</td>';
-                        }
-                        table += '</tr>';
-                        for (var i = 0, l = axisData.length; i < l; i++) {
-                            table += '<tr>'
-                                + '<td>' + axisData[i] + '</td>';
-                            for (var j = 0; j < series.length; j++) {
-                                if (typeof series[j].data[i] == "number") {
-                                    table += '<td>' + series[j].data[i].toFixed(2) + '</td>';
-                                } else {
-                                    table += '<td>' + series[j].data[i] + '</td>';
-                                }
-                            }
-                            table += '</tr>';
-                        }
-                        table += '</tbody></table>';
-                        return table;
-                    }
+            ],
+            dataZoom: [//给x轴设置滚动条  
+                {
+                    start: 0,//默认为0  
+                    end: 100 - 1500 / 31,//默认为100  
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    handleSize: 0,//滑动条的 左右2个滑动条的大小  
+                    height: 8,//组件高度  
+                    left: 50, //左边的距离  
+                    right: 40,//右边的距离  
+                    bottom: 26,//右边的距离  
+                    handleColor: '#ddd',//h滑动图标的颜色  
+                    handleStyle: {
+                        borderColor: "#cacaca",
+                        borderWidth: "1",
+                        shadowBlur: 2,
+                        background: "#ddd",
+                        shadowColor: "#ddd",
+                    },
+                    fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                        //给颜色设置渐变色 前面4个参数，给第一个设置1，第四个设置0 ，就是水平渐变  
+                        //给第一个设置0，第四个设置1，就是垂直渐变  
+                        offset: 0,
+                        color: '#1eb5e5'
+                    }, {
+                        offset: 1,
+                        color: '#5ccbb1'
+                    }]),
+                    backgroundColor: '#ddd',//两边未选中的滑动条区域的颜色  
+                    showDataShadow: false,//是否显示数据阴影 默认auto  
+                    showDetail: false,//即拖拽时候是否显示详细数值信息 默认true  
+                    handleIcon: 'M-292,322.2c-3.2,0-6.4-0.6-9.3-1.9c-2.9-1.2-5.4-2.9-7.6-5.1s-3.9-4.8-5.1-7.6c-1.3-3-1.9-6.1-1.9-9.3c0-3.2,0.6-6.4,1.9-9.3c1.2-2.9,2.9-5.4,5.1-7.6s4.8-3.9,7.6-5.1c3-1.3,6.1-1.9,9.3-1.9c3.2,0,6.4,0.6,9.3,1.9c2.9,1.2,5.4,2.9,7.6,5.1s3.9,4.8,5.1,7.6c1.3,3,1.9,6.1,1.9,9.3c0,3.2-0.6,6.4-1.9,9.3c-1.2,2.9-2.9,5.4-5.1,7.6s-4.8,3.9-7.6,5.1C-285.6,321.5-288.8,322.2-292,322.2z',
+                    filterMode: 'filter',
                 },
-                magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
-                //刷新
-                //restore: { show: true },
-                saveAsImage: { show: true }
-            }
-        },
-        calculable: true,
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: true,
-                data: []
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        grid: {
-            left: '3%',
-            right: '4%',
-            top: '37%',
-            containLabel: true
-        },
-        dataZoom: [{
-            type: 'inside',
-            start: 0,
-            end: 20,
-        }, {
-            start: 74,
-            end: 100,
-            handleSize: '80%',
-            handleStyle: {
-                color: '#fff',
-                shadowBlur: 3,
-                shadowColor: 'rgba(0, 0, 0, 0.6)',
-                shadowOffsetX: 2,
-                shadowOffsetY: 2
-            }
-        }],
-        series: [
-            {
-                // 根据名字对应到相应的系列
-                name: '孔距',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '排距',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '孔数',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '孔总深',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '平均孔深',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '炸药量',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '抵抗线',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '超深',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '填充',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '爆破量',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }, {
-                // 根据名字对应到相应的系列
-                name: '炸药单耗',
-                type: 'bar',
-                stack: '总量',
-                barMaxWidth: 30,
-                data: []
-            }
-        ]
-    };
+                //下面这个属性是里面拖到  
+                {
+                    type: 'inside',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0,//默认为1  
+                    end: 100 - 1500 / 31,//默认为100  
+                },
+            ],
+        };
+        ;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
 
-    // 使用刚指定的配置项和数据显示图表。
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔距" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔距" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-排距" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-排距" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔数" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔数" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔总深" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔总深" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-平均孔深" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-平均孔深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药量" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药量" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-抵抗线" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-抵抗线" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-超深" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-超深" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-填充" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-填充" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-爆破量" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-爆破量" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药单耗" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药单耗" })
+        }
+    }
 
-    myChart3.setOption(option3);
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔距" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "排距" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔数" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "孔总深" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "平均孔深" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "抵抗线" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "超深" })
-    myChart3.dispatchAction({ type: 'legendUnSelect', name: "填充" })
 
-    window.onresize = myChart3.resize;
+
+
 
     //真实数据拟态框显示
     $('#myTure').on('show.bs.modal', function () {
@@ -840,7 +818,8 @@ function buildTable($el, cells, rows, id, name) {
         url: '/Table/QueryTureData',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         queryParams: queryBy(id, name),
-        //detailFormatter: detailFormatter,
+        detailView: true,
+        detailFormatter: detailFormatter,
         columns: [
             [
                 {
