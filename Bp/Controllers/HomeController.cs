@@ -39,6 +39,7 @@ namespace Bp.Controllers
             {
                 //上传人
                 var name = CookieResult.CookieName();
+
                 //上传时间
                 var time = DateTime.Now;
                 //文件存放路径
@@ -47,28 +48,36 @@ namespace Bp.Controllers
 
                 //文件大小不为0
                 file = Request.Files["file"];
-                //保存成自己的文件全路径,newfile就是你上传后保存的文件,
-                //服务器上的UpLoadFile文件夹必须有读写权限
                 string target = homePath + guid;//取得目标文件夹的路径
-                //判断文件夹是否存在
-                if (!Directory.Exists(target))
+                //取得文件名字
+                var filename = file.FileName;
+                try
                 {
-                    // 目录不存在，建立目录
-                    Directory.CreateDirectory(target);
+                    Bp_分享资料 fxzl = new Bp_分享资料
+                    {
+                        ID = guid,
+                        资料名称 = filename,
+                        上传时间 = time,
+                        上传人 = name,
+                    };
+                    db.Bp_分享资料.Add(fxzl);
+                    db.SaveChanges();
+                    //判断文件夹是否存在
+                    if (!Directory.Exists(target))
+                    {
+                        // 目录不存在，建立目录
+                        Directory.CreateDirectory(target);
+                    }
+                    //获取存储的目标地址
+                    string path = target + "\\" + filename;
+                    file.SaveAs(path);
+                    Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
                 }
-                string filename = file.FileName;//取得文件名字
-                string path = target + "\\" + filename;//获取存储的目标地址
-                file.SaveAs(path);
-                Bp_分享资料 fxzl = new Bp_分享资料
+                catch (Exception)
                 {
-                    ID = guid,
-                    资料名称 = filename,
-                    上传时间 = time,
-                    上传人 = name,
-                };
-                db.Bp_分享资料.Add(fxzl);
-                db.SaveChanges();
-                Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
+                    Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
+                }
+
             }
         }
 
@@ -369,7 +378,7 @@ namespace Bp.Controllers
             foreach (var s in list)
             {
                 //动态拼接文件路径
-                string path = Server.MapPath(homePath) + s.ID;
+                string path = homePath + s.ID;
                 var ls = Directory.GetFiles(path).ToList();
                 files.AddRange(ls);
             }

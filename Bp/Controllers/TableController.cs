@@ -384,14 +384,14 @@ namespace Bp.Controllers
 
         //上传
         [HttpPost]
-        public void UploadFile(FormCollection form)
+        public void Upload(FormCollection form)
         {
             //if (Request.Files.Count == 0)
             //{
             //Request.Files.Count 文件数为0上传不成功
             //Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
             //}
-            var files = Request.Files["files"];
+            var files = Request.Files["file"];
             if (files.ContentLength == 0)
             {
                 //文件大小大（以字节为单位）为0时，做一些操作
@@ -399,60 +399,77 @@ namespace Bp.Controllers
             }
             else
             {
+
                 //上传人
                 var name = CookieResult.CookieName();
-                var number = 0;
                 //流水号
+                var number = 0;
                 if (db.Bp_项目资料.Select(x => x.流水号).Count() == 0)
                 {
                     number = 0;
                 }
                 else
                 {
-                    number = db.Bp_项目资料.Select(x => x.流水号).Max();
+                    number = db.Bp_项目资料.Select(x => x.流水号).Max() + 1;
                 }
-
                 //项目编码
+
                 var bm = Request["ubm"].ToString();
+
                 //项目名称
+
                 var nm = Request["unm"].ToString();
+
                 //上传时间
                 var time = DateTime.Now;
                 //上传电脑
-                System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);//根据目标IP地址获取IP对象
-                System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);//根据IP对象创建主机对象
-                string clientPCName = ihe.HostName;//获取客户端主机名称
+                //根据目标IP地址获取IP对象
+                //System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);
+                //根据IP对象创建主机对象
+                //System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);
+                //获取客户端主机名称
+                //var clientPCName = ihe.HostName;
                 //文件存放路径
                 var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
                 var guid = Guid.NewGuid().ToString();
-                files = Request.Files["files"];
-                //保存成自己的文件全路径,newfile就是你上传后保存的文件,
-                //服务器上的UpLoadFile文件夹必须有读写权限
-                string target = homePath + guid;//取得目标文件夹的路径
-                //判断文件夹是否存在
-                if (!Directory.Exists(target))
-                {
-                    // 目录不存在，建立目录
-                    Directory.CreateDirectory(target);
-                }
                 //文件大小不为0
-                string filename = files.FileName;//取得文件名字
-                string path = target + '\\' + filename;//获取存储的目标地址\
-                files.SaveAs(path);
-                Bp_项目资料 xmzl = new Bp_项目资料
+                files = Request.Files["file"];
+                //取得目标文件夹的路径
+                string target = homePath + guid;
+                //取得文件名字
+                var filename = files.FileName;
+                try
                 {
-                    项目编码 = bm,
-                    项目名称 = nm,
-                    资料ID = guid,
-                    资料名称 = filename,
-                    上传时间 = time,
-                    上传人 = name,
-                    上传电脑 = clientPCName,
-                    流水号 = number + 1,
-                };
-                db.Bp_项目资料.Add(xmzl);
-                db.SaveChanges();
-                Response.Write("<script>alert('上传成功');window.location.href='/Table/Operation';</script>");
+                    //判断文件夹是否存在
+                    if (!Directory.Exists(target))
+                    {
+                        // 目录不存在，建立目录
+                        Directory.CreateDirectory(target);
+                    }
+                    //获取存储的目标地址
+                    string path = target + "\\" + filename;
+                    files.SaveAs(path);
+                    Bp_项目资料 xmzl = new Bp_项目资料
+                    {
+                        项目编码 = bm,
+                        项目名称 = nm,
+                        资料ID = guid,
+                        资料名称 = filename,
+                        上传时间 = time,
+                        上传人 = name,
+                        //上传电脑 = clientPCName,
+                        流水号 = number,
+                    };
+                    db.Bp_项目资料.Add(xmzl);
+                    db.SaveChanges();
+                    Response.Write("<script>alert('上传成功');window.location.href='/Table/Operation';</script>");
+                }
+                catch (Exception)
+                {
+                    Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
+                }
+
+
 
             }
         }

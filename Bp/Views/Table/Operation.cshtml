@@ -76,17 +76,17 @@
                 <h4 class="modal-title" id="myModalLabel">上传</h4>
             </div>
             @*new { enctype = "multipart/form-data" }比不可少，否则上传文件不会成功 *@
-            @using (Html.BeginForm("UploadFile", "Table", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Upload", "Table", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <div class="modal-body">
                     <label for="bm" style="display:none">项目编码：</label>
                     <input type="text" id="ubm" name="ubm" readonly style="display:none" />
                     <label for="bm" style="display:none">日期：</label>
                     <input type="text" id="unm" name="unm" readonly style="display:none" />
-                    <text>选择上传文件：</text><input name="files" type="file" id="files" />
+                    <text>选择上传文件：</text><input name="file" type="file" id="file" />
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" name="Upload1" value="Upload1" class="btn btn-primary">上传</button>
+                    <button type="submit" name="Upload" value="Upload" class="btn btn-primary">上传</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
             }
