@@ -78,11 +78,12 @@ function queryFilePicture(id) {
                 }
                 Indicators.push('></li>');
 
-                Wrapper.push('"><img src="')
+                Wrapper.push('"><img id ="imgTest" src="')
                 Wrapper.push(v)
                 Wrapper.push('"></div>')
             })
 
+            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(180)">旋转</button>');
             Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
 
             $('#Indicators').html(Indicators.join(''));
@@ -128,7 +129,7 @@ function records(id) {
                 title: '总分',
                 align: 'center',
                 valign: 'middle',
-              
+
             }, {
                 field: '评论人',
                 title: '评论人',
@@ -147,8 +148,19 @@ function upFile(id, nm) {
     $("#ubm").val(id);
     $("#unm").val(nm);
 }
-
+function tranImg(trun) {
+    var imgClass = document.getElementsByClassName('item active');
+    var imgObj = imgClass[0].firstElementChild;
+    var current = 0;
+    if (imgObj.style.transform == "") {
+        current = (current + trun) % 360;
+        imgObj.style.transform = 'rotate(' + current + 'deg)';
+    } else {
+        imgObj.style.transform = "";
+    }
+}
 $(function () {
+
     //预览轮播图(设置不自动播放)
     $('#carousel-example-generic').carousel({
         pause: true,
