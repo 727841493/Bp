@@ -10,7 +10,7 @@
         <div class="col-md-2">
             <div class="widget-container fluid-height">
                 <div class="heading">
-                    <i class="icon-bar-chart"></i>个人信息
+                    <i class="icon-bar-chart"></i>个人信息<span class="icon-smile pull-right" data-toggle="modal" data-target="#editUser">修改</span>
                 </div>
                 <div class="widget-content padded text-center">
                     <div class="graph-container">
@@ -127,6 +127,33 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
             }
+        </div>
+    </div>
+</div>
+@* 修改用户信息 *@
+<div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">用户信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-signin">
+                    <label for="lName">登录名</label>
+                    <input type="text" id="lName" name="lName" class="form-control" placeholder="登录名">
+                    <label for="uName">用户姓名</label>
+                    <input type="text" id="uName" name="uName" class="form-control" placeholder="用户姓名">
+                    <label for="Email">邮箱</label>
+                    <input type="text" id="Email" name="Email" class="form-control" placeholder="邮箱">
+                    <label for="Phone">手机</label>
+                    <input type="text" id="Phone" name="Phone" class="form-control" placeholder="手机">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="changeUser">提交</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>

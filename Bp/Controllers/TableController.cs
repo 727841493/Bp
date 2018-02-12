@@ -91,7 +91,7 @@ namespace Bp.Controllers
                                打分 = !db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID && x.评论人 == name),
                                查看 = db.Bp_Data_comment.Any(x => x.项目编码 == sj.项目编码 && x.项目ID == sj.项目ID),
                                下载 = db.Bp_项目资料.Any(x => x.项目编码 == sj.项目编码),
-                               预览 = db.Bp_项目资料.Where(x => x.项目编码 == sj.项目编码).Select(x => x.资料名称)
+                               预览 = db.Bp_项目资料.Where(x => x.项目编码 == sj.项目编码).Select(x => x.资料名称),
                            };
                 if (!string.IsNullOrEmpty(startTime))
                 {
@@ -128,7 +128,6 @@ namespace Bp.Controllers
                         list = list.Where(b => b.总平均分 < 3);
                     }
                 }
-
                 switch (sortOrder)
                 {
                     case "a":
@@ -144,6 +143,40 @@ namespace Bp.Controllers
                         list = list.OrderByDescending(w => w.日期);
                         break;
                 };
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        ///查询爆破评分
+        /// </summary>
+        public JsonResult QueryComments()
+        {
+            try
+            {
+                int pageSize = int.Parse(Request["pageSize"] ?? "10");
+                int pageNumber = int.Parse(Request["pageNumber"] ?? "1");
+                string sortOrder = Request["sortOrder"];
+                string searchText = Request["searchText"];
+                string sortName = Request["sortName"];
+
+                var list = from com in db.Bp_Data_comment
+                           select new
+                           {
+                               ID = com.ID,
+                               伞岩评分 = com.伞岩评分,
+                               块度评分 = com.块度评分,
+                               抛掷评分 = com.抛掷评分,
+                               根底评分 = com.根底评分,
+                               评论 = com.评论,
+                               评论人 = com.评论人,
+                               项目ID = com.项目ID,
+                               项目编码 = com.项目编码,
+                           };
+
                 return Json(list);
             }
             catch (Exception ex)

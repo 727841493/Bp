@@ -30,9 +30,8 @@ function sumbit() {
         success: function (result) {
             if (!result.success) {
                 alert(result.message);
-                window.location.reload();
             } else {
-                window.location.reload();
+                $('#myModal').modal('hide');
             }
         }
     });
@@ -634,7 +633,10 @@ $(function () {
             ]
         ]
     });
-
+    //打分拟态框关闭
+    $('#myModal').on('hide.bs.modal', function () {
+        location.reload();
+    })
 
     //查询Echarts
     //初始化切换

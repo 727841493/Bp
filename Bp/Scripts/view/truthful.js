@@ -243,7 +243,7 @@ $(function () {
                     //dataView: { show: true, readOnly: false },
                     magicType: { show: true, type: ['line', 'bar'] },
                     //restore: { show: true },
-                    //saveAsImage: { show: true }
+                    saveAsImage: { show: true }
                 }
             },
             legend: {
@@ -1007,7 +1007,7 @@ function SaveChange() {
                     alert(result.message);
                 } else {
                     $('#myTure').modal('hide');
-                    $("#showTrue").bootstrapTable('refresh');
+                    //$("#showTrue").bootstrapTable('refresh');
                 }
             }
         });

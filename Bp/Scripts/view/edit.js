@@ -18,6 +18,7 @@
         method: "post",//请求方式
         url: '/Table/QueryCostYears',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
+        showExport: true,//导出按钮
         pagination: true,//显示分页条
         sidePagination: "client",//设置在哪里进行分页( 'client' 客户端 或者 'server' 服务器)
         pageNumber: 1,//首页页码
@@ -302,7 +303,7 @@
                     //dataView: { show: true, readOnly: false },
                     magicType: { show: true, type: ['line', 'bar'] },
                     //restore: { show: true },
-                    //saveAsImage: { show: true }
+                    saveAsImage: { show: true }
                 }
             },
             legend: {

@@ -33,7 +33,6 @@ function detailFormatter(index, row) {
 //页面加载
 $(function () {
 
-
     $('#table').bootstrapTable({
         toolbar: "#toolbar",//工具按钮用哪个容器
         method: "post",//请求方式
@@ -362,7 +361,6 @@ $(function () {
                 success: function (result) {
                     alert(result.message);
                     $('#AddMessages').modal('hide')
-                    $("#showMsg").bootstrapTable('refresh');
                 }
             });
         }
@@ -372,14 +370,6 @@ $(function () {
     $('#AddMessages').on('hide.bs.modal', function () {
         $("#Title").val("");
         $("#Content").val("");
-    });
-    //查看留言模态框关闭
-    $('#ReadMessages').on('hide.bs.modal', function () {
-        $("#showMsg").bootstrapTable('refresh');
-    });
-    //上传共享文件模态框关闭
-    $('#upShare').on('hide.bs.modal', function () {
-        $("#showFlie").bootstrapTable('refresh');
     });
 
 });
@@ -397,9 +387,7 @@ function delete_file(id) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
-                } else {
-                    window.location.reload();
-                }
+                } 
             }
         });
     }
@@ -419,9 +407,7 @@ function delete_msg(id, title) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
-                } else {
-                    window.location.reload();
-                }
+                } 
             }
         });
     }
