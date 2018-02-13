@@ -852,7 +852,7 @@ $(function () {
         dataZoom: [{
             type: 'inside',
             start: 0,
-            end: 20,
+            end: 100,
         }, {
             start: 74,
             end: 100,

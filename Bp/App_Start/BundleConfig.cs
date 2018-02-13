@@ -134,7 +134,8 @@ namespace Bp
 
             //头部
             bundles.Add(new ScriptBundle("~/bundles/top").Include(
-                   "~/Scripts/view/top.js"
+                   "~/Scripts/view/top.js",
+                   "~/Scripts/view/pinying.js"
                    ));
 
             //项目成本页面

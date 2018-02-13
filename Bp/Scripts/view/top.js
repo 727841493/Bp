@@ -40,12 +40,12 @@
                 $("#dlm").html("登录名：" + result.登录名)
                 $("#yhm").html("用户姓名：" + result.用户姓名)
                 $("#yhlb").html("用户类别：" + result.用户类别)
-                if (result.邮箱 == null) {
+                if (result.邮箱 == null || result.邮箱 == "") {
                     $("#yx").html("邮箱：无")
                 } else {
                     $("#yx").html("邮箱：" + result.邮箱)
                 }
-                if (result.手机 == null) {
+                if (result.手机 == null || result.手机 == "") {
                     $("#sj").html("手机：无")
                 } else {
                     $("#sj").html("手机：" + result.手机)
@@ -107,11 +107,103 @@
     //    $("#home").removeClass("current");
     //    $('#bao').attr('class', 'current');
     //}
+    var ln;
+    var un;
+    var em;
+    var ph;
+
+    $('#changeInfo').on('show.bs.modal', function () {
+        $("#lName").val(name[1]);
+        $.ajax({
+            url: '/User/QueryUsers',
+            type: 'post',
+            data: {
+                "name": $("#lName").val(),
+            },
+            success: function (result) {
+                $("#uName").val(result.用户姓名);
+                $("#Email").val(result.邮箱);
+                $("#Phone").val(result.手机);
+                ln = $("#lName").val();
+                un = $("#uName").val();
+                em = $("#Email").val();
+                ph = $("#Phone").val();
+            }
+        });
+    });
+
+    $("#uName").blur(function () {
+        var uname = $("#uName").val();
+        if ($("#uName").val() == "") {
+            alert("用户名不能为空!");
+            un = "";
+        } else {
+            var regn = /^[a-zA-Z\u4e00-\u9fa5]+$/;
+            if (!regn.test(uname)) {
+                alert("用户名格式不正确!");
+                un = "";
+            } else {
+                un = $("#uName").val();
+            }
+        }
+    });
+
+    $("#Email").blur(function () {
+        var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+        var email = $("#Email").val();
+        if ($("#Email").val() != "" && !reg.test(email)) {
+            alert("邮箱地址格式不正确!");
+            $("#Email").val("");
+            em = "";
+        } else {
+            em = $("#Email").val();
+        }
+    });
+
+    $("#Phone").blur(function () {
+        var regp = /^[1][3,4,5,7,8][0-9]{9}$/;
+        var phone = $("#Phone").val();
+        if ($("#Phone").val() != "" && !regp.test(phone)) {
+            alert("手机号格式不正确!");
+            $("#Phone").val("");
+            ph = "";
+        } else {
+            ph = $("#Phone").val();
+        }
+    });
+
+    $("#changeUser").click(function () {
+        if (un == "") {
+            alert("请输入完整信息!");
+        } else {
+            var arrRslt = makePy(un);
+            var ec = arrRslt[0];
+            $.ajax({
+                url: '/User/ChangeInfo',
+                type: 'post',
+                data: {
+                    "ln": ln,
+                    "un": un,
+                    "ec": ec,
+                    "email": em,
+                    "phone": ph,
+                },
+                success: function (result) {
+                    if (!result.success) {
+                        alert(result.message);
+                    } else {
+                        $('#changeInfo').modal('hide');
+                        location.reload();
+                    }
+                }
+            });
+        }
+    });
 
     setInterval("queryRefresh();", 5 * 1000);
 
 });
-
+//刷新
 function queryRefresh() {
     var test = window.location.pathname;
     if (test == "/Home/Index") {
@@ -305,12 +397,11 @@ function queryCost() {
     return c;
 }
 
-
 function loginOut() {
-    window.location.href = "/Account/Index";
     clearCookie("Xing");
     clearCookie(".ASPXAUTH");
     clearCookie("Porschev");
+    window.location.href = "/Account/Index";
 }
 
 function show_confirm() {

@@ -250,10 +250,11 @@ $(function () {
                 width: '90%',
                 height: 1000,
                 x: 'center',
-                data: ["设-孔距", "真-孔距", "设-排距", "真-排距", "设-孔数", "真-孔数",
-                    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
-                    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
-                    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
+                //data: ["设-孔距", "真-孔距", "设-排距", "真-排距", "设-孔数", "真-孔数",
+                //    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
+                //    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
+                //    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
+                data: ["设计值", "真实值"]
             },
             xAxis: [
                 {
@@ -280,8 +281,9 @@ $(function () {
             },
             series: [
                 {
-                    name: '设-孔距',
+                    name: '设计值',
                     type: 'bar',
+                   
                     data: data.map(function (v, i) {
                         if (v.孔距 != null) {
                             return v.孔距.toFixed(2)
@@ -290,7 +292,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-孔距',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.孔距 != null) {
@@ -301,7 +303,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-排距',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.排距 != null) {
@@ -311,7 +313,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-排距',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.排距 != null) {
@@ -322,7 +324,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-孔数',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.孔数 != null) {
@@ -332,7 +334,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-孔数',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.孔数 != null) {
@@ -343,7 +345,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-孔总深',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.孔总深 != null) {
@@ -353,7 +355,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-孔总深',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.孔总深 != null) {
@@ -364,7 +366,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-平均孔深',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.平均孔深 != null) {
@@ -374,7 +376,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-平均孔深',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.平均孔深 != null) {
@@ -385,7 +387,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-炸药量',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.炸药量 != null) {
@@ -395,7 +397,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-炸药量',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.炸药量 != null) {
@@ -406,7 +408,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-抵抗线',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.抵抗线 != null) {
@@ -417,7 +419,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '真-抵抗线',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.抵抗线 != null) {
@@ -428,7 +430,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-超深',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.超深 != null) {
@@ -438,7 +440,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-超深',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.超深 != null) {
@@ -449,7 +451,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-填充',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.填充 != null) {
@@ -459,7 +461,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-填充',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.填充 != null) {
@@ -470,7 +472,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-爆破量',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.爆破量 != null) {
@@ -480,7 +482,7 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真-爆破量',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.爆破量 != null) {
@@ -491,7 +493,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '设-炸药单耗',
+                    name: '设计值',
                     type: 'bar',
                     data: data.map(function (v, i) {
                         if (v.炸药单耗 != null) {
@@ -502,7 +504,7 @@ $(function () {
                     })
                 },
                 {
-                    name: '真-炸药单耗',
+                    name: '真实值',
                     type: 'bar',
                     data: tada.map(function (v, i) {
                         if (v.炸药单耗 != null) {
@@ -561,29 +563,31 @@ $(function () {
         ;
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
+            myChart.dispatchAction({ type: 'legendUnSelect', name: "真实值" })
 
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔距" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔距" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-排距" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-排距" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔数" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔数" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔总深" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔总深" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-平均孔深" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-平均孔深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药量" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药量" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-抵抗线" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-抵抗线" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-超深" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-超深" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-填充" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-填充" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-爆破量" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-爆破量" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药单耗" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药单耗" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔距" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔距" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-排距" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-排距" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔数" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔数" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔总深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔总深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-平均孔深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-平均孔深" })
+            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药量" })
+            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药量" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-抵抗线" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-抵抗线" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-超深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-超深" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-填充" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-填充" })
+            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "设-爆破量" })
+            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "真-爆破量" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药单耗" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药单耗" })
         }
     }
 

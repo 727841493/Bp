@@ -22,6 +22,18 @@ namespace Bp.Controllers
             var list = db.Users.Where(x => x.登录名 == name).FirstOrDefault();
             return Json(list);
         }
+        //查询判断
+        public string queryByName(string name)
+        {
+            var cookie = CookieResult.CookieName();
+            var user = db.Users.Where(x => x.登录名 == name).FirstOrDefault();
+            if (name != cookie && user != null)
+            {
+                return AjaxResult.Error("已存在该用户").ToString();
+            }
+            return AjaxResult.Success(null, "可以使用").ToString();
+        }
+
         //修改密码
         public string ChangePassword(string name, string oldPassword, string newPassword)
         {
@@ -37,6 +49,31 @@ namespace Bp.Controllers
                 else
                 {
                     return AjaxResult.Error("修改失败,原密码错误").ToString();
+                }
+            }
+            return AjaxResult.Error("修改失败").ToString();
+        }
+
+        //修改信息
+        public string ChangeInfo(string ln, string un, string ec, string email, string phone)
+        {
+            var user = db.Users.Where(x => x.登录名 == ln).FirstOrDefault();
+            if (user != null)
+            {
+                user.用户姓名 = un;
+                user.拼音 = ln + "," + un + "," + ec;
+                user.邮箱 = email == "" ? null : email;
+                user.手机 = phone == "" ? null : phone;
+                try
+                {
+                    db.SaveChanges();
+                    return AjaxResult.Success(null, "修改成功").ToString();
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
                 }
             }
             return AjaxResult.Error("修改失败").ToString();
