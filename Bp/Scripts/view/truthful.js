@@ -191,21 +191,21 @@ $(function () {
         return data;
     }
 
-    var ua = navigator.userAgent;
+    //var ua = navigator.userAgent;
 
-    var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+    //var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
 
-        isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+    //    isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
 
-        isAndroid = ua.match(/(Android)\s+([\d.]+)/),
+    //    isAndroid = ua.match(/(Android)\s+([\d.]+)/),
 
-        isMobile = isIphone || isAndroid;
+    //    isMobile = isIphone || isAndroid;
 
-    if (isMobile) {
-        $("#t").val('40%')
-    } else {
-        $("#t").val(60)
-    }
+    //if (isMobile) {
+    //    $("#t").val('40%')
+    //} else {
+    //    $("#t").val(60)
+    //}
 
     function buildChart(data, tada) {
         var mainContainer = document.getElementById('manyColumn');
@@ -229,7 +229,8 @@ $(function () {
 
         option = {
             tooltip: {
-                trigger: 'axis',
+                //trigger: 'axis',
+                trigger: 'item',
                 axisPointer: {
                     type: 'cross',
                     crossStyle: {
@@ -250,11 +251,18 @@ $(function () {
                 width: '90%',
                 height: 1000,
                 x: 'center',
+                selected: {
+                    // 选中'系列1'
+                    '设计值': true,
+                    // 不选中'系列2'
+                    '真实值': false
+                },
                 //data: ["设-孔距", "真-孔距", "设-排距", "真-排距", "设-孔数", "真-孔数",
                 //    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
                 //    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
                 //    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
-                data: ["设计值", "真实值"]
+                data: ["设计值", "真实值"],
+
             },
             xAxis: [
                 {
@@ -272,18 +280,33 @@ $(function () {
                     type: 'value',
                     axisLabel: {
                         formatter: '{value}'
-                    }
+                    },
+                },
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    },
                 }
             ],
             grid: {
-                top: $("#t").val(),
                 containLabel: true
             },
             series: [
                 {
                     name: '设计值',
                     type: 'bar',
-                   
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.孔距 != null) {
                             return v.孔距.toFixed(2)
@@ -294,6 +317,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.孔距 != null) {
                             return v.孔距.toFixed(2)
@@ -305,6 +339,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '排距：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.排距 != null) {
                             return v.排距.toFixed(2)
@@ -315,6 +360,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '排距：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.排距 != null) {
                             return v.排距.toFixed(2)
@@ -326,6 +382,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔数：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.孔数 != null) {
                             return v.孔数.toFixed(2)
@@ -336,6 +403,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔数：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.孔数 != null) {
                             return v.孔数.toFixed(2)
@@ -347,6 +425,16 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔总深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.孔总深 != null) {
                             return v.孔总深.toFixed(2)
@@ -357,6 +445,16 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔总深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.孔总深 != null) {
                             return v.孔总深.toFixed(2)
@@ -368,6 +466,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '平均孔深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.平均孔深 != null) {
                             return v.平均孔深.toFixed(2)
@@ -378,6 +487,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '平均孔深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.平均孔深 != null) {
                             return v.平均孔深.toFixed(2)
@@ -389,6 +509,16 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '炸药量：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.炸药量 != null) {
                             return v.炸药量.toFixed(2)
@@ -399,6 +529,16 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '炸药量：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.炸药量 != null) {
                             return v.炸药量.toFixed(2)
@@ -410,6 +550,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '抵抗线：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.抵抗线 != null) {
                             return v.抵抗线.toFixed(2)
@@ -421,6 +572,17 @@ $(function () {
                 {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '抵抗线：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.抵抗线 != null) {
                             return v.抵抗线.toFixed(2)
@@ -432,6 +594,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '超深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.超深 != null) {
                             return v.超深.toFixed(2)
@@ -442,6 +615,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '超深：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.超深 != null) {
                             return v.超深.toFixed(2)
@@ -453,6 +637,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '填充：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.填充 != null) {
                             return v.填充.toFixed(2)
@@ -463,6 +658,17 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '填充：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.填充 != null) {
                             return v.填充.toFixed(2)
@@ -474,6 +680,16 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '爆破量：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.爆破量 != null) {
                             return v.爆破量.toFixed(2)
@@ -484,6 +700,16 @@ $(function () {
                 }, {
                     name: '真实值',
                     type: 'bar',
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '爆破量：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.爆破量 != null) {
                             return v.爆破量.toFixed(2)
@@ -495,6 +721,17 @@ $(function () {
                 {
                     name: '设计值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '炸药单耗：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: data.map(function (v, i) {
                         if (v.炸药单耗 != null) {
                             return v.炸药单耗.toFixed(2)
@@ -506,6 +743,17 @@ $(function () {
                 {
                     name: '真实值',
                     type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        // formatter: "{a}<br/>{b}:{c}"
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '炸药单耗：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
                     data: tada.map(function (v, i) {
                         if (v.炸药单耗 != null) {
                             return v.炸药单耗.toFixed(2)
@@ -560,11 +808,10 @@ $(function () {
                 },
             ],
         };
-        ;
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
-            myChart.dispatchAction({ type: 'legendUnSelect', name: "真实值" })
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真实值" })
 
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔距" })
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔距" })

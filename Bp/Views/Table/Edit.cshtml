@@ -53,8 +53,8 @@
                 <h4 class="modal-title" id="myModalLabel">项目成本</h4>
             </div>
             <div class="modal-body">
-                <h4 class="modal-title" id="myModalLabel"  style="display:none">月份：<span id="id"></span></h4>
-                <h4 class="modal-title" id="myModalLabel"  style="display:none">年份：<span id="bm"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" style="display:none">月份：<span id="id"></span></h4>
+                <h4 class="modal-title" id="myModalLabel" style="display:none">年份：<span id="bm"></span></h4>
                 <div>
                     <table style="width:100%;text-align: center;line-height: 20px;font-size: 20px;">
                         <tr>
@@ -120,13 +120,35 @@
         </div>
     </div>
 </div>
+
+
 @*Echarts 成本统计*@
 <div class="row" style="margin-top:20px;">
     <div class="data_wrap" style="background: #efeff5; padding: 10px;width: 100%;margin: 0px auto;">
         <div class="contain">
             <div style="background: white;">
                 <span id="t"></span>
-                <div id="myColumn" style="width:100%;"></div>
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#home" data-toggle="tab">
+                            年份
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#ios" data-toggle="tab">
+                            月份
+                        </a>
+                    </li>
+                </ul>
+
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="home">
+                        <div id="myColumn" style="width:100%;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="ios">
+                        <div id="column" style="width:100%;"></div>
+                    </div>
+                </div>
 
             </div>
         </div>

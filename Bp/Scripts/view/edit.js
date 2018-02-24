@@ -235,12 +235,24 @@
         });
     });
 
+    var da;
     //Echarts
     function costHandler(data) {
-        buildChart(data);
+        da = data;
         return data;
     }
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // 获取已激活的标签页的名称
+        var activeTab = $(e.target).text();
+        if (activeTab.trim() == '月份') {
+            buildMonChart(da);
+        } else {
+            buildChart(da);
+        }
+    });
+
+    //判断手机端还是PC端
     var ua = navigator.userAgent;
 
     var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
@@ -257,6 +269,7 @@
         $("#t").val(60)
     }
 
+    //年份
     function buildChart(res) {
         var list = [];
         var ser = [];
@@ -302,7 +315,7 @@
                 feature: {
                     //dataView: { show: true, readOnly: false },
                     magicType: { show: true, type: ['line', 'bar'] },
-                    //restore: { show: true },
+                    restore: { show: true },
                     saveAsImage: { show: true }
                 }
             },
@@ -335,15 +348,132 @@
             },
             series: ser
         };
-
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
         }
     }
 
+    //月份
+    function buildMonChart(res) {
+        var list = [];
+        var ser = [];
+        for (var i = 0; i < res.length; i++) {
+            $.ajax({
+                url: '/Table/QueryYearCost',
+                type: 'post',
+                async: false,
+                data: {
+                    "id": res[i].年份.toString(),
+                },
+                success: function (result) {
+                    for (var j = 0; j < result.length; j++) {
+                        var year = "";
+                        if (list.indexOf(result[j].月份) == -1) {
+                            list.push(result[j].月份.toString());
+                        }
+                        $.ajax({
+                            url: '/Table/lookCost',
+                            type: 'post',
+                            async: false,
+                            data: {
+                                "ye": result[j].年份.toString(),
+                                "mon": result[j].月份.toString()
+                            },
+                            success: function (data) {
+                                year = data[0].年份;
+                            }
+                        });
+                        ser.push({
+                            name: result[j].月份,
+                            type: 'bar',
+                            tooltip: {
+                                formatter: function (params) {
+                                    var str = '<style>td{padding:5px;}</style><table>';
+                                    str += '<tr><td>' + year + '/' + params.seriesName + '</td></tr>';
+                                    str += '<tr><td>' + params.name + '：' + params.data + '</td></tr>';
+                                    str += '</table>';
+                                    return str
+                                }
+                            },
+                            data: [result[j].钻孔, result[j].火工品, result[j].冲击炮, result[j].装载, result[j].运输, result[j].辅助, result[j].其他, result[j].总计],
+                        });
+                    }
+                }
+            });
+        }
+        var container = document.getElementById('column');
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeMainContainer = function () {
+            container.style.width = container.style.width;
+            container.style.height = window.innerHeight * 0.8 + 'px';
+        };
+        //设置div容器高宽
+        resizeMainContainer();
+        // 初始化图表
+        var chart = echarts.init(container);
+        $(window).on('resize', function () {
+            //屏幕大小自适应，重置容器高宽
+            resizeMainContainer();
+            chart.resize();
+        });
+        var app = {};
+        option = null;
+        app.title = '数据对比';
 
-
+        option = {
+            tooltip: {
+                //trigger: 'axis',
+                trigger: 'item',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                orient: 'vertical',
+                feature: {
+                    //dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    //restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                width: '90%',
+                height: 1000,
+                x: 'center',
+                data: list,
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ["钻孔", "火工品", "冲击炮", "装载", "运输", "辅助", "其他", "合计"],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            grid: {
+                containLabel: true
+            },
+            series: ser
+        };
+        if (option && typeof option === "object") {
+            chart.setOption(option, true);
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+        }
+    }
 
 });
 //方法调用
