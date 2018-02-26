@@ -240,13 +240,15 @@ function queryRefresh() {
         }
 
         if (list.length != view.length) {
-            $("#mark").bootstrapTable('refresh');
+            //$("#mark").bootstrapTable('refresh');
+            location.reload();
         } else {
             for (var i = 0; i < list.length; i++) {
                 for (var j = 0; j < view.length; j++) {
                     if (list[i].项目编码 == view[j].项目编码 && list[i].日期 == view[j].日期) {
                         if (list[i].伞岩平均分 != view[j].伞岩平均分 || list[i].块度平均分 != view[j].块度平均分 || list[i].抛掷平均分 != view[j].抛掷平均分 || list[i].根底平均分 != view[j].根底平均分) {
-                            $("#mark").bootstrapTable('refresh');
+                            //$("#mark").bootstrapTable('refresh');
+                            location.reload();
                         }
                     } else {
                         continue;
@@ -286,7 +288,8 @@ function queryRefresh() {
             });
         }
         if (sum.length != mt.length) {
-            $("#showTrue").bootstrapTable('refresh');
+            //$("#showTrue").bootstrapTable('refresh');
+            location.reload();
         } else {
             for (var i = 0; i < sum.length; i++) {
                 for (var j = 0; j < mt.length; j++) {
@@ -295,7 +298,8 @@ function queryRefresh() {
                             || sum[i].抵抗线 != mt[j].抵抗线 || sum[i].孔数 != mt[j].孔数
                             || sum[i].平均孔深 != mt[j].平均孔深 || sum[i].炸药量 != mt[j].炸药量
                             || sum[i].超深 != mt[j].超深 || sum[i].填充 != mt[j].填充) {
-                            $("#showTrue").bootstrapTable('refresh');
+                            //$("#showTrue").bootstrapTable('refresh');
+                            location.reload();
                         }
                     } else {
                         continue;
@@ -307,7 +311,8 @@ function queryRefresh() {
         var num = queryCost();
         var year = $("#showYear").bootstrapTable('getData');
         if (num.length != year.length) {
-            $("#showYear").bootstrapTable('refresh');
+            //$("#showYear").bootstrapTable('refresh');
+            location.reload();
         } else {
             for (var i = 0; i < num.length; i++) {
                 for (var j = 0; j < year.length; j++) {
@@ -315,7 +320,8 @@ function queryRefresh() {
                         if (num[i].钻孔 != year[j].钻孔 || num[i].火工品 != year[j].火工品 || num[i].冲击炮 != year[j].冲击炮
                             || num[i].装载 != year[j].装载 || num[i].运输 != year[j].运输 || num[i].辅助 != year[j].辅助
                             || num[i].其他 != year[j].其他 || num[i].合计 != year[j].合计 || num[i].产量 != year[j].产量) {
-                            $("#showYear").bootstrapTable('refresh');
+                            //$("#showYear").bootstrapTable('refresh');
+                            location.reload();
                         }
                     } else {
                         continue;
