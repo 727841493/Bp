@@ -261,19 +261,19 @@ $(function () {
                 //    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
                 //    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
                 //    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
-                data: ["设计值", "真实值"],
+                data: ["设计值", "真实值", "孔距"],
             },
-            dataRange: {
-                x: 'left',
-                y: 'top',
-                splitList: [
-                    { start: 1500, label: '孔距', color: 'black' },
-                    { start: 900, end: 1500 },
-                    { start: 5, end: 5 },
-                    { end: 10 }
-                ],
-                color: ['#E0022B', '#E09107', '#A3E00B']
-            },
+            //dataRange: {
+            //    x: 'left',
+            //    y: 'top',
+            //    splitList: [
+            //        { start: 1500, label: '孔距', color: 'black' },
+            //        { start: 900, end: 1500 },
+            //        { start: 5, end: 5 },
+            //        { end: 10 }
+            //    ],
+            //    color: ['#E0022B', '#E09107', '#A3E00B']
+            //},
             xAxis: [
                 {
                     type: 'category',
@@ -303,6 +303,27 @@ $(function () {
                 containLabel: true
             },
             series: [
+                {
+                    name: '孔距',
+                    type: 'bar',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        formatter: function (params) {
+                            var str = '<style>td{padding:5px;}</style><table>';
+                            str += '<tr><td>' + params.seriesName + '</td></tr>';
+                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
+                            str += '</table>';
+                            return str
+                        }
+                    },
+                    data: data.map(function (v, i) {
+                        if (v.孔距 != null) {
+                            return v.孔距.toFixed(2)
+                        } else {
+                            return 0;
+                        }
+                    }),
+                },
                 {
                     name: '设计值',
                     type: 'bar',
@@ -828,36 +849,24 @@ $(function () {
             myChart.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "真实值" })
-
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔距" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔距" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-排距" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-排距" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔数" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔数" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-孔总深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-孔总深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-平均孔深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-平均孔深" })
-            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药量" })
-            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药量" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-抵抗线" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-抵抗线" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-超深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-超深" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-填充" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-填充" })
-            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "设-爆破量" })
-            ////myChart.dispatchAction({ type: 'legendUnSelect', name: "真-爆破量" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药单耗" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药单耗" })
         }
 
         //myChart.dispatchAction({
         //    type: 'legendUnSelect',
-        //    name: "设计值",
+        //    name: "孔距",
         //});
 
+        //var ecConfig = require('echarts/config');
+        //myChart.on(ecConfig.EVENT.LEGEND_SELECTED, function (param) {
+        //    alert(1);
+        //});
+
+        //myChart.dispatchAction({
+        //    type: 'legendUnSelect',
+        //    // 图例名称  
+        //    name: "孔距",
+        //});
+ 
     }
 
     //真实数据拟态框显示
