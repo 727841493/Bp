@@ -578,7 +578,7 @@ function queryBy(id) {
 }
 //父子表
 function expandTable($detail, cells, rows, row) {
-    buildTable($detail.html('<table></table>').find('table'), cells, rows, row);
+    buildTable($detail.html('<button id="ed" type="button" class="btn btn-primary" style="float:right">导出</button><table id="' + row + '"></table>').find('table'), cells, rows, row);
 }
 
 function buildTable($el, cells, rows, all) {
@@ -600,7 +600,7 @@ function buildTable($el, cells, rows, all) {
         }
         data.push(row);
     }
-    $el.bootstrapTable({
+    $("#" + all).bootstrapTable({
         method: "post",//请求方式
         url: '/Table/QueryYearCost',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
@@ -700,6 +700,17 @@ function buildTable($el, cells, rows, all) {
             ]
         ]
     });
+
+    $("#ed").click(function () {
+        //data 需要导出的数据
+        var data = JSON.stringify($("#" + all).bootstrapTable('getData'));
+        if (data == '')
+            return;
+        //excel 表格输出顺序及标题
+        var title = [{ 年: '年份' }, { 月份: '月份' }, { 钻孔: '钻孔' }, { 火工品: '火工品' }, { 冲击炮: '冲击炮' }, { 装载: '装载' }, { 运输: '运输' },
+        { 辅助: '辅助' }, { 其他: '其他' }, { 总计: '总计' }, { 产量: '产量' }];
+        toExcel("Report", data, title);
+    });
 }
 
 //添加年份
@@ -797,3 +808,80 @@ function colorFormatter(value, row, index) {
     }
     return a;
 }
+
+//FileName 生成的Excel文件名称
+function toExcel(FileName, JSONData, ShowLabel) {
+    //先转化json  
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+    var excel = '<table>';
+
+    //设置表头  
+    var row = "<tr align='left'>";//设置Excel的左居中
+    for (var i = 0, l = ShowLabel.length; i < l; i++) {
+        for (var key in ShowLabel[i]) {
+            row += "<td>" + ShowLabel[i][key] + '</td>';
+        }
+    }
+
+
+    //换行  
+    excel += row + "</tr>";
+
+    //设置数据  
+    for (var i = 0; i < arrData.length; i++) {
+        var rowData = "<tr align='left'>";
+
+        for (var y = 0; y < ShowLabel.length; y++) {
+            for (var k in ShowLabel[y]) {
+                if (ShowLabel[y].hasOwnProperty(k)) {
+                    rowData += "<td style='vnd.ms-excel.numberformat:@'>" + (arrData[i][k] === null ? "" : arrData[i][k]) + "</td>";
+                    //vnd.ms-excel.numberformat:@ 输出为文本
+                }
+            }
+        }
+
+        excel += rowData + "</tr>";
+    }
+
+    excel += "</table>";
+
+    var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';
+    excelFile += '; charset=UTF-8">';
+    excelFile += "<head>";
+    excelFile += "<!--[if gte mso 9]>";
+    excelFile += "<xml>";
+    excelFile += "<x:ExcelWorkbook>";
+    excelFile += "<x:ExcelWorksheets>";
+    excelFile += "<x:ExcelWorksheet>";
+    excelFile += "<x:Name>";
+    excelFile += "{worksheet}";
+    excelFile += "</x:Name>";
+    excelFile += "<x:WorksheetOptions>";
+    excelFile += "<x:DisplayGridlines/>";
+    excelFile += "</x:WorksheetOptions>";
+    excelFile += "</x:ExcelWorksheet>";
+    excelFile += "</x:ExcelWorksheets>";
+    excelFile += "</x:ExcelWorkbook>";
+    excelFile += "</xml>";
+    excelFile += "<![endif]-->";
+    excelFile += "</head>";
+    excelFile += "<body>";
+    excelFile += excel;
+    excelFile += "</body>";
+    excelFile += "</html>";
+
+    var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);
+
+    var link = document.createElement("a");
+    link.href = uri;
+
+    link.style = "visibility:hidden";
+    link.download = FileName + ".xls";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}  

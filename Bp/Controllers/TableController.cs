@@ -756,6 +756,7 @@ namespace Bp.Controllers
                                其他 = mon.其他,
                                总计 = mon.合计,
                                年份 = mon.yearID,
+                               年 = db.Bp_成本年份.Where(x => x.id == mon.yearID).Select(a => a.年份).FirstOrDefault(),
                                产量 = mon.产量,
                            };
                 if (!string.IsNullOrEmpty(id))

@@ -262,7 +262,17 @@ $(function () {
                 //    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
                 //    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
                 data: ["设计值", "真实值"],
-
+            },
+            dataRange: {
+                x: 'left',
+                y: 'top',
+                splitList: [
+                    { start: 1500, label: '孔距', color: 'black' },
+                    { start: 900, end: 1500 },
+                    { start: 5, end: 5 },
+                    { end: 10 }
+                ],
+                color: ['#E0022B', '#E09107', '#A3E00B']
             },
             xAxis: [
                 {
@@ -313,7 +323,13 @@ $(function () {
                         } else {
                             return 0;
                         }
-                    })
+                    }),
+                    //系列中的数据标注内容  
+                    //markPoint: {
+                    //    data: [
+                    //        { type: 'max', name: '孔距' },
+                    //    ]
+                    //},
                 }, {
                     name: '真实值',
                     type: 'bar',
@@ -836,11 +852,13 @@ $(function () {
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设-炸药单耗" })
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "真-炸药单耗" })
         }
+
+        //myChart.dispatchAction({
+        //    type: 'legendUnSelect',
+        //    name: "设计值",
+        //});
+
     }
-
-
-
-
 
     //真实数据拟态框显示
     $('#myTure').on('show.bs.modal', function () {
@@ -873,11 +891,10 @@ $(function () {
             }
         });
     });
-
 });
+//页面加载结束
 
 //方法调用
-
 //数据保留两位小数
 function numberFormatter(v) {
     if (v != null) {
@@ -1036,11 +1053,11 @@ function cost(id, name) {
                 formatter: numberFormatter1
             },
         ],
-    })
+    });
 }
 //父子表
 function expandTable($detail, cells, rows, id, name) {
-    buildTable($detail.html('<table></table>').find('table'), cells, rows, id, name);
+    buildTable($detail.html('<button id="tf" type="button" class="btn btn-primary" style="float:right">导出</button><table id="' + id + '"></table>').find('table'), cells, rows, id, name);
 }
 
 function buildTable($el, cells, rows, id, name) {
@@ -1062,10 +1079,8 @@ function buildTable($el, cells, rows, id, name) {
         }
         data.push(row);
     }
-    $el.bootstrapTable({
+    $("#" + id).bootstrapTable({
         method: "post",//请求方式
-        //toolbar: "#toolbar",//工具按钮用哪个容器
-        //showExport: true,//导出按钮
         url: '/Table/QueryTureData',//请求地址
         queryParamsType: 'C',// 重写分页传递参数
         queryParams: queryBy(id, name),
@@ -1205,8 +1220,18 @@ function buildTable($el, cells, rows, id, name) {
             ]
         ]
     });
-}
 
+    $("#tf").click(function () {
+        //data 需要导出的数据
+        var data = JSON.stringify($("#" + id).bootstrapTable('getData'));
+        if (data == '')
+            return;
+        //excel 表格输出顺序及标题
+        var title = [{ 项目编码: '项目编码' }, { 日期: '日期' }, { 孔距: '孔距' }, { 排距: '排距' }, { 孔数: '孔数' }, { 平均孔深: '平均孔深' },
+        { 炸药量: '炸药量' }, { 抵抗线: '抵抗线' }, { 超深: '超深' }, { 填充: '填充' }, { 孔总深: '孔总深' }, { 爆破量: '爆破量' }, { 炸药单耗: '炸药单耗' }];
+        toExcel("Report", data, title);
+    });
+}
 function SaveChange() {
     var patrn = /^(([1-9]\d*)|\d)(\.\d{1,})?$/;
     var result = true;
@@ -1258,9 +1283,86 @@ function SaveChange() {
                     alert(result.message);
                 } else {
                     $('#myTure').modal('hide');
-                    //$("#showTrue").bootstrapTable('refresh');
+                    $("#showTrue").bootstrapTable('refresh');
                 }
             }
         });
     }
 }
+//FileName 生成的Excel文件名称
+function toExcel(FileName, JSONData, ShowLabel) {
+    //先转化json  
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+    var excel = '<table>';
+
+    //设置表头  
+    var row = "<tr align='left'>";//设置Excel的左居中
+    for (var i = 0, l = ShowLabel.length; i < l; i++) {
+        for (var key in ShowLabel[i]) {
+            row += "<td>" + ShowLabel[i][key] + '</td>';
+        }
+    }
+
+
+    //换行  
+    excel += row + "</tr>";
+
+    //设置数据  
+    for (var i = 0; i < arrData.length; i++) {
+        var rowData = "<tr align='left'>";
+
+        for (var y = 0; y < ShowLabel.length; y++) {
+            for (var k in ShowLabel[y]) {
+                if (ShowLabel[y].hasOwnProperty(k)) {
+                    rowData += "<td style='vnd.ms-excel.numberformat:@'>" + (arrData[i][k] === null ? "" : arrData[i][k]) + "</td>";
+                    //vnd.ms-excel.numberformat:@ 输出为文本
+                }
+            }
+        }
+
+        excel += rowData + "</tr>";
+    }
+
+    excel += "</table>";
+
+    var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';
+    excelFile += '; charset=UTF-8">';
+    excelFile += "<head>";
+    excelFile += "<!--[if gte mso 9]>";
+    excelFile += "<xml>";
+    excelFile += "<x:ExcelWorkbook>";
+    excelFile += "<x:ExcelWorksheets>";
+    excelFile += "<x:ExcelWorksheet>";
+    excelFile += "<x:Name>";
+    excelFile += "{worksheet}";
+    excelFile += "</x:Name>";
+    excelFile += "<x:WorksheetOptions>";
+    excelFile += "<x:DisplayGridlines/>";
+    excelFile += "</x:WorksheetOptions>";
+    excelFile += "</x:ExcelWorksheet>";
+    excelFile += "</x:ExcelWorksheets>";
+    excelFile += "</x:ExcelWorkbook>";
+    excelFile += "</xml>";
+    excelFile += "<![endif]-->";
+    excelFile += "</head>";
+    excelFile += "<body>";
+    excelFile += excel;
+    excelFile += "</body>";
+    excelFile += "</html>";
+
+
+    var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);
+
+    var link = document.createElement("a");
+    link.href = uri;
+
+    link.style = "visibility:hidden";
+    link.download = FileName + ".xls";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}  
