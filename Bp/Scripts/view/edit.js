@@ -247,8 +247,12 @@
         var activeTab = $(e.target).text();
         if (activeTab.trim() == '月份') {
             buildMonChart(da);
-        } else {
+        } else if (activeTab.trim() == '年份') {
             buildChart(da);
+        } else if (activeTab.trim() == '年成本') {
+            buildChartCost(da);
+        } else if (activeTab.trim() == '月成本') {
+            buildMonChartCost(da);
         }
     });
 
@@ -340,7 +344,7 @@
                     axisLabel: {
                         formatter: '{value}'
                     }
-                }
+                },
             ],
             grid: {
                 top: $("#t").val(),
@@ -353,6 +357,94 @@
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
         }
     }
+
+    //年成本
+    function buildChartCost(res) {
+        var list = [];
+        var ser = [];
+        for (var i = 0; i < res.length; i++) {
+            list.push(res[i].年份.toString());
+            ser.push({
+                name: res[i].年份.toString(),
+                type: 'bar',
+                data: [(res[i].钻孔 / res[i].产量).toFixed(2), (res[i].火工品 / res[i].产量).toFixed(2), (res[i].冲击炮 / res[i].产量).toFixed(2),
+                (res[i].装载 / res[i].产量).toFixed(2), (res[i].运输 / res[i].产量).toFixed(2),
+                (res[i].辅助 / res[i].产量).toFixed(2), (res[i].其他 / res[i].产量).toFixed(2), (res[i].合计 / res[i].产量).toFixed(2)],
+            });
+        }
+        var yco = document.getElementById('yco');
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeMainContainer = function () {
+            yco.style.width = window.innerWidth + 'px';
+            yco.style.height = window.innerHeight * 0.8 + 'px';
+        };
+        //设置div容器高宽
+        resizeMainContainer();
+        // 初始化图表
+        var myChartCost = echarts.init(yco);
+        $(window).on('resize', function () {
+            //屏幕大小自适应，重置容器高宽
+            resizeMainContainer();
+            myChartCost.resize();
+        });
+        var app = {};
+        option = null;
+        app.title = '数据对比';
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                orient: 'vertical',
+                feature: {
+                    //dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                width: '90%',
+                height: 1000,
+                x: 'center',
+                data: list,
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ["钻孔", "火工品", "冲击炮", "装载", "运输", "辅助", "其他", "合计"],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            grid: {
+                top: $("#t").val(),
+                containLabel: true
+            },
+            series: ser
+        };
+        if (option && typeof option === "object") {
+            myChartCost.setOption(option, true);
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+        }
+    }
+
 
     //月份
     function buildMonChart(res) {
@@ -391,7 +483,7 @@
                                 formatter: function (params) {
                                     var str = '<style>td{padding:5px;}</style><table>';
                                     str += '<tr><td>' + year + '/' + params.seriesName + '</td></tr>';
-                                    str += '<tr><td>' + params.name + '：' + params.data + '</td></tr>';
+                                    str += '<tr><td>' + params.name + '：' + params.data.toFixed(2) + '</td></tr>';
                                     str += '</table>';
                                     return str
                                 }
@@ -462,6 +554,12 @@
                     axisLabel: {
                         formatter: '{value}'
                     }
+                },
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
                 }
             ],
             grid: {
@@ -471,6 +569,131 @@
         };
         if (option && typeof option === "object") {
             chart.setOption(option, true);
+            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+        }
+    }
+
+    //月成本
+    function buildMonChartCost(res) {
+        var list = [];
+        var ser = [];
+        for (var i = 0; i < res.length; i++) {
+            $.ajax({
+                url: '/Table/QueryYearCost',
+                type: 'post',
+                async: false,
+                data: {
+                    "id": res[i].年份.toString(),
+                },
+                success: function (result) {
+                    for (var j = 0; j < result.length; j++) {
+                        var year = "";
+                        if (list.indexOf(result[j].月份) == -1) {
+                            list.push(result[j].月份.toString());
+                        }
+                        $.ajax({
+                            url: '/Table/lookCost',
+                            type: 'post',
+                            async: false,
+                            data: {
+                                "ye": result[j].年份.toString(),
+                                "mon": result[j].月份.toString()
+                            },
+                            success: function (data) {
+                                year = data[0].年份;
+                            }
+                        });
+                        ser.push({
+                            name: result[j].月份,
+                            type: 'bar',
+                            tooltip: {
+                                formatter: function (params) {
+                                    var str = '<style>td{padding:5px;}</style><table>';
+                                    str += '<tr><td>' + year + '/' + params.seriesName + '</td></tr>';
+                                    str += '<tr><td>' + params.name + '：' + params.data+ '</td></tr>';
+                                    str += '</table>';
+                                    return str
+                                }
+                            },
+                            data: [(result[j].钻孔 / result[j].产量).toFixed(2), (result[j].火工品 / result[j].产量).toFixed(2),
+                                (result[j].冲击炮 / result[j].产量).toFixed(2), (result[j].装载 / result[j].产量).toFixed(2),
+                                (result[j].运输 / result[j].产量).toFixed(2), (result[j].辅助 / result[j].产量).toFixed(2),
+                                (result[j].其他 / result[j].产量).toFixed(2), (result[j].总计 / result[j].产量).toFixed(2)],
+                        });
+                    }
+                }
+            });
+        }
+
+        var mco = document.getElementById('mco');
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeMainContainer = function () {
+            mco.style.width = window.innerWidth + 'px';
+            mco.style.height = window.innerHeight * 0.8 + 'px';
+        };
+        //设置div容器高宽
+        resizeMainContainer();
+        // 初始化图表
+        var chartCost = echarts.init(mco);
+        $(window).on('resize', function () {
+            //屏幕大小自适应，重置容器高宽
+            resizeMainContainer();
+            chartCost.resize();
+        });
+        var app = {};
+        option = null;
+        app.title = '数据对比';
+
+        option = {
+            tooltip: {
+                //trigger: 'axis',
+                trigger: 'item',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                orient: 'vertical',
+                feature: {
+                    //dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    //restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                width: '90%',
+                height: 1000,
+                x: 'center',
+                data: list,
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ["钻孔", "火工品", "冲击炮", "装载", "运输", "辅助", "其他", "合计"],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            grid: {
+                containLabel: true
+            },
+            series: ser
+        };
+        if (option && typeof option === "object") {
+            chartCost.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
         }
     }

@@ -9,7 +9,6 @@
         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addYear">添加年份</button>
     </div>
     <div class="col-md-12">
-
         @*报表展示*@
         <table id="showYear"></table>
         <span id="total"></span>
@@ -139,6 +138,16 @@
                             月份
                         </a>
                     </li>
+                    <li>
+                        <a href="#yc" data-toggle="tab">
+                            年成本
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#mc" data-toggle="tab">
+                            月成本
+                        </a>
+                    </li>
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
@@ -147,6 +156,12 @@
                     </div>
                     <div class="tab-pane fade" id="ios">
                         <div id="column" style="width:100%;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="yc">
+                        <div id="yco" style="width:100%;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="mc">
+                        <div id="mco" style="width:100%;"></div>
                     </div>
                 </div>
 

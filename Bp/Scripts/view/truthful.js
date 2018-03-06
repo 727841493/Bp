@@ -191,21 +191,21 @@ $(function () {
         return data;
     }
 
-    //var ua = navigator.userAgent;
+    var ua = navigator.userAgent;
 
-    //var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+    var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
 
-    //    isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+        isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
 
-    //    isAndroid = ua.match(/(Android)\s+([\d.]+)/),
+        isAndroid = ua.match(/(Android)\s+([\d.]+)/),
 
-    //    isMobile = isIphone || isAndroid;
+        isMobile = isIphone || isAndroid;
 
-    //if (isMobile) {
-    //    $("#t").val('40%')
-    //} else {
-    //    $("#t").val(60)
-    //}
+    if (isMobile) {
+        $("#t").val('20%')
+    } else {
+        $("#t").val(50)
+    }
 
     function buildChart(data, tada) {
         var mainContainer = document.getElementById('manyColumn');
@@ -257,23 +257,8 @@ $(function () {
                     // 不选中'系列2'
                     '真实值': false
                 },
-                //data: ["设-孔距", "真-孔距", "设-排距", "真-排距", "设-孔数", "真-孔数",
-                //    "设-孔总深", "真-孔总深", "设-平均孔深", "真-平均孔深",
-                //    "设-炸药量", "真-炸药量", "设-抵抗线", "真-抵抗线", "设-超深", "真-超深",
-                //    "设-填充", "真-填充", "设-爆破量", "真-爆破量", "设-炸药单耗", "真-炸药单耗"]
-                data: ["设计值", "真实值", "孔距"],
+                data: ["孔距", "排距", "孔数", "孔总深", "平均孔深", "炸药量", "抵抗线", "超深", "填充", "爆破量", "炸药单耗"],
             },
-            //dataRange: {
-            //    x: 'left',
-            //    y: 'top',
-            //    splitList: [
-            //        { start: 1500, label: '孔距', color: 'black' },
-            //        { start: 900, end: 1500 },
-            //        { start: 5, end: 5 },
-            //        { end: 10 }
-            //    ],
-            //    color: ['#E0022B', '#E09107', '#A3E00B']
-            //},
             xAxis: [
                 {
                     type: 'category',
@@ -300,6 +285,7 @@ $(function () {
                 }
             ],
             grid: {
+                top: $("#t").val(),
                 containLabel: true
             },
             series: [
@@ -310,8 +296,8 @@ $(function () {
                     tooltip: {
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -323,44 +309,15 @@ $(function () {
                             return 0;
                         }
                     }),
-                },
-                {
-                    name: '设计值',
-                    type: 'bar',
-                    yAxisIndex: 1,
-                    tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
-                        formatter: function (params) {
-                            var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
-                            str += '</table>';
-                            return str
-                        }
-                    },
-                    data: data.map(function (v, i) {
-                        if (v.孔距 != null) {
-                            return v.孔距.toFixed(2)
-                        } else {
-                            return 0;
-                        }
-                    }),
-                    //系列中的数据标注内容  
-                    //markPoint: {
-                    //    data: [
-                    //        { type: 'max', name: '孔距' },
-                    //    ]
-                    //},
                 }, {
-                    name: '真实值',
+                    name: '孔距',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔距：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -374,15 +331,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '排距',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '排距：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -395,15 +351,14 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '排距',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '排距：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -417,15 +372,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '孔数',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔数：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -438,15 +392,14 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '孔数',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔数：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -460,14 +413,13 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '孔总深',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔总深：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -480,14 +432,13 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '孔总深',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '孔总深：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -501,15 +452,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '平均孔深',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '平均孔深：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -522,15 +472,14 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '平均孔深',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '平均孔深：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -544,14 +493,13 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '炸药量',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '炸药量：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -564,14 +512,13 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '炸药量',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '炸药量：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -585,15 +532,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '抵抗线',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '抵抗线：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -607,15 +553,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '真实值',
+                    name: '抵抗线',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '抵抗线：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -629,15 +574,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '超深',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '超深：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -650,15 +594,14 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '超深',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '超深：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -672,15 +615,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '填充',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '填充：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -693,15 +635,14 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '填充',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '填充：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -715,14 +656,13 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '爆破量',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '爆破量：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -735,14 +675,13 @@ $(function () {
                         }
                     })
                 }, {
-                    name: '真实值',
+                    name: '爆破量',
                     type: 'bar',
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '爆破量：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -756,15 +695,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '设计值',
+                    name: '炸药单耗',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '炸药单耗：' + params.data + '</td></tr>';
+                            str += '<tr><td>设计值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -778,15 +716,14 @@ $(function () {
                     })
                 },
                 {
-                    name: '真实值',
+                    name: '炸药单耗',
                     type: 'bar',
                     yAxisIndex: 1,
                     tooltip: {
-                        // formatter: "{a}<br/>{b}:{c}"
                         formatter: function (params) {
                             var str = '<style>td{padding:5px;}</style><table>';
-                            str += '<tr><td>' + params.seriesName + '</td></tr>';
-                            str += '<tr><td>' + '炸药单耗：' + params.data + '</td></tr>';
+                            str += '<tr><td>真实值</td></tr>';
+                            str += '<tr><td>' + params.seriesName + "：" + params.data + '</td></tr>';
                             str += '</table>';
                             return str
                         }
@@ -848,25 +785,8 @@ $(function () {
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "真实值" })
         }
 
-        //myChart.dispatchAction({
-        //    type: 'legendUnSelect',
-        //    name: "孔距",
-        //});
-
-        //var ecConfig = require('echarts/config');
-        //myChart.on(ecConfig.EVENT.LEGEND_SELECTED, function (param) {
-        //    alert(1);
-        //});
-
-        //myChart.dispatchAction({
-        //    type: 'legendUnSelect',
-        //    // 图例名称  
-        //    name: "孔距",
-        //});
- 
     }
 
     //真实数据拟态框显示
@@ -899,6 +819,26 @@ $(function () {
                 }
             }
         });
+    });
+
+
+    $("#tf").click(function () {
+        //data 需要导出的数据
+        var data;
+        $.ajax({
+            url: '/Table/QueryTureData',
+            type: 'post',
+            async: false,
+            success: function (result) {
+                data = result;
+            }
+        });
+        if (data == '')
+            return;
+        //excel 表格输出顺序及标题
+        var title = [{ 项目编码: '项目编码' }, { 日期: '日期' }, { 孔距: '孔距' }, { 排距: '排距' }, { 孔数: '孔数' }, { 平均孔深: '平均孔深' },
+        { 炸药量: '炸药量' }, { 抵抗线: '抵抗线' }, { 超深: '超深' }, { 填充: '填充' }, { 孔总深: '孔总深' }, { 爆破量: '爆破量' }, { 炸药单耗: '炸药单耗' }];
+        toExcel("项目真实数据", data, title);
     });
 });
 //页面加载结束
@@ -1066,7 +1006,8 @@ function cost(id, name) {
 }
 //父子表
 function expandTable($detail, cells, rows, id, name) {
-    buildTable($detail.html('<button id="tf" type="button" class="btn btn-primary" style="float:right">导出</button><table id="' + id + '"></table>').find('table'), cells, rows, id, name);
+    //buildTable($detail.html('<button id="tf" type="button" class="btn btn-primary" style="float:right">导出</button><table id="' + id + '"></table>').find('table'), cells, rows, id, name);
+    buildTable($detail.html('<table id="' + id + '"></table>').find('table'), cells, rows, id, name);
 }
 
 function buildTable($el, cells, rows, id, name) {
@@ -1230,16 +1171,6 @@ function buildTable($el, cells, rows, id, name) {
         ]
     });
 
-    $("#tf").click(function () {
-        //data 需要导出的数据
-        var data = JSON.stringify($("#" + id).bootstrapTable('getData'));
-        if (data == '')
-            return;
-        //excel 表格输出顺序及标题
-        var title = [{ 项目编码: '项目编码' }, { 日期: '日期' }, { 孔距: '孔距' }, { 排距: '排距' }, { 孔数: '孔数' }, { 平均孔深: '平均孔深' },
-        { 炸药量: '炸药量' }, { 抵抗线: '抵抗线' }, { 超深: '超深' }, { 填充: '填充' }, { 孔总深: '孔总深' }, { 爆破量: '爆破量' }, { 炸药单耗: '炸药单耗' }];
-        toExcel("Report", data, title);
-    });
 }
 function SaveChange() {
     var patrn = /^(([1-9]\d*)|\d)(\.\d{1,})?$/;
