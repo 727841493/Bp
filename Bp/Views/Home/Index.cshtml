@@ -110,7 +110,7 @@
 
 @*文件上传*@
 <div class="modal fade" id="upShare" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width:300px">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -120,13 +120,45 @@
             @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <div class="modal-body">
-                    <text>选择上传文件：</text><input name="file" type="file" id="file" />
+                    <text>文件名：</text><input name="alias" type="text" id="alias" /><br />
+                    <text>选择文件：</text><input name="file" type="file" id="file" />
                 </div>
                 <div class="modal-footer">
                     <button type="submit" name="Upload" value="Upload" class="btn btn-primary">上传</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
             }
+        </div>
+    </div>
+</div>
+
+@*重命名*@
+<div id="ChangName" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width:300px">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="carousel-example-generic" class="carousel slide">
+                    <!-- Indicators -->
+                    @*<ol id="Indicators" class="carousel-indicators"></ol>*@
+                    <!-- Wrapper for slides -->
+                    <div id="Wrapper" class="carousel-inner" role="listbox">
+                    </div>
+                    <!-- Controls -->
+                    @*<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>*@
+                    <div id="Alias" style="margin-top: 30px;">
+                    </div>
+                </div>
+            </div>
+            <!-- 关闭按钮 -->
+            <div id="Button" class="modal-footer">
+            </div>
         </div>
     </div>
 </div>

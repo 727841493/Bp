@@ -18,5 +18,8 @@ namespace Bp.Models
 
         [StringLength(50)]
         public string 上传人 { get; set; }
+
+        [StringLength(50)]
+        public string 别名 { get; set; }
     }
 }

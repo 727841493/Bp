@@ -30,56 +30,121 @@ namespace Bp.Controllers
             //Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
             //}
             var file = Request.Files["file"];
-            if (file.ContentLength == 0)
+            var alias = form["alias"];
+            var list = db.Bp_分享资料.Where(x => x.别名 == alias);
+            if (list.Count() > 0 || alias == null)
             {
-                //文件大小大（以字节为单位）为0时，做一些操作
+                //别名已存在或没写别名
                 Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
             }
             else
             {
-                //上传人
-                var name = CookieResult.CookieName();
-
-                //上传时间
-                var time = DateTime.Now;
-                //文件存放路径
-                var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
-                var guid = Guid.NewGuid().ToString();
-
-                //文件大小不为0
-                file = Request.Files["file"];
-                string target = homePath + guid;//取得目标文件夹的路径
-                //取得文件名字
-                var filename = file.FileName;
-                try
+                if (file.ContentLength == 0)
                 {
-                    Bp_分享资料 fxzl = new Bp_分享资料
-                    {
-                        ID = guid,
-                        资料名称 = filename,
-                        上传时间 = time,
-                        上传人 = name,
-                    };
-                    db.Bp_分享资料.Add(fxzl);
-                    db.SaveChanges();
-                    //判断文件夹是否存在
-                    if (!Directory.Exists(target))
-                    {
-                        // 目录不存在，建立目录
-                        Directory.CreateDirectory(target);
-                    }
-                    //获取存储的目标地址
-                    string path = target + "\\" + filename;
-                    file.SaveAs(path);
-                    Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
-                }
-                catch (Exception)
-                {
+                    //文件大小大（以字节为单位）为0时，做一些操作
                     Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
                 }
+                else
+                {
+                    //上传人
+                    var name = CookieResult.CookieName();
 
+                    //上传时间
+                    var time = DateTime.Now;
+                    //文件存放路径
+                    var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+                    var guid = Guid.NewGuid().ToString();
+
+                    //文件大小不为0
+                    file = Request.Files["file"];
+                    string target = homePath + guid;//取得目标文件夹的路径
+                                                    //取得文件名字
+                    var filename = file.FileName;
+                    try
+                    {
+                        Bp_分享资料 fxzl = new Bp_分享资料
+                        {
+                            ID = guid,
+                            资料名称 = filename,
+                            上传时间 = time,
+                            上传人 = name,
+                            别名 = alias,
+                        };
+                        db.Bp_分享资料.Add(fxzl);
+                        db.SaveChanges();
+                        //判断文件夹是否存在
+                        if (!Directory.Exists(target))
+                        {
+                            // 目录不存在，建立目录
+                            Directory.CreateDirectory(target);
+                        }
+                        //获取存储的目标地址
+                        string path = target + "\\" + filename;
+                        file.SaveAs(path);
+                        Response.Write("<script>alert('上传成功');window.location.href='/Home/Index';</script>");
+                    }
+                    catch (Exception)
+                    {
+                        Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
+                    }
+                }
             }
         }
+
+        /// <summary>
+        ///重命名
+        /// </summary>
+        /// <param name="id">项目编码</param>
+        /// <returns>图片</returns>
+        public JsonResult QueryFile(string id)
+        {
+            //根据项目编码查询符合条件的资料
+            var list = db.Bp_分享资料.Where(x => x.ID == id).FirstOrDefault();
+            //存放查询出来的文件
+            List<string> files = new List<string>();
+            //文件根目录
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
+            //目标文件夹配置路径
+            string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
+            //目标文件夹的文件名
+            string desdir = Server.MapPath(load) + CookieResult.CookieName();
+            //判断文件夹是否存在
+            if (!Directory.Exists(desdir))
+            {
+                // 目录不存在，建立目录
+                Directory.CreateDirectory(desdir);
+            }
+            //动态拼接文件路径
+            string path = homePath + list.ID;
+            //文件路径集合
+            var ls = Directory.GetFiles(path).ToList().FirstOrDefault();
+            try
+            {
+                //判断文件是否是图片格式
+                System.Drawing.Image img = System.Drawing.Image.FromFile(ls);
+                //目标图片保存的路径和名称
+                String imgPath = desdir + '\\' + list.资料名称;
+
+                //true 覆盖已存在的同名文件,false则反之
+                bool isrewrite = true;
+
+                //从源文件复制到目标文件中
+                System.IO.File.Copy(ls, imgPath, isrewrite);
+
+                //绝对路径转换为相对路径
+                int j = imgPath.IndexOf("Data");
+                string str = imgPath.Substring(j);
+                string url = str.Replace(@"\", @"/");
+                //添加到查询文件集合中
+                files.Add("../" + url);
+            }
+            catch (Exception)
+            {
+                return Json(files);
+            }
+            return Json(files);
+        }
+
 
         //报表查询
         public JsonResult QueryStatistics()
@@ -344,6 +409,7 @@ namespace Bp.Controllers
                            资料名称 = s.资料名称,
                            上传时间 = s.上传时间,
                            上传人 = s.上传人,
+                           别名 = s.别名,
                        };
             switch (sortOrder)
             {
@@ -367,55 +433,38 @@ namespace Bp.Controllers
         public void DownloadShare(string id)
         {
             //根据项目编码查询符合条件的资料
-            var list = db.Bp_分享资料.Where(x => x.ID == id);
-
-            //存放查询出来的文件
-            List<string> files = new List<string>();
-
-            //文件根目录
+            var list = db.Bp_分享资料.Where(x => x.ID == id).FirstOrDefault();
+            //文件根目录 absoluSrc
             var homePath = System.Configuration.ConfigurationManager.AppSettings["shareFile"];
-
-            foreach (var s in list)
-            {
-                //动态拼接文件路径
-                string path = homePath + s.ID;
-                var ls = Directory.GetFiles(path).ToList();
-                files.AddRange(ls);
-            }
-            //压缩包名称
-            string fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + @".zip";
-            //string absoluFilePath = @"C:\Program Files (x86)\MicroStarSoft\中矿微星后台服务程序\UserFiles\Zip\"+date+@".zip";
-            //压缩包备份路径
+            //动态拼接文件路径
+            string path = homePath + list.ID;
+            //存放查询出来的文件
+            var files = Directory.GetFiles(path).ToList();
+            //名称
+            string fileName = list.资料名称;
+            //备份路径
             string absolu = System.Configuration.ConfigurationManager.AppSettings["absoluSrc"];
-            //压缩包备份
-            string absoluFilePath = Server.MapPath(absolu) + fileName;
-            ZipHelper.ZipManyFilesOrDictorys(files, absoluFilePath, null);
-            //string absoluFilePath = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentPath"] + filePath);
-            //下载
-            Response.ClearHeaders();
-            Response.Clear();
-            Response.Expires = 0;
-            Response.Buffer = true;
-            Response.AddHeader("Accept-Language", "zh-tw");
-            FileStream fileStream = new FileStream(absoluFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            byte[] byteFile = null;
-            if (fileStream.Length == 0)
-            {
-                byteFile = new byte[1];
-            }
-            else
-            {
-                byteFile = new byte[fileStream.Length];
-            }
-            fileStream.Read(byteFile, 0, (int)byteFile.Length);
-            fileStream.Close();
-            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(fileName, System.Text.Encoding.UTF8));
+            //同名文件覆盖
+            bool isrewrite = true;
+            String imgPath = Server.MapPath(absolu) + fileName;
+            System.IO.File.Copy(files[0], imgPath, isrewrite);
+            int j = imgPath.IndexOf("Zip");
+            string str = imgPath.Substring(j);
+            string url = str.Replace(@"\", @"/");
+            string filePath = Server.MapPath("../" + url);//路径
+            //以字符流的形式下载文件
+            FileStream fs = new FileStream(filePath, FileMode.Open);
+            byte[] bytes = new byte[(int)fs.Length];
+            fs.Read(bytes, 0, bytes.Length);
+            fs.Close();
             Response.ContentType = "application/octet-stream";
-            Response.BinaryWrite(byteFile);
+            //通知浏览器下载文件而不是打开
+            Response.AddHeader("Content-Disposition", "attachment;  filename=" + HttpUtility.UrlEncode(fileName, System.Text.Encoding.UTF8));
+            Response.BinaryWrite(bytes);
             Response.Flush();
             Response.End();
             //删除备份
-            System.IO.File.Delete(absoluFilePath);
+            //System.IO.File.Delete(filePath);
         }
 
         /// <summary>

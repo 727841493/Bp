@@ -82,7 +82,7 @@ function queryFilePicture(id) {
                 Wrapper.push('"></div>')
             })
 
-            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(180)">旋转</button>');
+            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(90)">旋转</button>');
             Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
 
             $('#Indicators').html(Indicators.join(''));

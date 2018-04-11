@@ -68,6 +68,7 @@ $(function () {
                 valign: "middle",
                 align: "center",
                 sortable: true,
+                formatter: dateFormatter
             }, {
                 field: '岩性',
                 title: "岩性",
@@ -160,6 +161,23 @@ $(function () {
         ]
     });
 
+    //日期格式化
+    function dateFormatter(v) {
+        var val = Date.parse(v);
+        var newDate = new Date(val);
+        var year = newDate.getFullYear();
+        var month = (newDate.getMonth() + 1).toString();
+        var day = (newDate.getDate()).toString();
+        if (month.length == 1) {
+            month = "0" + month;
+        }
+        if (day.length == 1) {
+            day = "0" + day;
+        }
+        var dateTime = year + month + day;
+        return dateTime;
+    }
+
     //数据保留两位小数
     function numberFormatter(v) {
         return v.toFixed(2);
@@ -177,6 +195,9 @@ $(function () {
     }
     //下载共享文件
     function shareFormatter(value, row, index) {
+        if (row.别名 != null && row.别名 != "") {
+            value = row.别名;
+        }
         return [
             '<a  href="',
             "/Home/DownloadShare?id=",
@@ -330,6 +351,15 @@ $(function () {
             ')">',
             '删除',
             '</a>',
+            ' / ',
+            '<a href="#"',
+            'onclick="change_file(',
+            "'",
+            row.ID,
+            "'",
+            ')">',
+            '重命名',
+            '</a>',
         ].join('');
     }
 
@@ -374,6 +404,76 @@ $(function () {
 
 });
 
+//重命名共享文件
+function change_file(id) {
+    $.ajax({
+        url: '/Home/QueryFile',
+        type: 'post',
+        data: {
+            "id": id,
+        },
+        success: function (result) {
+
+            var Alias = [];
+            var Wrapper = [];
+            var Button = [];
+
+            if (result.length > 0) {
+                $.each(result, function (i, v) {
+                    //Indicators.push('<li data-target="#carousel-example-generic" data-slide-to="')
+                    //Indicators.push(i)
+                    //Indicators.push('"')
+                    Wrapper.push('<div class="item')
+                    if (i === 0) {
+                        //Indicators.push(' class="active"')
+                        Wrapper.push(' active')
+                    }
+                    //Indicators.push('></li>');
+
+                    Wrapper.push('"><img id ="imgTest" src="')
+                    Wrapper.push(v)
+                    Wrapper.push('"></div>')
+                })
+            }
+
+            Alias.push('<text style="display:none">文件ID：</text> <input type="text" id="aliasId" disabled style="display: none;" value="')
+            Alias.push(id)
+            Alias.push('" />')
+            Alias.push('<text>文件名：</text> <input  type="text" id="aliasName" />');
+
+            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(90)">旋转</button>');
+            Button.push('<button type="button" class="btn btn-default" onclick="changeName()">修改</button>');
+            Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
+            if (result.length > 0) {
+                $('#Wrapper').html(Wrapper.join(''));
+            }
+            $('#Button').html(Button.join(''));
+            $('#Alias').html(Alias.join(''));
+            $('#ChangName').modal('show');
+        }
+    });
+
+    $('#ChangName').on('hide.bs.modal', function () {
+        var Alias = [];
+        var Wrapper = [];
+        var Button = [];
+        $('#Wrapper').html(Wrapper.join(''));
+        $('#Button').html(Button.join(''));
+        $('#Alias').html(Alias.join(''));
+    })
+
+}
+//提交重命名
+function changeName() {
+    var id = $("#aliasId").val();
+    var name = $("#aliasName").val();
+    if (name == "") {
+        alert("文件名不能为空！");
+    } else {
+        alert(name);
+    }
+}
+
 //删除共享文件
 function delete_file(id) {
     var r = confirm("确定删除吗？");
@@ -387,7 +487,7 @@ function delete_file(id) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
-                } 
+                }
             }
         });
     }
@@ -407,13 +507,24 @@ function delete_msg(id, title) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
-                } 
+                }
             }
         });
     }
 }
 
-
+//图片旋转
+function tranImg(trun) {
+    var imgClass = document.getElementsByClassName('item active');
+    var imgObj = imgClass[0].firstElementChild;
+    var current = 0;
+    if (imgObj.style.transform == "") {
+        current = (current + trun) % 360;
+        imgObj.style.transform = 'rotate(' + current + 'deg)';
+    } else {
+        imgObj.style.transform = "";
+    }
+}
 //通知信息
 function read(id) {
     $('#readMsg').bootstrapTable('destroy');

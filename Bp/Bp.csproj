@@ -250,6 +250,7 @@
     <Content Include="Content\css\typeahead.css" />
     <Content Include="Content\css\wizard.css" />
     <Content Include="Content\echarts\drop-down.css" />
+    <Content Include="Images\bgImg.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\login.css" />
