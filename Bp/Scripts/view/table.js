@@ -40,6 +40,7 @@ function sumbit() {
 //点击查看详情
 function detailFormatter(index, row) {
     var html = [];
+    html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
         if (key == "项目编码" || key == "预览" || value == true || value == false) {
             return true;
@@ -50,6 +51,7 @@ function detailFormatter(index, row) {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>');
         }
     });
+    html.push('</div>')
     return html.join('');
 }
 //查询并预览图片
@@ -61,12 +63,13 @@ function queryFilePicture(id) {
             "id": id,
         },
         success: function (result) {
-
+           
             var Indicators = [];
             var Wrapper = [];
             var Button = [];
 
             $.each(result, function (i, v) {
+                var list = v.split("/");
                 Indicators.push('<li data-target="#carousel-example-generic" data-slide-to="')
                 Indicators.push(i)
                 Indicators.push('"')
@@ -79,10 +82,20 @@ function queryFilePicture(id) {
 
                 Wrapper.push('"><img id ="imgTest" src="')
                 Wrapper.push(v)
-                Wrapper.push('"></div>')
+                Wrapper.push('">')
+                Wrapper.push('<div class="carousel-caption">')
+                Wrapper.push('<p id="picId">')
+                Wrapper.push(list[list.length - 2])
+                Wrapper.push('</p>')
+                Wrapper.push('<p id= "picName">')
+                Wrapper.push(list[list.length - 1])
+                Wrapper.push('</p>')
+                Wrapper.push('</div>')
+                Wrapper.push('</div>')
             })
 
             Button.push('<button type="button" class="btn btn-default" onclick="tranImg(90)">旋转</button>');
+            Button.push('<button type="button" class="btn btn-default" onclick="deletePic()">删除</button>');
             Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
 
             $('#Indicators').html(Indicators.join(''));
@@ -92,6 +105,29 @@ function queryFilePicture(id) {
         }
     });
 }
+
+//删除图片
+function deletePic() {
+    var id = document.getElementById("picId").innerHTML;
+    var name = document.getElementById("picName").innerHTML;
+    alert(id + "--------------" + name)
+    //$.ajax({
+    //    url: '/Table/deletePic',
+    //    type: 'post',
+    //    data: {
+    //        "id": id,
+    //        "name":name,
+    //    },
+    //    success: function (result) {
+    //        if (!result.success) {
+    //            alert(result.message);
+    //        } else {
+    //            location.reload();
+    //        }
+    //    }
+    //})
+}
+
 //历史记录表格
 function records(id) {
     //评分的历史记录表格
@@ -516,6 +552,16 @@ $(function () {
             '</button>',
         ].join('');
     }
+
+    //最优项目
+    function optimalFormatter(value, row, index) {
+        return [
+            '<button  data-toggle="modal" data-target="#seeProjects" class="btn btn-primary" onclick="queryProject()">',
+            '优化',
+            '</button>',
+        ].join('');
+    }
+
     //打分
     $('#mark').bootstrapTable('destroy');
     $('#mark').bootstrapTable({
@@ -564,7 +610,7 @@ $(function () {
                     title: "操作",
                     valign: "middle",
                     align: "center",
-                    colspan: 5,
+                    colspan: 6,
                     rowspan: 1,
                     formatter: commentFormatter
                 }
@@ -629,6 +675,12 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     formatter: loadFormatter
+                }, {
+                    field: '优化',
+                    title: "优化",
+                    valign: "middle",
+                    align: "center",
+                    formatter: optimalFormatter
                 }
             ]
         ]
@@ -637,6 +689,20 @@ $(function () {
     $('#myModal').on('hide.bs.modal', function () {
         location.reload();
     })
+    //预览图片关闭
+    $('#image').on('hide.bs.modal', function () {
+        $.ajax({
+            url: '/Table/deleteLookPic',
+            type: 'post',
+            data: {},
+            success: function (result) {
+                if (!result.success) {
+                    alert(result.message)
+                }
+            }
+        })
+    })
+
 
     //查询Echarts
     //初始化切换

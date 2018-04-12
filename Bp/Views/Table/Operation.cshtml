@@ -122,3 +122,28 @@
         </div>
     </div>
 </div>
+@*查看最优项目*@
+<div class="modal fade" id="seeProjects" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">评分记录</h4>
+            </div>
+            <div class="modal-body">
+                @*块度平均分*@
+                <table id="block"></table>
+                @*抛掷平均分*@
+                <table id="throw"></table>
+                @*根底平均分*@
+                <table id="found"></table>
+                @*伞岩平均分*@
+                <table id="san"></table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

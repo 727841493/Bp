@@ -92,9 +92,9 @@ namespace Bp.Controllers
         }
 
         /// <summary>
-        ///重命名
+        ///重命名查看图片
         /// </summary>
-        /// <param name="id">项目编码</param>
+        /// <param name="id">guid</param>
         /// <returns>图片</returns>
         public JsonResult QueryFile(string id)
         {
@@ -144,7 +144,32 @@ namespace Bp.Controllers
             }
             return Json(files);
         }
-
+        /// <summary>
+        ///重命名
+        /// </summary>
+        /// <param name="id">guid</param>
+        /// <returns>是否成功</returns>
+        public string ChangeName(string id, string name)
+        {
+            var list = db.Bp_分享资料.Where(x => x.ID == id).FirstOrDefault();
+            if (list == null)
+            {
+                return AjaxResult.Error("修改失败").ToString();
+            }
+            else
+            {
+                try
+                {
+                    list.别名 = name;
+                    db.SaveChanges();
+                    return AjaxResult.Success(null, "修改成功").ToString();
+                }
+                catch (Exception)
+                {
+                    return AjaxResult.Error("修改失败").ToString();
+                }
+            }
+        }
 
         //报表查询
         public JsonResult QueryStatistics()
@@ -231,6 +256,25 @@ namespace Bp.Controllers
                             }
                         }
                     }
+                }
+                foreach (var item in list)
+                {
+                    string time = item.日期.Replace("-", "");
+                    var dt=DateTime.Now;
+                    if (time.Length == 8) {
+                        continue;
+                    }
+                    else {
+                        try
+                        {
+                            dt = DateTime.ParseExact(time, "yyyyMdd", System.Globalization.CultureInfo.CurrentCulture);
+                        }
+                        catch (Exception)
+                        {
+                            dt = DateTime.ParseExact(time, "yyyyMMd", System.Globalization.CultureInfo.CurrentCulture);
+                        }
+                    }
+                    item.日期 = dt.ToString("yyyy-MM-dd");
                 }
                 db.Bp_项目数据.AddRange(list);
                 db.SaveChanges();

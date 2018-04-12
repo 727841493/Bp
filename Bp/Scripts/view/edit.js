@@ -730,6 +730,7 @@ function lookCost(value, row, index) {
 //点击查看详情
 function detailFormatter(index, row) {
     var html = [];
+    html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
         if (key == "项目编码" || key == "预览" || value == true || value == false) {
             return true;
@@ -740,6 +741,7 @@ function detailFormatter(index, row) {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>');
         }
     });
+    html.push('</div>')
     return html.join('');
 }
 //一年成本核算

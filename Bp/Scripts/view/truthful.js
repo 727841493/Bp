@@ -153,6 +153,8 @@ $(function () {
     });
 
     //Echarts 对比
+    var selectArr = "";
+    var chart = "";
 
     function falseHandler(data) {
         //查询真实数据
@@ -252,10 +254,19 @@ $(function () {
                 height: 1000,
                 x: 'center',
                 selected: {
-                    // 选中'系列1'
-                    '设计值': true,
-                    // 不选中'系列2'
-                    '真实值': false
+                    // 选中
+                    '炸药单耗': true,
+                    // 不选中
+                    '孔距': false,
+                    '排距': false,
+                    '孔数': false,
+                    '孔总深': false,
+                    '平均孔深': false,
+                    '炸药量': false,
+                    '抵抗线': false,
+                    '超深': false,
+                    '填充': false,
+                    '爆破量': false,
                 },
                 data: ["孔距", "排距", "孔数", "孔总深", "平均孔深", "炸药量", "抵抗线", "超深", "填充", "爆破量", "炸药单耗"],
             },
@@ -785,10 +796,29 @@ $(function () {
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
             //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
+            selectArr = myChart.getOption().legend[0].data;
+            chart = myChart;
         }
-
     }
-
+   
+    $('#selectall').click(function () {
+        var flag = $(this).attr('flag');
+        if (flag == 1) {
+            var val = false;
+            $(this).attr('flag', 0);
+            $(this).val('全选中');
+        } else {
+            var val = true;
+            $(this).attr('flag', 1);
+            $(this).val('全不选');
+        }
+        var obj = {};
+        for (var key in selectArr) {
+            obj[selectArr[key]] = val;
+        }
+        option.legend.selected = obj;
+        chart.setOption(option);
+    });
     //真实数据拟态框显示
     $('#myTure').on('show.bs.modal', function () {
         $.ajax({
@@ -861,6 +891,7 @@ function numberFormatter1(v) {
 //点击查看详情
 function detailFormatter(index, row) {
     var html = [];
+    html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
         if (key == "项目编码" || key == "预览" || value == true || value == false) {
             return true;
@@ -871,6 +902,7 @@ function detailFormatter(index, row) {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>');
         }
     });
+    html.push('</div>')
     return html.join('');
 }
 //参数
