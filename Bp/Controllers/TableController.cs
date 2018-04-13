@@ -365,17 +365,19 @@ namespace Bp.Controllers
             //目标文件夹配置路径
             string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
 
-            //目标文件夹的文件名
-            string desdir = Server.MapPath(load) + CookieResult.CookieName();
-            //判断文件夹是否存在
-            if (!Directory.Exists(desdir))
-            {
-                // 目录不存在，建立目录
-                Directory.CreateDirectory(desdir);
-            }
 
             foreach (var s in list)
             {
+
+                //目标文件夹的文件名
+                string desdir = Server.MapPath(load) + CookieResult.CookieName() + "\\" + s.资料ID;
+                //判断文件夹是否存在
+                if (!Directory.Exists(desdir))
+                {
+                    // 目录不存在，建立目录
+                    Directory.CreateDirectory(desdir);
+                }
+
                 //动态拼接文件路径
                 string path = homePath + s.资料ID;
 
@@ -397,7 +399,7 @@ namespace Bp.Controllers
 
                         //从源文件复制到目标文件中
                         System.IO.File.Copy(l, imgPath, isrewrite);
-
+                        img.Dispose();
                         //绝对路径转换为相对路径
                         int j = imgPath.IndexOf("Data");
                         string str = imgPath.Substring(j);
@@ -413,6 +415,79 @@ namespace Bp.Controllers
                 }
             }
             return Json(files);
+        }
+
+        /// <summary>
+        ///删除预览图片
+        /// </summary>
+        public string deleteLookPic()
+        {
+            //目标文件夹配置路径
+            string load = System.Configuration.ConfigurationManager.AppSettings["loadSrc"];
+
+            //目标文件夹的文件名
+            string desdir = Server.MapPath(load) + CookieResult.CookieName();
+
+            DirectoryInfo dir = new DirectoryInfo(desdir);
+            FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
+            foreach (FileSystemInfo i in fileinfo)
+            {
+                if (i is DirectoryInfo)            //判断是否文件夹
+                {
+                    DirectoryInfo subdir = new DirectoryInfo(i.FullName);
+                    subdir.Delete(true);          //删除子目录和文件
+                }
+                else
+                {
+                    System.IO.File.Delete(i.FullName);      //删除指定文件
+                }
+            }
+            return AjaxResult.Success("删除成功").ToString();
+        }
+
+
+        /// <summary>
+        ///删除文件中的图片
+        /// </summary>
+        /// <param name="id">资料ID</param>
+        /// <param name="name">资料名称</param>
+        /// <returns>图片</returns>
+        public string deletePic(string id)
+        {
+            var user = CookieResult.CookieName();
+            var list = db.Bp_项目资料.Where(x => x.资料ID == id).FirstOrDefault();
+            if (list == null)
+            {
+                return AjaxResult.Error("图片不存在或已被删除").ToString();
+            }
+            else
+            {
+                if (list.上传人 != user)
+                {
+                    return AjaxResult.Error("无权删除该图片").ToString();
+                }
+                else
+                {
+                    try
+                    {
+                        var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
+
+                        var path = homePath + list.资料ID;
+
+                        DirectoryInfo di = new DirectoryInfo(path);
+                        di.Delete(true);
+
+                        db.Bp_项目资料.Remove(list);
+                        db.SaveChanges();
+                        return AjaxResult.Success(null, "删除成功").ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        return AjaxResult.Error("删除失败" + e).ToString();
+                    }
+
+                }
+            }
         }
 
         //上传

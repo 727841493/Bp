@@ -16,6 +16,7 @@ function changeDateFormat(cellval) {
 }
 function detailFormatter(index, row) {
     var html = [];
+    html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
         if (key == "项目编码" || key == "预览" || value == true || value == false) {
             return true;
@@ -26,6 +27,7 @@ function detailFormatter(index, row) {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>');
         }
     });
+    html.push('</div>')
     return html.join('');
 }
 
@@ -68,7 +70,7 @@ $(function () {
                 valign: "middle",
                 align: "center",
                 sortable: true,
-                formatter: dateFormatter
+                //formatter: dateFormatter
             }, {
                 field: '岩性',
                 title: "岩性",
@@ -470,7 +472,22 @@ function changeName() {
     if (name == "") {
         alert("文件名不能为空！");
     } else {
-        alert(name);
+        $.ajax({
+            url: '/Home/ChangeName',
+            type: 'post',
+            data: {
+                "id": id,
+                "name": name,
+            },
+            success: function (result) {
+                if (!result.success) {
+                    alert(result.message);
+                } else {
+                    $('#ChangName').modal('hide');
+                    $("#showFlie").bootstrapTable('refresh');
+                }
+            }
+        });
     }
 }
 

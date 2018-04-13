@@ -10,6 +10,13 @@ function queryParams(id) {
     };
     return params;
 }
+
+//数据保留两位小数
+function numberFormatter(v) {
+    if (v != null) {
+        return v.toFixed(2);
+    }
+}
 //点击评分显示信息（项目编码）
 function editInfo(id) {
     $("#id").text(id);
@@ -40,6 +47,7 @@ function sumbit() {
 //点击查看详情
 function detailFormatter(index, row) {
     var html = [];
+    html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
         if (key == "项目编码" || key == "预览" || value == true || value == false) {
             return true;
@@ -50,8 +58,69 @@ function detailFormatter(index, row) {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>');
         }
     });
+    html.push('</div>')
     return html.join('');
 }
+
+//最优选择筛选
+function MaxFormatter(data, index) {
+    var best = [];
+    //块度
+    if (index == 1) {
+        for (var i = 0; i < data.length - 1; i++) {
+            for (var j = 0; j < data.length - i - 1; j++) {
+                if (data[j].块度平均分 < data[j + 1].块度平均分) {
+                    var swap = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = swap;
+                }
+            }
+        }
+    } else if (index == 2) {
+        //抛掷
+        for (var i = 0; i < data.length - 1; i++) {
+            for (var j = 0; j < data.length - i - 1; j++) {
+                if (data[j].抛掷平均分 < data[j + 1].抛掷平均分) {
+                    var swap = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = swap;
+                }
+            }
+        }
+    } else if (index == 3) {
+        //根底
+        for (var i = 0; i < data.length - 1; i++) {
+            for (var j = 0; j < data.length - i - 1; j++) {
+                if (data[j].根底平均分 < data[j + 1].根底平均分) {
+                    var swap = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = swap;
+                }
+            }
+        }
+    } else if (index==4) {
+        //伞岩
+        for (var i = 0; i < data.length - 1; i++) {
+            for (var j = 0; j < data.length - i - 1; j++) {
+                if (data[j].伞岩平均分 < data[j + 1].伞岩平均分) {
+                    var swap = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = swap;
+                }
+            }
+        }
+    }
+    var list = data.slice(0, 3);
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].块度平均分 == null || list[i].抛掷平均分 == null || list[i].根底平均分 == null || list[i].伞岩平均分 == null) {
+            continue;
+        } else {
+            best.push(list[i]);
+        }
+    }
+    return list;
+}
+
 //查询并预览图片
 function queryFilePicture(id) {
     $.ajax({
@@ -67,6 +136,7 @@ function queryFilePicture(id) {
             var Button = [];
 
             $.each(result, function (i, v) {
+                var list = v.split("/");
                 Indicators.push('<li data-target="#carousel-example-generic" data-slide-to="')
                 Indicators.push(i)
                 Indicators.push('"')
@@ -79,10 +149,20 @@ function queryFilePicture(id) {
 
                 Wrapper.push('"><img id ="imgTest" src="')
                 Wrapper.push(v)
-                Wrapper.push('"></div>')
+                Wrapper.push('">')
+                Wrapper.push('<div class="carousel-caption" style="display:none">')
+                Wrapper.push('<p id="picId">')
+                Wrapper.push(list[list.length - 2])
+                Wrapper.push('</p>')
+                Wrapper.push('<p id= "picName">')
+                Wrapper.push(list[list.length - 1])
+                Wrapper.push('</p>')
+                Wrapper.push('</div>')
+                Wrapper.push('</div>')
             })
 
-            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(90)">旋转</button>');
+            Button.push('<button type="button" class="btn btn-default" onclick="tranImg(180)">旋转</button>');
+            Button.push('<button type="button" class="btn btn-default" onclick="deletePic()">删除</button>');
             Button.push('<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>');
 
             $('#Indicators').html(Indicators.join(''));
@@ -90,6 +170,349 @@ function queryFilePicture(id) {
             $('#Button').html(Button.join(''));
             $('#image').modal('show');
         }
+    });
+}
+
+//删除图片
+function deletePic() {
+    var div = document.getElementsByClassName("item active", "div");
+    var id = div[0].children[1].children[0].innerHTML;
+    $.ajax({
+        url: '/Table/deletePic',
+        type: 'post',
+        data: {
+            "id": id,
+        },
+        success: function (result) {
+            if (!result.success) {
+                alert(result.message);
+            } else {
+                location.reload();
+            }
+        }
+    })
+}
+//优化意见
+function queryProject() {
+    //块度
+    $('#block').bootstrapTable('destroy');
+    $('#block').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        //showExport: true,//导出按钮
+        url: '/Table/QueryStatistics',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryParams,
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
+        responseHandler: function (data) {
+            var list = MaxFormatter(data, 1)
+            return list;
+        },
+        columns: [
+            [
+                {
+                    field: '项目编码',
+                    title: "项目编码",
+                    valign: "middle",
+                    align: "center",
+                    visible: false,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    field: '日期',
+                    title: "日期",
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    title: "爆破效果",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 4,
+                    rowspan: 1
+                }
+            ], [
+                {
+                    field: '块度平均分',
+                    title: '块度',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '抛掷平均分',
+                    title: '抛掷',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '根底平均分',
+                    title: '根底',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '伞岩平均分',
+                    title: '伞岩',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                }
+            ]
+        ]
+    });
+    //抛掷
+    $('#throw').bootstrapTable('destroy');
+    $('#throw').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        //showExport: true,//导出按钮
+        url: '/Table/QueryStatistics',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryParams,
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
+        responseHandler: function (data) {
+            var list = MaxFormatter(data, 2)
+            return list;
+        },
+        columns: [
+            [
+                {
+                    field: '项目编码',
+                    title: "项目编码",
+                    valign: "middle",
+                    align: "center",
+                    visible: false,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    field: '日期',
+                    title: "日期",
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    title: "爆破效果",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 4,
+                    rowspan: 1
+                }
+            ], [
+                {
+                    field: '块度平均分',
+                    title: '块度',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '抛掷平均分',
+                    title: '抛掷',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '根底平均分',
+                    title: '根底',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '伞岩平均分',
+                    title: '伞岩',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                }
+            ]
+        ]
+    });
+    //根底
+    $('#found').bootstrapTable('destroy');
+    $('#found').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        //showExport: true,//导出按钮
+        url: '/Table/QueryStatistics',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryParams,
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
+        responseHandler: function (data) {
+            var list = MaxFormatter(data, 3)
+            return list;
+        },
+        columns: [
+            [
+                {
+                    field: '项目编码',
+                    title: "项目编码",
+                    valign: "middle",
+                    align: "center",
+                    visible: false,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    field: '日期',
+                    title: "日期",
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    title: "爆破效果",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 4,
+                    rowspan: 1
+                }
+            ], [
+                {
+                    field: '块度平均分',
+                    title: '块度',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '抛掷平均分',
+                    title: '抛掷',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '根底平均分',
+                    title: '根底',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '伞岩平均分',
+                    title: '伞岩',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                }
+            ]
+        ]
+    });
+    //伞岩
+    $('#san').bootstrapTable('destroy');
+    $('#san').bootstrapTable({
+        toolbar: "#toolbar",//工具按钮用哪个容器
+        method: "post",//请求方式
+        //showExport: true,//导出按钮
+        url: '/Table/QueryStatistics',//请求地址
+        queryParamsType: 'C',// 重写分页传递参数
+        queryParams: queryParams,
+        sortName: "name",
+        sortOrder: "desc",
+        detailView: true,
+        detailFormatter: detailFormatter,
+        responseHandler: function (data) {
+            var list = MaxFormatter(data, 4)
+            return list;
+        },
+        columns: [
+            [
+                {
+                    field: '项目编码',
+                    title: "项目编码",
+                    valign: "middle",
+                    align: "center",
+                    visible: false,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    field: '日期',
+                    title: "日期",
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    colspan: 1,
+                    rowspan: 2,
+                },
+                {
+                    title: "爆破效果",
+                    valign: "middle",
+                    align: "center",
+                    colspan: 4,
+                    rowspan: 1
+                }
+            ], [
+                {
+                    field: '块度平均分',
+                    title: '块度',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '抛掷平均分',
+                    title: '抛掷',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '根底平均分',
+                    title: '根底',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                },
+                {
+                    field: '伞岩平均分',
+                    title: '伞岩',
+                    sortable: true,
+                    valign: "middle",
+                    align: "center",
+                    formatter: numberFormatter
+                }
+            ]
+        ]
     });
 }
 //历史记录表格
@@ -159,7 +582,6 @@ function tranImg(trun) {
     }
 }
 $(function () {
-
     //预览轮播图(设置不自动播放)
     $('#carousel-example-generic').carousel({
         pause: true,
@@ -432,13 +854,6 @@ $(function () {
         };
     }
 
-    //数据保留两位小数
-    function numberFormatter(v) {
-        if (v != null) {
-            return v.toFixed(2);
-        }
-
-    }
 
     //打分评论
     function commentFormatter(value, row, index) {
@@ -516,6 +931,16 @@ $(function () {
             '</button>',
         ].join('');
     }
+
+    //最优项目
+    function optimalFormatter(value, row, index) {
+        return [
+            '<button  data-toggle="modal" data-target="#seeProjects" class="btn btn-primary" onclick="queryProject()">',
+            '优化',
+            '</button>',
+        ].join('');
+    }
+
     //打分
     $('#mark').bootstrapTable('destroy');
     $('#mark').bootstrapTable({
@@ -564,7 +989,7 @@ $(function () {
                     title: "操作",
                     valign: "middle",
                     align: "center",
-                    colspan: 5,
+                    colspan: 6,
                     rowspan: 1,
                     formatter: commentFormatter
                 }
@@ -629,6 +1054,12 @@ $(function () {
                     valign: "middle",
                     align: "center",
                     formatter: loadFormatter
+                }, {
+                    field: '优化',
+                    title: "优化",
+                    valign: "middle",
+                    align: "center",
+                    formatter: optimalFormatter
                 }
             ]
         ]
@@ -636,6 +1067,19 @@ $(function () {
     //打分拟态框关闭
     $('#myModal').on('hide.bs.modal', function () {
         location.reload();
+    })
+    //预览图片关闭
+    $('#image').on('hide.bs.modal', function () {
+        $.ajax({
+            url: '/Table/deleteLookPic',
+            type: 'post',
+            data: {},
+            success: function (result) {
+                if (!result.success) {
+                    alert(result.message)
+                }
+            }
+        })
     })
 
     //查询Echarts
