@@ -370,7 +370,7 @@ namespace Bp.Controllers
             {
 
                 //目标文件夹的文件名
-                string desdir = Server.MapPath(load) + CookieResult.CookieName() +"\\"+ s.资料ID;
+                string desdir = Server.MapPath(load) + CookieResult.CookieName() + "\\" + s.资料ID;
                 //判断文件夹是否存在
                 if (!Directory.Exists(desdir))
                 {
@@ -399,7 +399,7 @@ namespace Bp.Controllers
 
                         //从源文件复制到目标文件中
                         System.IO.File.Copy(l, imgPath, isrewrite);
-
+                        img.Dispose();
                         //绝对路径转换为相对路径
                         int j = imgPath.IndexOf("Data");
                         string str = imgPath.Substring(j);
@@ -452,10 +452,10 @@ namespace Bp.Controllers
         /// <param name="id">资料ID</param>
         /// <param name="name">资料名称</param>
         /// <returns>图片</returns>
-        public string deletePic(string id, string name)
+        public string deletePic(string id)
         {
             var user = CookieResult.CookieName();
-            var list = db.Bp_项目资料.Where(x => x.资料ID == id && x.项目名称 == name).FirstOrDefault();
+            var list = db.Bp_项目资料.Where(x => x.资料ID == id).FirstOrDefault();
             if (list == null)
             {
                 return AjaxResult.Error("图片不存在或已被删除").ToString();
@@ -474,24 +474,16 @@ namespace Bp.Controllers
 
                         var path = homePath + list.资料ID;
 
-                        FileAttributes attr = System.IO.File.GetAttributes(path);
-
-                        if (attr == FileAttributes.Directory)
-                        {
-                            Directory.Delete(path, true);
-                        }
-                        else
-                        {
-                            System.IO.File.Delete(path);
-                        }
+                        DirectoryInfo di = new DirectoryInfo(path);
+                        di.Delete(true);
 
                         db.Bp_项目资料.Remove(list);
                         db.SaveChanges();
                         return AjaxResult.Success(null, "删除成功").ToString();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        return AjaxResult.Error("删除失败").ToString();
+                        return AjaxResult.Error("删除失败" + e).ToString();
                     }
 
                 }
