@@ -250,7 +250,8 @@ $(function () {
                 }
             },
             legend: {
-                width: '90%',
+                type: 'scroll',
+                width: '80%',
                 height: 1000,
                 x: 'center',
                 selected: {
@@ -267,8 +268,9 @@ $(function () {
                     '超深': false,
                     '填充': false,
                     '爆破量': false,
+                    "全选": false,
                 },
-                data: ["孔距", "排距", "孔数", "孔总深", "平均孔深", "炸药量", "抵抗线", "超深", "填充", "爆破量", "炸药单耗"],
+                data: ["全选", "孔距", "排距", "孔数", "孔总深", "平均孔深", "炸药量", "抵抗线", "超深", "填充", "爆破量", "炸药单耗"],
             },
             xAxis: [
                 {
@@ -296,10 +298,17 @@ $(function () {
                 }
             ],
             grid: {
-                top: $("#t").val(),
+                //top: $("#t").val(),
                 containLabel: true
             },
             series: [
+                {
+                    name: '全选',
+                    type: 'bar',
+                    //yAxisIndex: 1,
+                    tooltip: {},
+                    data: [],
+                },
                 {
                     name: '孔距',
                     type: 'bar',
@@ -795,30 +804,29 @@ $(function () {
         };
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "设计值" })
             selectArr = myChart.getOption().legend[0].data;
-            chart = myChart;
+            myChart.on('legendselectchanged', function (params) {
+                var name = params.name;
+                if (name == "全选") {
+                    var flag = $(this).attr('flag');
+                    if (flag == 1) {
+                        var val = false;
+                        $(this).attr('flag', 0);
+                    } else {
+                        var val = true;
+                        $(this).attr('flag', 1);
+                    }
+                    var obj = {};
+                    for (var key in selectArr) {
+                        obj[selectArr[key]] = val;
+                    }
+                    option.legend.selected = obj;
+                    myChart.setOption(option);
+                }
+            });
         }
     }
-   
-    $('#selectall').click(function () {
-        var flag = $(this).attr('flag');
-        if (flag == 1) {
-            var val = false;
-            $(this).attr('flag', 0);
-            $(this).val('全选中');
-        } else {
-            var val = true;
-            $(this).attr('flag', 1);
-            $(this).val('全不选');
-        }
-        var obj = {};
-        for (var key in selectArr) {
-            obj[selectArr[key]] = val;
-        }
-        option.legend.selected = obj;
-        chart.setOption(option);
-    });
+
     //真实数据拟态框显示
     $('#myTure').on('show.bs.modal', function () {
         $.ajax({

@@ -275,10 +275,23 @@
 
     //年份
     function buildChart(res) {
-        var list = [];
-        var ser = [];
+        var list = ["全选"];
+        var ser = [{
+            name: '全选',
+            type: 'bar',
+            tooltip: {},
+            data: [],
+        }];
+        var selected = {};
+        selected["全选"] = false;
+        var now = new Date();
         for (var i = 0; i < res.length; i++) {
             list.push(res[i].年份.toString());
+            if (now.getFullYear() != res[i].年份) {
+                selected[res[i].年份.toString()] = false;
+            } else {
+                selected[res[i].年份.toString()] = true;
+            }
             ser.push({
                 name: res[i].年份.toString(),
                 type: 'bar',
@@ -294,6 +307,7 @@
         //设置div容器高宽
         resizeMainContainer();
         // 初始化图表
+        echarts.dispose(mainContainer);
         var myChart = echarts.init(mainContainer);
         $(window).on('resize', function () {
             //屏幕大小自适应，重置容器高宽
@@ -324,10 +338,12 @@
                 }
             },
             legend: {
-                width: '90%',
+                type: 'scroll',
+                width: '80%',
                 height: 1000,
                 x: 'center',
                 data: list,
+                selected: selected,
             },
             xAxis: [
                 {
@@ -347,23 +363,55 @@
                 },
             ],
             grid: {
-                top: $("#t").val(),
+                //top: $("#t").val(),
                 containLabel: true
             },
             series: ser
         };
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+            selectArr = myChart.getOption().legend[0].data;
+            myChart.on('legendselectchanged', function (params) {
+                var name = params.name;
+                if (name == "全选") {
+                    var flag = $(this).attr('flag');
+                    if (flag == 1) {
+                        var val = false;
+                        $(this).attr('flag', 0);
+                    } else {
+                        var val = true;
+                        $(this).attr('flag', 1);
+                    }
+                    var obj = {};
+                    for (var key in selectArr) {
+                        obj[selectArr[key]] = val;
+                    }
+                    option.legend.selected = obj;
+                    myChart.setOption(option);
+                }
+            });
         }
     }
 
     //年成本
     function buildChartCost(res) {
-        var list = [];
-        var ser = [];
+        var list = ["全选"];
+        var ser = [{
+            name: '全选',
+            type: 'bar',
+            tooltip: {},
+            data: [],
+        }];
+        var selected = {};
+        selected["全选"] = false;
+        var time = new Date();
         for (var i = 0; i < res.length; i++) {
             list.push(res[i].年份.toString());
+            if (time.getFullYear() != res[i].年份) {
+                selected[res[i].年份.toString()] = false;
+            } else {
+                selected[res[i].年份.toString()] = true;
+            }
             ser.push({
                 name: res[i].年份.toString(),
                 type: 'bar',
@@ -375,12 +423,14 @@
         var yco = document.getElementById('yco');
         //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
         var resizeMainContainer = function () {
-            yco.style.width = window.innerWidth + 'px';
+            //yco.style.width = window.innerWidth + 'px';
+            yco.style.width = yco.style.width;
             yco.style.height = window.innerHeight * 0.8 + 'px';
         };
         //设置div容器高宽
         resizeMainContainer();
         // 初始化图表
+        echarts.dispose(yco);
         var myChartCost = echarts.init(yco);
         $(window).on('resize', function () {
             //屏幕大小自适应，重置容器高宽
@@ -411,10 +461,12 @@
                 }
             },
             legend: {
-                width: '90%',
+                type: 'scroll',
+                width: '80%',
                 height: 1000,
                 x: 'center',
                 data: list,
+                selected: selected,
             },
             xAxis: [
                 {
@@ -434,22 +486,49 @@
                 }
             ],
             grid: {
-                top: $("#t").val(),
+                //top: $("#t").val(),
                 containLabel: true
             },
             series: ser
         };
         if (option && typeof option === "object") {
             myChartCost.setOption(option, true);
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+            selectArr = myChartCost.getOption().legend[0].data;
+            myChartCost.on('legendselectchanged', function (params) {
+                var name = params.name;
+                if (name == "全选") {
+                    var flag = $(this).attr('flag');
+                    if (flag == 1) {
+                        var val = false;
+                        $(this).attr('flag', 0);
+                    } else {
+                        var val = true;
+                        $(this).attr('flag', 1);
+                    }
+                    var obj = {};
+                    for (var key in selectArr) {
+                        obj[selectArr[key]] = val;
+                    }
+                    option.legend.selected = obj;
+                    myChartCost.setOption(option);
+                }
+            });
         }
     }
 
 
     //月份
     function buildMonChart(res) {
-        var list = [];
-        var ser = [];
+        var list = ["全选"];
+        var ser = [{
+            name: '全选',
+            type: 'bar',
+            tooltip: {},
+            data: [],
+        }];
+        var selected = {}; 
+        selected["全选"] = false;
+        var time = new Date();
         for (var i = 0; i < res.length; i++) {
             $.ajax({
                 url: '/Table/QueryYearCost',
@@ -463,6 +542,11 @@
                         var year = "";
                         if (list.indexOf(result[j].月份) == -1) {
                             list.push(result[j].月份.toString());
+                        }
+                        if (time.getMonth() + 1 != result[j].月份) {
+                            selected[result[j].月份.toString()] = false;
+                        } else {
+                            selected[result[j].月份.toString()] = true;
                         }
                         $.ajax({
                             url: '/Table/lookCost',
@@ -503,6 +587,7 @@
         //设置div容器高宽
         resizeMainContainer();
         // 初始化图表
+        echarts.dispose(container);
         var chart = echarts.init(container);
         $(window).on('resize', function () {
             //屏幕大小自适应，重置容器高宽
@@ -534,10 +619,12 @@
                 }
             },
             legend: {
-                width: '90%',
+                type: 'scroll',
+                width: '80%',
                 height: 1000,
                 x: 'center',
                 data: list,
+                selected: selected,
             },
             xAxis: [
                 {
@@ -554,13 +641,8 @@
                     axisLabel: {
                         formatter: '{value}'
                     }
-                },
-                {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: '{value}'
-                    }
                 }
+               
             ],
             grid: {
                 containLabel: true
@@ -569,14 +651,41 @@
         };
         if (option && typeof option === "object") {
             chart.setOption(option, true);
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+            selectArr = chart.getOption().legend[0].data;
+            chart.on('legendselectchanged', function (params) {
+                var name = params.name;
+                if (name == "全选") {
+                    var flag = $(this).attr('flag');
+                    if (flag == 1) {
+                        var val = false;
+                        $(this).attr('flag', 0);
+                    } else {
+                        var val = true;
+                        $(this).attr('flag', 1);
+                    }
+                    var obj = {};
+                    for (var key in selectArr) {
+                        obj[selectArr[key]] = val;
+                    }
+                    option.legend.selected = obj;
+                    chart.setOption(option);
+                }
+            });
         }
     }
 
     //月成本
     function buildMonChartCost(res) {
-        var list = [];
-        var ser = [];
+        var list = ["全选"];
+        var ser = [{
+            name: '全选',
+            type: 'bar',
+            tooltip: {},
+            data: [],
+        }];
+        var selected = {}; 
+        selected["全选"] = false;
+        var now = new Date();
         for (var i = 0; i < res.length; i++) {
             $.ajax({
                 url: '/Table/QueryYearCost',
@@ -590,6 +699,11 @@
                         var year = "";
                         if (list.indexOf(result[j].月份) == -1) {
                             list.push(result[j].月份.toString());
+                        }
+                        if (now.getMonth() + 1 != result[j].月份) {
+                            selected[result[j].月份.toString()] = false;
+                        } else {
+                            selected[result[j].月份.toString()] = true;
                         }
                         $.ajax({
                             url: '/Table/lookCost',
@@ -610,15 +724,15 @@
                                 formatter: function (params) {
                                     var str = '<style>td{padding:5px;}</style><table>';
                                     str += '<tr><td>' + year + '/' + params.seriesName + '</td></tr>';
-                                    str += '<tr><td>' + params.name + '：' + params.data+ '</td></tr>';
+                                    str += '<tr><td>' + params.name + '：' + params.data + '</td></tr>';
                                     str += '</table>';
                                     return str
                                 }
                             },
                             data: [(result[j].钻孔 / result[j].产量).toFixed(2), (result[j].火工品 / result[j].产量).toFixed(2),
-                                (result[j].冲击炮 / result[j].产量).toFixed(2), (result[j].装载 / result[j].产量).toFixed(2),
-                                (result[j].运输 / result[j].产量).toFixed(2), (result[j].辅助 / result[j].产量).toFixed(2),
-                                (result[j].其他 / result[j].产量).toFixed(2), (result[j].总计 / result[j].产量).toFixed(2)],
+                            (result[j].冲击炮 / result[j].产量).toFixed(2), (result[j].装载 / result[j].产量).toFixed(2),
+                            (result[j].运输 / result[j].产量).toFixed(2), (result[j].辅助 / result[j].产量).toFixed(2),
+                            (result[j].其他 / result[j].产量).toFixed(2), (result[j].总计 / result[j].产量).toFixed(2)],
                         });
                     }
                 }
@@ -628,12 +742,14 @@
         var mco = document.getElementById('mco');
         //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
         var resizeMainContainer = function () {
-            mco.style.width = window.innerWidth + 'px';
+            //mco.style.width = window.innerWidth + 'px';
+            mco.style.width = mco.style.width;
             mco.style.height = window.innerHeight * 0.8 + 'px';
         };
         //设置div容器高宽
         resizeMainContainer();
         // 初始化图表
+        echarts.dispose(mco);
         var chartCost = echarts.init(mco);
         $(window).on('resize', function () {
             //屏幕大小自适应，重置容器高宽
@@ -665,10 +781,12 @@
                 }
             },
             legend: {
-                width: '90%',
+                type: 'scroll',
+                width: '80%',
                 height: 1000,
                 x: 'center',
                 data: list,
+                selected: selected,
             },
             xAxis: [
                 {
@@ -694,7 +812,26 @@
         };
         if (option && typeof option === "object") {
             chartCost.setOption(option, true);
-            //myChart.dispatchAction({ type: 'legendUnSelect', name: "1995" })
+            selectArr = chartCost.getOption().legend[0].data;
+            chartCost.on('legendselectchanged', function (params) {
+                var name = params.name;
+                if (name == "全选") {
+                    var flag = $(this).attr('flag');
+                    if (flag == 1) {
+                        var val = false;
+                        $(this).attr('flag', 0);
+                    } else {
+                        var val = true;
+                        $(this).attr('flag', 1);
+                    }
+                    var obj = {};
+                    for (var key in selectArr) {
+                        obj[selectArr[key]] = val;
+                    }
+                    option.legend.selected = obj;
+                    chartCost.setOption(option);
+                }
+            });
         }
     }
 
@@ -732,7 +869,7 @@ function detailFormatter(index, row) {
     var html = [];
     html.push('<div style=" overflow:scroll; width:100%; height:300px;">')
     $.each(row, function (key, value) {
-        if (key == "项目编码" || key == "预览" || value == true || value == false) {
+        if (key == "项目编码" || key == "预览" || value == "true" || value == "false") {
             return true;
         }
         if (typeof value == "number") {
