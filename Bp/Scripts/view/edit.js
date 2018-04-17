@@ -686,7 +686,7 @@
         var selected = {}; 
         selected["全选"] = false;
         var now = new Date();
-        if (!res.length) {
+        if (!res) {
             window.location.reload();
         }
         for (var i = 0; i < res.length; i++) {
