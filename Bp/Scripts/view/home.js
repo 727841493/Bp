@@ -504,6 +504,8 @@ function delete_file(id) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
+                } else {
+                    location.reload();
                 }
             }
         });
@@ -524,6 +526,8 @@ function delete_msg(id, title) {
             success: function (result) {
                 if (!result.success) {
                     alert(result.message);
+                } else {
+                    location.reload();
                 }
             }
         });
