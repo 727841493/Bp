@@ -221,7 +221,9 @@ $(function () {
         pageNumber: 1,//首页页码
         pageSize: 4,//页面数据条数
         striped: true, // 是否显示行间隔色
-        smartDisplay: true,
+        paginationDetailHAlign: "right",
+        onlyInfoPagination: false,
+        smartDisplay: false,
         showHeader: false,
         classes: "table table-no-bordered",
         columns: [
@@ -289,7 +291,9 @@ $(function () {
         pageNumber: 1,//首页页码
         pageSize: 4,//页面数据条数
         striped: true, // 是否显示行间隔色
-        smartDisplay: true,
+        paginationDetailHAlign: "right",
+        onlyInfoPagination: false,
+        smartDisplay: false,
         showHeader: false,
         classes: "table table-no-bordered",
         columns: [

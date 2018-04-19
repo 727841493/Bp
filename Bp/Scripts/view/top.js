@@ -200,7 +200,7 @@
         }
     });
 
-    setInterval("queryRefresh();", 5 * 1000);
+    setInterval("queryRefresh();", 60 * 1000);
 
 });
 //刷新

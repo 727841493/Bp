@@ -259,23 +259,57 @@ namespace Bp.Controllers
                 }
                 foreach (var item in list)
                 {
-                    string time = item.日期.Replace("-", "");
-                    var dt=DateTime.Now;
-                    if (time.Length == 8) {
+                    string value = item.日期;
+                    string time = value.Replace("-", "");
+                    DateTime dt = new DateTime();
+                    if (time.Length == 8)
+                    {
                         continue;
                     }
-                    else {
-                        try
+                    else
+                    {
+                        if (time.Length == 6)
                         {
-                            dt = DateTime.ParseExact(time, "yyyyMdd", System.Globalization.CultureInfo.CurrentCulture);
+                            dt = DateTime.ParseExact(value, "yyyy-M-d", System.Globalization.CultureInfo.CurrentCulture);
+
                         }
-                        catch (Exception)
+                        else if (time.Length == 7)
                         {
-                            dt = DateTime.ParseExact(time, "yyyyMMd", System.Globalization.CultureInfo.CurrentCulture);
+                            try
+                            {
+                                dt = DateTime.ParseExact(time, "yyyyMdd", System.Globalization.CultureInfo.CurrentCulture);
+                            }
+                            catch (Exception)
+                            {
+                                dt = DateTime.ParseExact(time, "yyyyMMd", System.Globalization.CultureInfo.CurrentCulture);
+                            }
                         }
                     }
                     item.日期 = dt.ToString("yyyy-MM-dd");
                 }
+
+                foreach (var i in list)
+                {
+                    var n = 1;
+                    foreach (var j in list)
+                    {
+                        if (i.日期 == j.日期 && i.项目编码 != j.项目编码)
+                        {
+                            if (n == 1)
+                            {
+                                i.日期 = i.日期 + "(" + n + ")";
+                                n += 1;
+                                j.日期 = j.日期 + "(" + n + ")";
+                            }
+                            else
+                            {
+                                n += 1;
+                                j.日期 = j.日期 + "(" + n + ")";
+                            }
+                        }
+                    }
+                }
+
                 db.Bp_项目数据.AddRange(list);
                 db.SaveChanges();
 

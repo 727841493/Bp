@@ -98,7 +98,7 @@ function MaxFormatter(data, index) {
                 }
             }
         }
-    } else if (index==4) {
+    } else if (index == 4) {
         //伞岩
         for (var i = 0; i < data.length - 1; i++) {
             for (var j = 0; j < data.length - i - 1; j++) {
@@ -1075,8 +1075,9 @@ $(function () {
             type: 'post',
             data: {},
             success: function (result) {
-                if (!result.success) {
-                    alert(result.message)
+                if (result.success) {
+                    //alert(result.message)
+                    //location.reload();
                 }
             }
         })
@@ -1242,32 +1243,32 @@ $(function () {
             feature: {
                 mark: { show: true },
                 //数据视图
-                dataView: {
-                    show: true, readOnly: true, optionToContent: function (opt) {
-                        var axisData = opt.xAxis[0].data;
-                        var series = opt.series;
-                        var table = '<table style="width:100%;text-align:center"><tbody><tr>'
-                            + '<td>日期</td>';
-                        for (var n = 0; n < series.length; n++) {
-                            table += '<td>' + series[n].name + '</td>';
-                        }
-                        table += '</tr>';
-                        for (var i = 0, l = axisData.length; i < l; i++) {
-                            table += '<tr>'
-                                + '<td>' + axisData[i] + '</td>';
-                            for (var j = 0; j < series.length; j++) {
-                                if (typeof series[j].data[i] == "number") {
-                                    table += '<td>' + series[j].data[i].toFixed(2) + '</td>';
-                                } else {
-                                    table += '<td>' + series[j].data[i] + '</td>';
-                                }
-                            }
-                            table += '</tr>';
-                        }
-                        table += '</tbody></table>';
-                        return table;
-                    }
-                },
+                //dataView: {
+                //    show: true, readOnly: true, optionToContent: function (opt) {
+                //        var axisData = opt.xAxis[0].data;
+                //        var series = opt.series;
+                //        var table = '<table style="width:100%;text-align:center"><tbody><tr>'
+                //            + '<td>日期</td>';
+                //        for (var n = 0; n < series.length; n++) {
+                //            table += '<td>' + series[n].name + '</td>';
+                //        }
+                //        table += '</tr>';
+                //        for (var i = 0, l = axisData.length; i < l; i++) {
+                //            table += '<tr>'
+                //                + '<td>' + axisData[i] + '</td>';
+                //            for (var j = 0; j < series.length; j++) {
+                //                if (typeof series[j].data[i] == "number") {
+                //                    table += '<td>' + series[j].data[i].toFixed(2) + '</td>';
+                //                } else {
+                //                    table += '<td>' + series[j].data[i] + '</td>';
+                //                }
+                //            }
+                //            table += '</tr>';
+                //        }
+                //        table += '</tbody></table>';
+                //        return table;
+                //    }
+                //},
                 magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
                 //刷新
                 //restore: { show: true },

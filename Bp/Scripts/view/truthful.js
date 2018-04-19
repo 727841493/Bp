@@ -1047,7 +1047,7 @@ function cost(id, name) {
 //父子表
 function expandTable($detail, cells, rows, id, name) {
     //buildTable($detail.html('<button id="tf" type="button" class="btn btn-primary" style="float:right">导出</button><table id="' + id + '"></table>').find('table'), cells, rows, id, name);
-    buildTable($detail.html('<table id="' + id + '"></table>').find('table'), cells, rows, id, name);
+    buildTable($detail.html('<table></table>').find('table'), cells, rows, id, name);
 }
 
 function buildTable($el, cells, rows, id, name) {
@@ -1069,7 +1069,7 @@ function buildTable($el, cells, rows, id, name) {
         }
         data.push(row);
     }
-    $("#" + id).bootstrapTable({
+    $el.bootstrapTable({
         method: "post",//请求方式
         url: '/Table/QueryTureData',//请求地址
         queryParamsType: 'C',// 重写分页传递参数

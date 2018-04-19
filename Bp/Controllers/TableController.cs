@@ -442,7 +442,7 @@ namespace Bp.Controllers
                     System.IO.File.Delete(i.FullName);      //删除指定文件
                 }
             }
-            return AjaxResult.Success("删除成功").ToString();
+            return AjaxResult.Success(null, "删除成功").ToString();
         }
 
 
@@ -989,17 +989,34 @@ namespace Bp.Controllers
                 string sortOrder = Request["sortOrder"];
                 string searchText = Request["searchText"];
                 string sortName = Request["sortName"];
-                var f = db.Bp_项目数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
-                var t = db.Bp_真实数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
-                if (f != null && t == null)
+                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(name))
                 {
-                    Bp_真实数据 bp = new Bp_真实数据
+                    var f = db.Bp_项目数据.Where(x => x.项目编码 == id && x.日期 == name).FirstOrDefault();
+                    var t = db.Bp_真实数据.Where(x => x.项目编码 == id && x.日期 == name);
+                    if (f != null && t.Count() == 0)
                     {
-                        项目ID = f.项目ID,
-                        项目编码 = f.项目编码,
-                        日期 = f.日期,
-                    };
-                    db.Bp_真实数据.Add(bp);
+                        Bp_真实数据 bp = new Bp_真实数据
+                        {
+                            项目ID = f.项目ID,
+                            项目编码 = f.项目编码,
+                            日期 = f.日期,
+                        };
+                        db.Bp_真实数据.Add(bp);
+                    }
+                    else if (f != null && t.Count() > 1)
+                    {
+                        foreach (var item in t)
+                        {
+                            if (item.孔距 > 0 || item.排距 > 0 || item.孔数 > 0 || item.平均孔深 > 0 || item.炸药量 > 0 || item.抵抗线 > 0 || item.超深 > 0 || item.填充 > 0)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                db.Bp_真实数据.Remove(item);
+                            }
+                        }
+                    }
                     db.SaveChanges();
                 }
                 var list = from tu in db.Bp_真实数据
