@@ -308,6 +308,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\echarts\common.js" />
     <Content Include="Scripts\echarts\echarts.js" />
@@ -402,7 +403,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Data\" />
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Some\" />
     <Folder Include="Zip\" />
   </ItemGroup>

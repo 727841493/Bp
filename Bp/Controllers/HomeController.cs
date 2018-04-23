@@ -1,5 +1,6 @@
 ﻿using Bp.Models;
 using Bp.Utils;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -32,7 +33,7 @@ namespace Bp.Controllers
             var file = Request.Files["file"];
             var alias = form["alias"];
             var list = db.Bp_分享资料.Where(x => x.别名 == alias);
-            if (list.Count() > 0 || alias == null)
+            if (list.Count() > 0 || alias == null || alias == "")
             {
                 //别名已存在或没写别名
                 Response.Write("<script>alert('上传失败');window.location.href='/Home/Index';</script>");
@@ -89,6 +90,32 @@ namespace Bp.Controllers
                     }
                 }
             }
+        }
+
+        /// <summary>
+        ///修改背景图
+        /// </summary>
+        /// <returns>图片</returns>
+        [HttpPost]
+        public void UpPic(FormCollection form)
+        {
+            var homePath = System.Configuration.ConfigurationManager.AppSettings["backSrc"];
+            var url = form["url"];
+            var file = Request.Files["background"];
+            var name = file.FileName;
+            string ImgExtention = System.IO.Path.GetExtension(name);
+            if (ImgExtention == ".jpg")
+            {
+                name = "bgImg.jpg";
+                string path = Server.MapPath(homePath) + name;
+                file.SaveAs(path);
+                Response.Write("<script>alert('修改成功');window.location.href='" + url + "';</script>");
+            }
+            else
+            {
+                Response.Write("<script>alert('修改失败');window.location.href='" + url + "';</script>");
+            }
+
         }
 
         /// <summary>

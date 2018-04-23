@@ -101,7 +101,10 @@
         $("#OldPassword").val("");
         $("#NewPassword").val("");
     })
-
+    var test = window.location.pathname;
+    $('#changePic').on('show.bs.modal', function () {
+        $("#url").val(test);
+    })
     //var test = window.location.pathname;
     //if (test != "/Home/Index" && test != "/Account/Index") {
     //    $("#home").removeClass("current");

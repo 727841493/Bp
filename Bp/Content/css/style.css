@@ -27,7 +27,11 @@ body {
     font-family: "Lao UI", sans-serif !important;
     color: #666666;
     /*background: #d3e4ef;*/
-    background-image: url(../../Images/bgImg.jpg);
+    background: url(../../Images/bgImg.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     padding-top: 140px;
     min-height: 100%;
 }

@@ -82,6 +82,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a data-toggle="modal" data-target="#changePic" href="#">
+                                        <i class="icon-gear"></i>修改背景图
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="#" onclick="show_confirm()">
                                         <i class="icon-signout"></i>退出
                                     </a>
@@ -191,6 +196,29 @@
                     <button type="button" class="btn btn-primary" id="changeUser">提交</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    @* 修改背景图片 *@
+    <div class="modal fade" id="changePic" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:300px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">背景图片</h4>
+                </div>
+                @using (Html.BeginForm("UpPic", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="modal-body">
+                        <input name="url" type="text" id="url" />
+                        <text>选择文件：</text><input name="background" type="file" id="background" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" name="UpPic" value="UpPic" class="btn btn-primary">上传</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                }
             </div>
         </div>
     </div>
