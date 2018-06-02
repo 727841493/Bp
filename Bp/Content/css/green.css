@@ -59,3 +59,7 @@
     border-bottom: 5px solid #60c560; }
   .dataTable th.sorting_desc:after {
     border-top: 5px solid #60c560; }
+
+.bootstrap-table .table thead > tr > th {
+    color: #60c560;
+}

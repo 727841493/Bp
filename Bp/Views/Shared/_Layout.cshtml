@@ -211,7 +211,7 @@
                 @using (Html.BeginForm("UpPic", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
                     <div class="modal-body">
-                        <input name="url" type="text" id="url" />
+                        <input name="url" type="text" id="url" style="display:none" />
                         <text>选择文件：</text><input name="background" type="file" id="background" />
                     </div>
                     <div class="modal-footer">

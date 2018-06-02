@@ -2,6 +2,8 @@
 using Bp.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -489,7 +491,7 @@ namespace Bp.Controllers
                 }
             }
         }
-
+ 
         //上传
         [HttpPost]
         public void Upload(FormCollection form)
@@ -510,16 +512,20 @@ namespace Bp.Controllers
 
                 //上传人
                 var name = CookieResult.CookieName();
+
                 //流水号
-                var number = 0;
-                if (db.Bp_项目资料.Select(x => x.流水号).Count() == 0)
-                {
-                    number = 0;
-                }
-                else
-                {
-                    number = db.Bp_项目资料.Select(x => x.流水号).Max() + 1;
-                }
+                List<SqlParameter> paramArray = new List<SqlParameter>();
+                paramArray.Add(new SqlParameter("@别名", "项目流水号"));
+                paramArray.Add(new SqlParameter("@写流水号", 1));
+                SqlParameter param = new SqlParameter("@输出流水号", SqlDbType.VarChar);
+                param.Direction = ParameterDirection.Output;
+                param.Size = 100;
+                paramArray.Add(param);
+                db.Database.ExecuteSqlCommand("EXEC [sp_GetNewID] @别名,@写流水号,@输出流水号 out", paramArray.ToArray());
+                string result = paramArray[2].Value.ToString();
+
+                var number = Convert.ToInt32(result);
+
                 //项目编码
 
                 var bm = Request["ubm"].ToString();
