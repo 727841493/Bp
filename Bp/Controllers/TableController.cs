@@ -539,7 +539,7 @@ namespace Bp.Controllers
 
                 //上传电脑
                 var clientPCName = "";
-                
+
                 //根据目标IP地址获取IP对象
                 //    System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);
                 //根据IP对象创建主机对象
@@ -573,7 +573,7 @@ namespace Bp.Controllers
                     files.SaveAs(path);
 
                     string info = target + "\\" + "Upload_File_State.inf";
-                    string vTime = time.Year+"-"+time.Month+"-"+time.Day+" " +time.Hour+":"+time.Minute+":"+time.Second;
+                    string vTime = time.Year + "-" + time.Month + "-" + time.Day + " " + time.Hour + ":" + time.Minute + ":" + time.Second;
                     //可以指定盘符，也可以指定任意文件名，还可以为word等文件
                     FileStream fs = new FileStream(info, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                     // 创建写入流
@@ -589,6 +589,8 @@ namespace Bp.Controllers
                     sw.WriteLine("上传计算机=" + clientPCName);
                     sw.WriteLine("是否逻辑删除=0");
                     sw.Close(); //关闭文件
+                    fs.Close();
+                    System.IO.File.Open(info, FileMode.Open);
                     Bp_项目资料 xmzl = new Bp_项目资料
                     {
                         项目编码 = bm,
