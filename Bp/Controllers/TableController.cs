@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -491,7 +492,7 @@ namespace Bp.Controllers
                 }
             }
         }
- 
+
         //上传
         [HttpPost]
         public void Upload(FormCollection form)
@@ -511,8 +512,7 @@ namespace Bp.Controllers
             {
 
                 //上传人
-                var name = CookieResult.CookieName();
-
+                var user = CookieResult.CookieUser();
                 //流水号
                 List<SqlParameter> paramArray = new List<SqlParameter>();
                 paramArray.Add(new SqlParameter("@别名", "项目流水号"));
@@ -536,22 +536,30 @@ namespace Bp.Controllers
 
                 //上传时间
                 var time = DateTime.Now;
+
                 //上传电脑
+                var clientPCName = "";
+                
                 //根据目标IP地址获取IP对象
-                //System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);
+                //    System.Net.IPAddress clientIP = System.Net.IPAddress.Parse(Request.UserHostAddress);
                 //根据IP对象创建主机对象
-                //System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);
+                //    System.Net.IPHostEntry ihe = System.Net.Dns.GetHostEntry(clientIP);
                 //获取客户端主机名称
-                //var clientPCName = ihe.HostName;
+                //    clientPCName = ihe.HostName;
+
                 //文件存放路径
                 var homePath = System.Configuration.ConfigurationManager.AppSettings["imageSrc"];
                 var guid = Guid.NewGuid().ToString();
+
                 //文件大小不为0
                 files = Request.Files["file"];
+
                 //取得目标文件夹的路径
                 string target = homePath + guid;
+
                 //取得文件名字
                 var filename = files.FileName;
+
                 try
                 {
                     //判断文件夹是否存在
@@ -563,6 +571,23 @@ namespace Bp.Controllers
                     //获取存储的目标地址
                     string path = target + "\\" + filename;
                     files.SaveAs(path);
+
+                    string info = target + "\\" + "Upload_File_State.inf";
+                    //可以指定盘符，也可以指定任意文件名，还可以为word等文件
+                    FileStream fs = new FileStream(info, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                    // 创建写入流
+                    StreamWriter sw = new StreamWriter(fs);
+                    // 写入Hello World
+                    sw.WriteLine("[基本信息]");
+                    sw.WriteLine("上传文件名=" + filename);
+                    sw.WriteLine("上传类型=项目");
+                    sw.WriteLine("上传文件大小=" + files.ContentLength);
+                    sw.WriteLine("上传日期=" + time);
+                    sw.WriteLine("上传登录名=" + user.登录名);
+                    sw.WriteLine("上传用户=" + user.用户姓名);
+                    sw.WriteLine("上传计算机=" + clientPCName);
+                    sw.WriteLine("是否逻辑删除 = 0");
+                    sw.Close(); //关闭文件
                     Bp_项目资料 xmzl = new Bp_项目资料
                     {
                         项目编码 = bm,
@@ -570,8 +595,8 @@ namespace Bp.Controllers
                         资料ID = guid,
                         资料名称 = filename,
                         上传时间 = time,
-                        上传人 = name,
-                        //上传电脑 = clientPCName,
+                        上传人 = user.登录名,
+                        上传电脑 = clientPCName,
                         流水号 = number,
                     };
                     db.Bp_项目资料.Add(xmzl);
@@ -582,9 +607,6 @@ namespace Bp.Controllers
                 {
                     Response.Write("<script>alert('上传失败');window.location.href='/Table/Operation';</script>");
                 }
-
-
-
             }
         }
 

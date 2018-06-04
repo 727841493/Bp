@@ -20,5 +20,18 @@ namespace Bp.Utils
             var user = SerializeHelper.Instance.JsonDeserialize<Users>(Ticket.UserData);
             return user.登录名;
         }
+        /// <summary>
+        ///获取登录的用户信息
+        /// </summary>
+        public static Users CookieUser()
+        {
+            //获取cookie
+            HttpCookie authCookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+            //解密
+            FormsAuthenticationTicket Ticket = FormsAuthentication.Decrypt(authCookie.Value);
+            //反序列化
+            var user = SerializeHelper.Instance.JsonDeserialize<Users>(Ticket.UserData);
+            return user;
+        }
     }
 }

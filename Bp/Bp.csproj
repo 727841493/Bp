@@ -380,7 +380,9 @@
     <Content Include="Scripts\view\table.js" />
     <Content Include="Scripts\view\top.js" />
     <Content Include="Scripts\view\user.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
