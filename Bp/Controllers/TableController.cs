@@ -590,7 +590,8 @@ namespace Bp.Controllers
                     sw.WriteLine("是否逻辑删除=0");
                     sw.Close(); //关闭文件
                     fs.Close();
-                    System.IO.File.Open(info, FileMode.Open);
+                    FileStream fs1 = System.IO.File.Open(info, FileMode.Open);
+                    fs1.Close();
                     Bp_项目资料 xmzl = new Bp_项目资料
                     {
                         项目编码 = bm,
