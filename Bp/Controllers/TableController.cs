@@ -6,8 +6,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 
 namespace Bp.Controllers
@@ -574,22 +576,12 @@ namespace Bp.Controllers
 
                     string info = target + "\\" + "Upload_File_State.inf";
                     string vTime = time.Year + "-" + time.Month + "-" + time.Day + " " + time.Hour + ":" + time.Minute + ":" + time.Second;
-                    //可以指定盘符，也可以指定任意文件名，还可以为word等文件
+
                     FileStream fs = new FileStream(info, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                    // 创建写入流
                     StreamWriter sw = new StreamWriter(fs);
-                    // 写入Hello World
-                    sw.WriteLine("[基本信息]");
-                    sw.WriteLine("上传文件名=" + filename);
-                    sw.WriteLine("上传类型=项目");
-                    sw.WriteLine("上传文件大小=" + files.ContentLength);
-                    sw.WriteLine("上传日期=" + vTime);
-                    sw.WriteLine("上传登录名=" + user.登录名);
-                    sw.WriteLine("上传用户=" + user.用户姓名);
-                    sw.WriteLine("上传计算机=" + clientPCName);
-                    sw.WriteLine("是否逻辑删除=0");
-                    sw.Close(); //关闭文件
-                    fs.Close();
+                    sw.WriteLine("[基本信息]", new Object[] { "上传文件名=" + filename, "上传类型=项目", "上传文件大小=" + files.ContentLength, "上传日期=" + vTime, "上传登录名=" + user.登录名, "上传用户=" + user.用户姓名, "上传计算机=" + clientPCName, "是否逻辑删除=0" });
+                    sw.Close();
+
                     Bp_项目资料 xmzl = new Bp_项目资料
                     {
                         项目编码 = bm,
