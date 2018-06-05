@@ -312,8 +312,19 @@ namespace Bp.Controllers
             {
                 //动态拼接文件路径
                 string path = homePath + s.资料ID;
+                if (!Directory.Exists(path))
+                {
+                    continue;
+                }
                 var ls = Directory.GetFiles(path).ToList();
-                files.AddRange(ls);
+                foreach (var item in ls)
+                {
+                    if (item.IndexOf("Upload_File_State.inf") == -1)
+                    {
+                        files.Add(item);
+                    }
+                }
+                //files.AddRange(ls);
             }
             //压缩包名称
             string fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + @".zip";
@@ -386,6 +397,10 @@ namespace Bp.Controllers
                 //动态拼接文件路径
                 string path = homePath + s.资料ID;
 
+                if (!Directory.Exists(path))
+                {
+                    continue;
+                }
                 //文件路径集合
                 var ls = Directory.GetFiles(path).ToList();
 
