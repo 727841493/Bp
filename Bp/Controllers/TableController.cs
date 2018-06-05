@@ -577,10 +577,23 @@ namespace Bp.Controllers
                     string info = target + "\\" + "Upload_File_State.inf";
                     string vTime = time.Year + "-" + time.Month + "-" + time.Day + " " + time.Hour + ":" + time.Minute + ":" + time.Second;
 
-                    FileStream fs = new FileStream(info, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                    StreamWriter sw = new StreamWriter(fs);
-                    sw.WriteLine("[基本信息]", new Object[] { "上传文件名=" + filename, "上传类型=项目", "上传文件大小=" + files.ContentLength, "上传日期=" + vTime, "上传登录名=" + user.登录名, "上传用户=" + user.用户姓名, "上传计算机=" + clientPCName, "是否逻辑删除=0" });
+                    string str = "[基本信息]" + "\r\n" + "上传文件名=" + filename + "\r\n" + "上传类型=项目"
+                        + "\r\n" + "上传文件大小=" + files.ContentLength + "\r\n" + "上传日期=" + vTime + "\r\n"
+                        + "上传登录名=" + user.登录名 + "\r\n" + "上传用户=" + user.用户姓名 + "\r\n"
+                        + "上传计算机=" + clientPCName + "\r\n" + "是否逻辑删除=0";
+                    Encoding code = Encoding.GetEncoding("gb2312");
+                    StreamWriter sw = null;
+                    {
+                        try
+                        {
+                            sw = new StreamWriter(info, false, code);
+                            sw.Write(str);
+                            sw.Flush();
+                        }
+                        catch { }
+                    }
                     sw.Close();
+                    sw.Dispose();
 
                     Bp_项目资料 xmzl = new Bp_项目资料
                     {
