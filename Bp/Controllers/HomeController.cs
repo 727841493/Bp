@@ -287,7 +287,24 @@ namespace Bp.Controllers
                 foreach (var item in list)
                 {
                     string value = item.日期;
-                    string time = value.Replace("-", "");
+                    if (value.IndexOf(".") > -1)
+                    {
+                        value = value.Substring(0, value.IndexOf("."));
+                    }
+                    string[] valList = value.Split('-');
+                    string time = "";
+                    for (int t = 0; t < 3; t++)
+                    {
+                        if (valList[t].IndexOf(".") > -1)
+                        {
+                            time += valList[t].Substring(0, value.IndexOf("."));
+                        }
+                        else {
+                            time += valList[t];
+                        }
+                    }
+                    //替换
+                    //string time = value.Replace("-", "");
                     DateTime dt = new DateTime();
                     if (time.Length == 8)
                     {
