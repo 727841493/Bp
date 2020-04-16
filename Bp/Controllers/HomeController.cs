@@ -293,19 +293,25 @@ namespace Bp.Controllers
                     }
                     string[] valList = value.Split('-');
                     string time = "";
-                    for (int t = 0; t < 3; t++)
+                    for (int t = 0; t < valList.Length; t++)
                     {
+                        if (t<3) { 
                         if (valList[t].IndexOf(".") > -1)
                         {
-                            time += valList[t].Substring(0, value.IndexOf("."));
+                            time += valList[t].Substring(0, valList[t].IndexOf("."));
                         }
                         else {
                             time += valList[t];
+                        }
                         }
                     }
                     //替换
                     //string time = value.Replace("-", "");
                     DateTime dt = new DateTime();
+                    if (time.Length > 8)
+                    {
+                        continue;
+                    }
                     if (time.Length == 8)
                     {
                         continue;
